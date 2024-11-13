@@ -1,0 +1,32 @@
+/* app/routes/components/FavoriteButton.module.css */
+
+.button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    background-color: #f9fafb; /* デフォルトの背景色 */
+    border: 2px solid #374151; /* デフォルトの枠線色 */
+    color: #374151; /* デフォルトの文字色 */
+  }
+  
+  .button:not([disabled]):hover {
+    background-color: #f3f3f3;
+  }
+  
+  .favorite {
+    background-color: #f9fafb; /* お気に入り状態でも背景は変えない */
+    border-color: #ef4444; /* お気に入り状態の枠線色 */
+    color: #ef4444; /* お気に入り状態の文字色（星形の色） */
+  }
+  
+  .star {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+    fill: currentColor; /* 親の color に依存して色を変える */
+  }
+  

@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: ./ 
+    command: sh -c "npx prisma db push && npx prisma generate && yarn dev"
+    # command: sh -c "yarn dev"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://user:password@db:5432/mydatabase
+    ports:
+      - '5173:5173'
+      - '5555:5555'
+    volumes:
+      - .:/app
+      # - /app/node_modules
+      - ./prisma:/app/prisma
+    depends_on:
+      - db 
+    user: 0:0

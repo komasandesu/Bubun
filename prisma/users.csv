@@ -1,0 +1,3 @@
+email,password,name,image
+user1@example.com,password1,User One,http://example.com/image1.jpg
+user2@example.com,password2,User Two,http://example.com/image2.jpg

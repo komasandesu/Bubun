@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  originalString     String
+  substring   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+
+  Favorite  Favorite[]
+
+  // 返信（リプライ）に関するフィールド
+  parentId  Int?     // 親投稿ID
+  parent    Post?    @relation("PostReply", fields: [parentId], references: [id]) // 親の投稿
+  replies   Post[]   @relation("PostReply") // 返信（子投稿）
+}
+
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  PostId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [PostId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, PostId]) // ユーザーが同じ投稿を複数回お気に入りできないようにする
+}
+
+model User {
+  id        String   @id @default(cuid())
+  password  String
+  name      String   @unique
+  image     String?
+  provider  String   @default("Credentials")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+
+  Favorite Favorite[]
+}
