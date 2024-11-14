@@ -21,4 +21,4 @@ RUN yarn build
 EXPOSE 3000
 
 # アプリケーションを起動
-# CMD ["yarn", "start" ,"--port ${PORT:-3000}"]
+CMD ["yarn", "start" ,"--port ${PORT:-3000}"]
