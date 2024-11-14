@@ -21,9 +21,6 @@ export default defineConfig({
     include: ['react', 'react-dom'],
     exclude: ["@mapbox"],
   },
-  esbuild: {
-    jsxInject: `import React from 'react'`
-  },
 
   // ビルド設定を追加
   build: {
