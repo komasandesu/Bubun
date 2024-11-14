@@ -6,13 +6,14 @@ services:
       dockerfile: Dockerfile.production
     environment:
       NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL}  # 本番のデータベースURL
+      DATABASE_URL: ${DATABASE_URL}
+      PORT: 3000
+      HOST: 0.0.0.0 # これを追加
     ports:
-      - '3001:3000'  # 通常の本番用ポート
-    restart: always  # 障害が発生した場合に自動再起動
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://0.0.0.0:3000/"] # これを修正
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
