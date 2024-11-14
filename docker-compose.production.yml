@@ -6,8 +6,13 @@ services:
       dockerfile: Dockerfile.production
     environment:
       NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL}
-      PORT: 5173
+      DATABASE_URL: ${DATABASE_URL}  # 本番のデータベースURL
     ports:
-      - "5173:5173"
-    restart: always
+      - '3000:3000'  # 通常の本番用ポート
+    restart: always  # 障害が発生した場合に自動再起動
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
