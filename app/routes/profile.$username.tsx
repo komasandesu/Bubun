@@ -4,9 +4,9 @@ import { prisma } from "~/models/db.server";
 import { useLoaderData, Link, Form, useSearchParams } from '@remix-run/react';
 import { json } from "@remix-run/node";
 import { postRepository } from "~/models/post.server"; // 追加
-import { useSyncExternalStore } from "react";
 import { requireAuthenticatedUser } from "~/services/auth.server";
 import PostCard from "./components/PostCard";
+import { favoriteRepository } from "~/models/favorite.server";
 
 
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
@@ -33,24 +33,33 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     POSTS_PER_PAGE
   );
 
-  return json({ user, profileUser, posts, page, totalPages });
+  // posts にお気に入りデータを追加し、createdAt を JST で成形
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user.id)).map(post => ({
+    ...post,
+    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  }));
+
+  return json({ user, profileUser, posts:postsWithFavoriteData, page, totalPages });
 }
 
 export default function UserProfile() {
   const { user, profileUser, posts, page, totalPages } = useLoaderData<typeof loader>();
-
-  const formattedDate = useSyncExternalStore(
-    () => () => {},
-    () => new Date(profileUser.createdAt).toLocaleString(),
-    () => "~"
-  );
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-bold mb-4 text-black">{profileUser.name}さんのプロフィール</h1>
         <div className="space-y-4">
-          <p className="text-gray-600">作成日: {formattedDate}</p>
+          <p className="text-gray-600">作成日: {user.createdAt}</p>
 
           <Link to={`/profile/${profileUser.name}/favorite`} className="text-blue-600 hover:underline ml-4">
             お気に入り一覧
@@ -80,12 +89,15 @@ export default function UserProfile() {
         {posts.length > 0 ? (
           posts.map((post) => (
             <li key={post.id}>
-              <PostCard
-                post={{
-                  ...post,
-                  createdAt: new Date(post.createdAt),
-                  updatedAt: new Date(post.updatedAt),
-                }}
+              <PostCard 
+                key={post.id} 
+                id={post.id}
+                parentId={post.parentId}
+                originalString={post.originalString}
+                substring={post.substring}
+                createdAt={post.createdAt}
+                initialIsFavorite={post.initialIsFavorite} // 初期のお気に入り状態
+                initialFavoriteCount={post.initialFavoriteCount} // 初期のお気に入り数
               />
             </li>
           ))
@@ -125,10 +137,10 @@ export default function UserProfile() {
           </Link>
         )}
 
+        {/* 省略記号 */}
+        {page < totalPages - 2 && <span className="px-2">…</span>}
+
         {/* 最後のページ */}
-        {totalPages > 1 && page < totalPages - 1 && (
-          <span className="px-2">…</span>
-        )}
         {page < totalPages-1 && (
           <Link
             to={`?page=${totalPages}`}

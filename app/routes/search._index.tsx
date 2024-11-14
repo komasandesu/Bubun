@@ -6,6 +6,7 @@ import { postRepository } from "~/models/post.server";
 
 import { useLoaderData, Link } from "@remix-run/react";
 import PostCard from "./components/PostCard";
+import { favoriteRepository } from "~/models/favorite.server";
 
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 
@@ -22,7 +23,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // 検索結果を取得
   const posts = await postRepository.searchPosts(query, (page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE);
 
-  return json({ user, posts, page, totalPages, query });
+  // posts にお気に入りデータを追加し、createdAt を JST で成形
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user.id)).map(post => ({
+    ...post,
+    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  }));
+
+  return json({ user, posts: postsWithFavoriteData, page, totalPages, query });
 }
 
 export default function SearchResults() {
@@ -35,12 +51,15 @@ export default function SearchResults() {
           {posts.length > 0 ? (
             posts.map((post) => (
               <li key={post.id}>
-                <PostCard
-                  post={{
-                    ...post,
-                    createdAt: new Date(post.createdAt),
-                    updatedAt: new Date(post.updatedAt),
-                  }}
+                <PostCard 
+                  key={post.id} 
+                  id={post.id}
+                  parentId={post.parentId}
+                  originalString={post.originalString}
+                  substring={post.substring}
+                  createdAt={post.createdAt}
+                  initialIsFavorite={post.initialIsFavorite} // 初期のお気に入り状態
+                  initialFavoriteCount={post.initialFavoriteCount} // 初期のお気に入り数
                 />
               </li>
             ))
@@ -51,8 +70,54 @@ export default function SearchResults() {
   
         {/* ページネーション */}
         <div className="flex justify-center space-x-2 mt-4">
-          {/* ページネーションのロジックを追加 */}
-          {/* 省略 */}
+          {/* 最初のページ */}
+          {page > 2 && (
+            <Link
+              to={`?query=${query}&page=1`}
+              className={`px-4 py-2 border rounded ${page === 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+            >
+              1
+            </Link>
+          )}
+
+          {/* 省略記号 */}
+          {page > 3 && <span className="px-2">…</span>}
+
+          {/* 現在のページの前のページ */}
+          {page > 1 && (
+            <Link
+              to={`?query=${query}&page=${page - 1}`}
+              className="px-4 py-2 border rounded bg-white text-blue-500"
+            >
+              {page - 1}
+            </Link>
+          )}
+
+          {/* 現在のページ */}
+          <span className="px-4 py-2 border rounded bg-blue-500 text-white">{page}</span>
+
+          {/* 現在のページの次のページ */}
+          {page < totalPages && (
+            <Link
+              to={`?query=${query}&page=${page + 1}`}
+              className="px-4 py-2 border rounded bg-white text-blue-500"
+            >
+              {page + 1}
+            </Link>
+          )}
+
+          {/* 省略記号 */}
+          {page < totalPages - 2 && <span className="px-2">…</span>}
+
+          {/* 最後のページ */}
+          {page < totalPages - 1 && (
+            <Link
+              to={`?query=${query}&page=${totalPages}`}
+              className={`px-4 py-2 border rounded ${page === totalPages ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+            >
+              {totalPages}
+            </Link>
+          )}
         </div>
       </div>
     );

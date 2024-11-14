@@ -1,9 +1,9 @@
 // app/routes/posts.$postId.tsx
-import { useSyncExternalStore } from 'react';
 import type { LoaderFunction, ActionFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { postRepository } from '~/models/post.server';
+import { favoriteRepository } from '~/models/favorite.server'; // お気に入りのリポジトリをインポート
 
 import { requireAuthenticatedUser } from '~/services/auth.server';
 
@@ -22,26 +22,63 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   try {
     const post = await postRepository.findPostWithAuthorAndReplies(postId);
 
-    // 投稿が返信である場合は親ポストにリダイレクト
     if (post.parentId) {
       return redirect(`/posts/${post.parentId}`);
     }
 
-    return json({ post, user }); // 投稿とユーザー情報を返す
+    // 投稿の createdAt を成形
+    const formattedPostDate = new Date(post.createdAt).toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+
+    // 投稿のメインアイテムのお気に入り情報を取得
+    const isFavorite = await favoriteRepository.isFavorite({ PostId: postId, userId: user.id });
+    const favoriteCount = await favoriteRepository.countFavorites(postId);
+
+    // posts にお気に入りデータを追加し、createdAt を JST で成形
+    const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user.id)).map(post => ({
+      ...post,
+      createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      }),
+    }));
+
+    return json({
+      post: { 
+        ...post, 
+        createdAt: formattedPostDate,
+        replies: repliesWithFavoriteInfo },
+      user,
+      initialIsFavorite: isFavorite,
+      initialFavoriteCount: favoriteCount,
+    });
   } catch (error) {
     throw new Response("Post Not Found", { status: 404 });
   }
 };
 
-
 export const action: ActionFunction = async ({ request, params }) => {
   const user = await requireAuthenticatedUser(request);
 
   const formData = new URLSearchParams(await request.text());
-  const originalString = formData.get('originalString'); // タイトルを取得
+  const originalString = formData.get('originalString');
   const substring = formData.get('substring');
-  const postId = parseInt(params.postId || '', 10); // postIdをparamsから取得
-  const authorId = user.id; // 現在のユーザーのIDを設定してください
+  const postId = parseInt(params.postId || '', 10);
+  const authorId = user.id;
 
   if (!originalString || !substring || isNaN(postId)) {
     throw new Response("Invalid Data", { status: 400 });
@@ -52,15 +89,12 @@ export const action: ActionFunction = async ({ request, params }) => {
   return redirect(`/posts/${postId}`);
 };
 
-
-
 export default function PostShow() {
-  const { post, user } = useLoaderData<typeof loader>();
+  const { post, user, initialIsFavorite, initialFavoriteCount } = useLoaderData<typeof loader>();
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <article className="mb-6">
-        {/* PostItemコンポーネントを使用して投稿を表示 */}
       <PostItem
         id={post.id}
         parentId={post.parentId}
@@ -70,6 +104,8 @@ export default function PostShow() {
         authorId={post.authorId}
         authorName={post.author.name}
         userId={user.id}
+        initialIsFavorite={initialIsFavorite} // 初期のお気に入り状態
+        initialFavoriteCount={initialFavoriteCount} // 初期のお気に入り数
       />
       </article>
 

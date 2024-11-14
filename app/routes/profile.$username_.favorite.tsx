@@ -6,8 +6,8 @@ import { json } from "@remix-run/node";
 import { requireAuthenticatedUser } from "~/services/auth.server";
 import PostCard from "./components/PostCard";
 import { postRepository } from "~/models/post.server"; // 追加
+import { favoriteRepository } from "~/models/favorite.server";
 
-const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 const FAVORITES_PER_PAGE = 10; // お気に入りの投稿数
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -35,7 +35,22 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     FAVORITES_PER_PAGE
   );
 
-  return json({ user, profileUser, favorites, page, totalPages });
+  // favorites にお気に入りデータを追加し、createdAt を JST で成形
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(favorites.map(f => f.post), user.id)).map(post => ({
+    ...post,
+    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  }));
+
+  return json({ user, profileUser, favorites: postsWithFavoriteData, page, totalPages });
 }
 
 
@@ -51,11 +66,15 @@ export default function UserFavorites() {
           {favorites.length > 0 ? (
             favorites.map((favorite) => (
               <li key={favorite.id}>
-                <PostCard post={{ 
-                    ...favorite.post, 
-                    createdAt: new Date(favorite.post.createdAt), 
-                    updatedAt: new Date(favorite.post.updatedAt) 
-                    }} 
+                <PostCard 
+                  key={favorite.id} 
+                  id={favorite.id}
+                  parentId={favorite.parentId}
+                  originalString={favorite.originalString}
+                  substring={favorite.substring}
+                  createdAt={favorite.createdAt}
+                  initialIsFavorite={favorite.initialIsFavorite} // 初期のお気に入り状態
+                  initialFavoriteCount={favorite.initialFavoriteCount} // 初期のお気に入り数
                 />
               </li>
             ))
@@ -96,10 +115,10 @@ export default function UserFavorites() {
           </Link>
         )}
 
+        {/* 省略記号 */}
+        {page < totalPages - 2 && <span className="px-2">…</span>}
+
         {/* 最後のページ */}
-        {totalPages > 1 && page < totalPages - 1 && (
-          <span className="px-2">…</span>
-        )}
         {page < totalPages-1 && (
           <Link
             to={`?page=${totalPages}`}

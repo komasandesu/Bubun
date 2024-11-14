@@ -30,7 +30,7 @@ const PostForm: React.FC = () => {
                     value={originalString}
                     onChange={(e) => setOriginalString(e.target.value)}
                 />
-                <span className="text-gray-500 ml-2">の</span>
+                <span className="text-gray-200 ml-2">の</span>
             </div>
 
             {/* 下段：××の部分 */}
@@ -44,7 +44,7 @@ const PostForm: React.FC = () => {
                     value={substring}
                     onChange={(e) => setSubstring(e.target.value)}
                 />
-                <span className="text-gray-500 ml-2 whitespace-nowrap">の部分</span>
+                <span className="text-gray-200 ml-2 whitespace-nowrap">の部分</span>
             </div>
 
             <button

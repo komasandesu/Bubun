@@ -1,15 +1,15 @@
 // app/routes/posts._index.tsx
 import { Post } from '.prisma/client';
-
 import { json, SerializeFrom, LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 
 import { postRepository } from '../models/post.server';
+import { favoriteRepository } from '../models/favorite.server'; // お気に入りのリポジトリをインポート
 
 import PostCard from './components/PostCard';
 import PostForm from './components/PostForm';
 import { useEffect, useRef, useState } from 'react';
-
+import { authenticator } from '~/services/auth.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -17,15 +17,34 @@ export const loader: LoaderFunction = async ({ request }) => {
   const limit = 20;
 
   const posts = await postRepository.findInfiniteScrollWithoutReplies(page, limit);
-  
-  // 次のページが存在するかを判定
-  const hasNextPage = posts.length === limit;
+  const user = await authenticator.isAuthenticated(request);
+  if (!user) {
+    return { error: "ユーザーが認証されていません。" };
+  }
 
-  return json({ posts, hasNextPage });
+  // posts にお気に入りデータを追加し、createdAt を JST で成形
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user.id)).map(post => ({
+    ...post,
+    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  }));
+  
+  const hasNextPage = posts.length === limit;
+  return json({ posts: postsWithFavoriteData, hasNextPage });
 };
 
-
-type PostType = SerializeFrom<Post>;
+type PostType = SerializeFrom<Post> & {
+  initialIsFavorite: boolean;
+  initialFavoriteCount: number;
+};
 
 export default function PostIndex() {
   const { posts: initialPosts, hasNextPage: initialHasNextPage } = useLoaderData<{ posts: PostType[], hasNextPage: boolean }>();
@@ -34,13 +53,13 @@ export default function PostIndex() {
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
   const observerRef = useRef<HTMLDivElement>(null);
-  const [loadingDelay, setLoadingDelay] = useState(false); // 読み込み遅延用の状態
+  const [loadingDelay, setLoadingDelay] = useState(false);
 
   const loadMorePosts = async () => {
-    if (!hasNextPage || loading || loadingDelay) return; // 次のページがないか、読み込み中または遅延中なら何もしない
+    if (!hasNextPage || loading || loadingDelay) return;
 
     setLoading(true);
-    setLoadingDelay(true); // 読み込み遅延開始
+    setLoadingDelay(true);
     const res = await fetch(`/posts?_data=routes/posts._index&page=${page}`);
     const data = await res.json();
 
@@ -54,8 +73,8 @@ export default function PostIndex() {
 
     setLoading(false);
     setTimeout(() => {
-      setLoadingDelay(false); // 遅延を解除
-    }, 1000); // 1秒の遅延
+      setLoadingDelay(false);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -64,9 +83,7 @@ export default function PostIndex() {
       if (entry.isIntersecting && hasNextPage && entry.intersectionRatio > 0.95) {
         loadMorePosts();
       }
-    }, {
-      threshold: 0.95,
-    });
+    }, { threshold: 0.95 });
 
     if (observerRef.current) {
       observer.observe(observerRef.current);
@@ -77,7 +94,7 @@ export default function PostIndex() {
         observer.unobserve(observerRef.current);
       }
     };
-  }, [hasNextPage, loading, loadingDelay]); // loadingDelayを依存配列に追加
+  }, [hasNextPage, loading, loadingDelay]);
 
   return (
     <div className="container mx-auto p-4">
@@ -86,11 +103,13 @@ export default function PostIndex() {
         {posts.map(post => (
           <PostCard 
             key={post.id} 
-            post={{ 
-              ...post, 
-              createdAt: new Date(post.createdAt), 
-              updatedAt: new Date(post.updatedAt) 
-            }} 
+            id={post.id}
+            parentId={post.parentId}
+            originalString={post.originalString}
+            substring={post.substring}
+            createdAt={post.createdAt}
+            initialIsFavorite={post.initialIsFavorite} // 初期のお気に入り状態
+            initialFavoriteCount={post.initialFavoriteCount} // 初期のお気に入り数
           />
         ))}
       </div>

@@ -6,8 +6,8 @@ import { json } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Remix Social Media' },
-    { name: 'description', content: 'Remix Social Media' },
+    { title: '部分ったー' },
+    { name: 'description', content: '部分ったー' },
   ];
 };
 
@@ -28,7 +28,7 @@ export default function Index() {
     <div className="min-h-screen p-8">
       {/* サービス名 */}
       <div className="flex justify-center mb-10">
-        <h1 className="text-5xl font-bold text-gray-200">部分文字列共有サービス</h1>
+        <h1 className="text-5xl font-bold text-gray-200">部分ったー</h1>
       </div>
 
       <div className="flex justify-between">

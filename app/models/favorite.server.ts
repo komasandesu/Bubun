@@ -1,6 +1,6 @@
 // app/models/favorite.server.ts
 import { PrismaClient } from '@prisma/client';
-import { Favorite } from '.prisma/client';
+import { Favorite, Post } from '.prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -100,6 +100,40 @@ class FavoriteRepository {
       where: {
         PostId,
       },
+    });
+  }
+
+  // 特定の投稿リストに対して、お気に入りの状態とカウントを含めたデータを取得
+  async postsWithFavoriteData(posts: Post[], userId: string) {
+    const postIds = posts.map((post) => post.id);
+
+    const favoriteStatuses = await prisma.favorite.findMany({
+      where: {
+        PostId: { in: postIds },
+        userId,
+      },
+      select: {
+        PostId: true,
+      },
+    });
+
+    const favoriteCounts = await prisma.favorite.groupBy({
+      by: ['PostId'],
+      _count: true,
+      where: {
+        PostId: { in: postIds },
+      },
+    });
+
+    return posts.map((post) => {
+      const isFavorite = favoriteStatuses.some((favorite) => favorite.PostId === post.id);
+      const favoriteCount = favoriteCounts.find((count) => count.PostId === post.id)?._count || 0;
+
+      return {
+        ...post,
+        initialIsFavorite: isFavorite,
+        initialFavoriteCount: favoriteCount,
+      };
     });
   }
   
