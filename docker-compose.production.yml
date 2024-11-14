@@ -10,9 +10,9 @@ services:
     ports:
       - '3000:3000'  # 通常の本番用ポート
     restart: always  # 障害が発生した場合に自動再起動
-    networks:
-      - app-network
+#     networks:
+#       - app-network
 
-networks:
-  app-network:
-    driver: bridge
+# networks:
+#   app-network:
+#     driver: bridge
