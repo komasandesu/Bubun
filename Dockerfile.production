@@ -1,29 +1,25 @@
 FROM node:22-alpine
 
+# 作業ディレクトリを設定
 WORKDIR /app
 
-# ビルドに必要なツールをインストール
-RUN apk add --no-cache python3 make g++
-
-# package.json と yarn.lock をコピー
+# アプリケーションの依存関係をインストール
 COPY package.json yarn.lock ./
+RUN yarn install 
+#--production  # 本番用に依存関係をインストール
 
-# 依存関係をインストール
-RUN yarn install
-
-# ソースコードをコピー
+# アプリケーションのソースコードをコピー
 COPY . .
 
-# Prismaの生成
+# Prismaの生成（本番環境用）
 RUN npx prisma generate
 
-# アプリケーションをビルド
+# 本番用にアプリをビルド
 RUN yarn build
 
-# 本番用の依存関係のみを再インストール
-RUN yarn install --production
-
+# ポートを公開
 EXPOSE 3000
 
-# 起動コマンドを修正
-CMD ["node", "build/server/index.js"]
+# アプリケーションを起動
+# CMD ["yarn", "start", "--host", "0.0.0.0" ,"--port ${PORT:-3000}"]
+CMD ["sh", "-c", "HOST=0.0.0.0 PORT=${PORT:-3000} npx remix-serve build/index.js"]
