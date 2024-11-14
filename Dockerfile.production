@@ -5,8 +5,7 @@ WORKDIR /app
 
 # アプリケーションの依存関係をインストール
 COPY package.json yarn.lock ./
-RUN yarn install 
-#--production  # 本番用に依存関係をインストール
+RUN yarn install --production  # 本番用に依存関係をインストール
 
 # アプリケーションのソースコードをコピー
 COPY . .
@@ -21,4 +20,4 @@ RUN yarn build
 EXPOSE 3000
 
 # アプリケーションを起動
-CMD ["yarn", "start"]
+CMD ["yarn", "start" ,"--port ${PORT:-3000}"]
