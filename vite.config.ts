@@ -18,6 +18,25 @@ export default defineConfig({
     port: 5173, // 必要に応じてポート番号を指定
   },
   optimizeDeps: {
+    include: ['react', 'react-dom'],
     exclude: ["@mapbox"],
   },
+  esbuild: {
+    jsxInject: `import React from 'react'`
+  },
+
+  // ビルド設定を追加
+  build: {
+  // ソースマップを生成（デバッグ時に便利）
+  sourcemap: true,
+  // 出力ディレクトリを明示的に指定
+  outDir: 'build',
+  // サーバービルドの設定
+  rollupOptions: {
+    output: {
+      // チャンクの設定
+      manualChunks: undefined,
+    },
+  },
+},
 });
