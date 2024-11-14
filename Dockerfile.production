@@ -22,4 +22,4 @@ EXPOSE 3000
 
 # アプリケーションを起動
 # CMD ["yarn", "start", "--host", "0.0.0.0" ,"--port ${PORT:-3000}"]
-CMD ["yarn", "remix-serve", "./build/server/index.js", "--host", "0.0.0.0", "--port", "${PORT:-3000}"]
+CMD ["sh", "-c", "HOST=0.0.0.0 PORT=${PORT:-3000} npx remix-serve build/index.js"]
