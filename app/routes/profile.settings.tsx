@@ -30,43 +30,44 @@ export async function action({ request }: ActionFunctionArgs) {
     return { error: "ユーザー情報が見つかりません。" };
   }
 
-  // 更新データの準備
-  const updateData: any = {};
-  if (name) {
-    // 名前の形式をチェック
-    const alphaNumericRegex = /^[a-zA-Z0-9_]+$/;
-    if (!alphaNumericRegex.test(name)) {
-      return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
-    }
-
-    // 他のユーザーと重複していないか確認
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        name: name,
-        NOT: { id: user.id }, // 自分以外のユーザーを対象に
-      },
-    });
-
-    if (existingUser) {
-      return { error: "この名前は既に登録されています。" };
-    }
-
-    updateData.name = name;
-  }
-
+  // パスワードが変更されている場合は、現在のパスワードを確認
+  let isValidPassword = true;
   if (newPassword) {
-    // パスワードの確認が必要
-    const isValidPassword = await bcrypt.compare(currentPassword, userData.password);
+    isValidPassword = await bcrypt.compare(currentPassword, userData.password);
     if (!isValidPassword) {
       return { error: "現在のパスワードが正しくありません。" };
     }
+  }
 
+  // 更新データの準備
+  const updateData: any = {};
+  if (name) updateData.name = name;
+  if (newPassword) {
     updateData.password = await bcrypt.hash(newPassword, 10);
   }
 
-  // 更新データがない場合、処理を中断
-  if (Object.keys(updateData).length === 0) {
-    return { error: "変更内容がありません。" };
+  // 同じ名前やメールアドレスがすでに存在するかチェック
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { name: updateData.name },
+      ],
+      NOT: {
+        id: user.id, // 自分自身のIDは除外
+      },
+    },
+  });
+
+  // ユーザー名がアルファベット、数字、アンダーバーのみに限定されているかを確認する
+  const alphaNumericRegex = /^[a-zA-Z0-9_]+$/; // アンダーバーも許可
+  if (!alphaNumericRegex.test(name)) {
+    return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
+  }
+
+  if (existingUser) {
+    if (existingUser.name === updateData.name) {
+      return { error: "この名前は既に登録されています。" };
+    }
   }
 
   // ユーザー情報の更新
@@ -75,13 +76,12 @@ export async function action({ request }: ActionFunctionArgs) {
     data: updateData,
   });
 
-  // セッションを更新（名前変更があった場合のみ）
+  // セッションを更新
   const session = await getSession(request.headers.get("Cookie"));
-  if (updateData.name) {
-    session.set(authenticator.sessionKey, { ...user, name: updateData.name });
-  }
+  session.set(authenticator.sessionKey, { ...user, name: updateData.name });
 
-  return redirect(`/profile/${updateData.name || user.name}`, {
+  // プロフィール更新後に新しいユーザー名を使ってリダイレクト
+  return redirect(`/profile/${updateData.name}`, {
     headers: { "Set-Cookie": await commitSession(session) },
   });
 }
