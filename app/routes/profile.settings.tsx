@@ -30,12 +30,6 @@ export async function action({ request }: ActionFunctionArgs) {
     return { error: "ユーザー情報が見つかりません。" };
   }
 
-  // パスワードの確認（常に必要）
-  const isValidPassword = await bcrypt.compare(currentPassword, userData.password);
-  if (!isValidPassword) {
-    return { error: "現在のパスワードが正しくありません。" };
-  }
-
   // 更新データの準備
   const updateData: any = {};
   if (name) {
@@ -61,6 +55,12 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   if (newPassword) {
+    // パスワードの確認が必要
+    const isValidPassword = await bcrypt.compare(currentPassword, userData.password);
+    if (!isValidPassword) {
+      return { error: "現在のパスワードが正しくありません。" };
+    }
+
     updateData.password = await bcrypt.hash(newPassword, 10);
   }
 
