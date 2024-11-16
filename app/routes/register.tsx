@@ -50,18 +50,22 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Register() {
     const actionData = useActionData<ActionData>(); // actionData を取得
     return (
-        <div className="flex items-center justify-center min-h-screen">
-            <div className="container mx-auto p-6 max-w-lg bg-white shadow-lg rounded-lg">
-                <h1 className="text-2xl font-bold mb-4 text-center text-black">新規登録</h1>
-                {actionData?.error && <p className="text-red-500 mb-4 text-center">{actionData.error}</p>} {/* エラーメッセージを表示 */}
-                
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+            <div className="container mx-auto p-6 max-w-lg bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-300 dark:border-gray-700">
+                <h1 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">
+                新規登録
+                </h1>
+                {actionData?.error && (
+                <p className="text-red-500 mb-4 text-center">{actionData.error}</p>
+                )}{" "}
+                {/* エラーメッセージを表示 */}
                 <Form method="post" action="/register" className="space-y-4">
                     <input
                         type="text"
                         name="name"
                         required
                         placeholder="ユーザー名"
-                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                     <input
                         type="password"
@@ -69,19 +73,24 @@ export default function Register() {
                         required
                         placeholder="パスワード"
                         autoComplete="new-password"
-                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
+                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200 dark:bg-blue-500 dark:hover:bg-blue-600"
                     >
                         登録する
                     </button>
-                    <div className="mt-4 text-center text-black">
+                    <div className="mt-4 text-center">
                         <p>
-                            ログインは
-                            <a href="/login" className="text-blue-600 hover:underline">こちら</a>
-                            からどうぞ。
+                        ログインは
+                        <a
+                            href="/login"
+                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                            こちら
+                        </a>
+                        からどうぞ。
                         </p>
                     </div>
                 </Form>

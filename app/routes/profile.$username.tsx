@@ -55,26 +55,29 @@ export default function UserProfile() {
   const { user, profileUser, posts, page, totalPages } = useLoaderData<typeof loader>();
 
   return (
-    <div className="container mx-auto p-6 max-w-3xl">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-4 text-black">{profileUser.name}さんのプロフィール</h1>
+    <div className="container mx-auto p-6 max-w-3xl bg-gray-100 dark:bg-gray-900">
+      <div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:text-gray-100">
+        <h1 className="text-2xl font-bold mb-4 text-black dark:text-gray-100">{profileUser.name}さんのプロフィール</h1>
         <div className="space-y-4">
-          <p className="text-gray-600">作成日: {user.createdAt}</p>
+          <p className="text-gray-600 dark:text-gray-400">作成日: {user.createdAt}</p>
 
-          <Link to={`/profile/${profileUser.name}/favorite`} className="text-blue-600 hover:underline ml-4">
+          <Link
+            to={`/profile/${profileUser.name}/favorite`}
+            className="text-blue-600 hover:underline ml-4 dark:text-blue-400"
+          >
             お気に入り一覧
           </Link>
 
           {user.id === profileUser.id && (
             <div>
-              <Link to="/profile/settings" className="text-blue-600 hover:underline">
+              <Link to="/profile/settings" className="text-blue-600 hover:underline dark:text-blue-400">
                 プロフィールを編集する
               </Link>
-              
+
               <Form action="/logout" method="post" className="mt-6">
                 <button
                   type="submit"
-                  className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition"
+                  className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition dark:bg-red-600 dark:hover:bg-red-700"
                 >
                   ログアウト
                 </button>
@@ -84,13 +87,13 @@ export default function UserProfile() {
         </div>
       </div>
 
-      <h2 className="text-xl font-semibold mt-6">投稿一覧</h2>
+      <h2 className="text-xl font-semibold mt-6 text-black dark:text-gray-100">投稿一覧</h2>
       <ul className="space-y-2">
         {posts.length > 0 ? (
           posts.map((post) => (
             <li key={post.id}>
-              <PostCard 
-                key={post.id} 
+              <PostCard
+                key={post.id}
                 id={post.id}
                 parentId={post.parentId}
                 originalString={post.originalString}
@@ -102,7 +105,7 @@ export default function UserProfile() {
             </li>
           ))
         ) : (
-          <p className="text-gray-500">まだ投稿がありません。</p>
+          <p className="text-gray-500 dark:text-gray-400">まだ投稿がありません。</p>
         )}
       </ul>
 
@@ -112,18 +115,25 @@ export default function UserProfile() {
         {page > 1 && (
           <Link
             to="?page=1"
-            className={`px-4 py-2 border rounded ${page === 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+            className={`px-4 py-2 border rounded ${
+              page === 1
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400'
+            }`}
           >
             1
           </Link>
         )}
 
         {/* 省略記号 */}
-        {page > 3 && <span className="px-2">…</span>}
+        {page > 3 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
 
         {/* 現在のページの前後 */}
         {page > 2 && (
-          <Link to={`?page=${page - 1}`} className="px-4 py-2 border rounded bg-white text-blue-500">
+          <Link
+            to={`?page=${page - 1}`}
+            className="px-4 py-2 border rounded bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400"
+          >
             {page - 1}
           </Link>
         )}
@@ -132,19 +142,26 @@ export default function UserProfile() {
         <span className="px-4 py-2 border rounded bg-blue-500 text-white">{page}</span>
 
         {page < totalPages && (
-          <Link to={`?page=${page + 1}`} className="px-4 py-2 border rounded bg-white text-blue-500">
+          <Link
+            to={`?page=${page + 1}`}
+            className="px-4 py-2 border rounded bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400"
+          >
             {page + 1}
           </Link>
         )}
 
         {/* 省略記号 */}
-        {page < totalPages - 2 && <span className="px-2">…</span>}
+        {page < totalPages - 2 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
 
         {/* 最後のページ */}
-        {page < totalPages-1 && (
+        {page < totalPages - 1 && (
           <Link
             to={`?page=${totalPages}`}
-            className={`px-4 py-2 border rounded ${page === totalPages ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+            className={`px-4 py-2 border rounded ${
+              page === totalPages
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400'
+            }`}
           >
             {totalPages}
           </Link>

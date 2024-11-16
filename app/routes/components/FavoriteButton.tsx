@@ -33,7 +33,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   return (
     <button
       onClick={handleFavoriteClick}
-      className={`${styles.button} ${isFavorite ? styles.favorite : ''}`}
+      className={`${styles.button} ${isFavorite ? styles.favorite : styles.notFavorite}`}
       disabled={fetcher.state === 'submitting'}
     >
       <svg

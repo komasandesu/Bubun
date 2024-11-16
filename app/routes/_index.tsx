@@ -22,43 +22,47 @@ export const loader: LoaderFunction = async () => {
 };
 
 export default function Index() {
-  const { posts } = useLoaderData<{ posts: { id: string; originalString: string; substring: string; }[] }>();
+  const { posts } = useLoaderData<{
+    posts: { id: string; originalString: string; substring: string }[];
+  }>();
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* サービス名 */}
       <div className="flex justify-center mb-10">
-        <h1 className="text-5xl font-bold text-gray-200">部分ったー</h1>
+        <h1 className="text-5xl font-bold text-gray-900 dark:text-gray-100">
+          部分ったー
+        </h1>
       </div>
 
       <div className="flex justify-between">
         {/* 左側: 最新の投稿 */}
-        <div className="w-2/5 p-3 bg-white rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-3 border-b border-gray-300 pb-2 text-black">最新の投稿</h2>
+        <div className="w-2/5 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-300 dark:border-gray-700">
+          <h2 className="text-xl font-semibold mb-3 border-b border-gray-300 dark:border-gray-700 pb-2 text-gray-900 dark:text-gray-100">
+            最新の投稿
+          </h2>
           <div className="space-y-2">
-            {posts.map((post) => {
-
-              return (
-                <div
-                  key={post.id}
-                  className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition duration-200 text-sm"
+            {posts.map((post) => (
+              <div
+                key={post.id}
+                className="p-2 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-200 text-sm"
+              >
+                <Link
+                  to={`/posts/${post.id}`}
+                  className="text-blue-500 dark:text-blue-400 hover:underline text-base block truncate"
+                  style={{
+                    display: "block",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    maxWidth: "100%",
+                  }}
                 >
-                  <Link
-                    to={`/posts/${post.id}`}
-                    className="text-blue-500 hover:underline text-base block truncate"
-                    style={{
-                      display: "block",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
-                      maxWidth: "100%", // 必要に応じて幅を調整
-                    }}
-                  >
-                    {post.originalString} <span className="mx-0.5">の</span> {post.substring} <span className="mx-0.5">の部分</span>
-                  </Link>
-                </div>
-              );
-            })}
+                  {post.originalString} <span className="mx-0.5">の</span>{" "}
+                  {post.substring} <span className="mx-0.5">の部分</span>
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -66,13 +70,13 @@ export default function Index() {
         <div className="w-1/2 flex flex-col items-center justify-center space-y-4">
           <Link
             to="/posts"
-            className="bg-blue-500 text-white hover:bg-blue-700 rounded-lg py-3 px-6 text-xl transition duration-300"
+            className="bg-blue-500 dark:bg-blue-400 text-white dark:text-gray-900 hover:bg-blue-700 dark:hover:bg-blue-500 rounded-lg py-3 px-6 text-xl transition duration-300"
           >
             ポスト一覧
           </Link>
           <Link
             to="/login"
-            className="bg-blue-500 text-white hover:bg-blue-700 rounded-lg py-3 px-6 text-xl transition duration-300"
+            className="bg-blue-500 dark:bg-blue-400 text-white dark:text-gray-900 hover:bg-blue-700 dark:hover:bg-blue-500 rounded-lg py-3 px-6 text-xl transition duration-300"
           >
             ログイン
           </Link>
