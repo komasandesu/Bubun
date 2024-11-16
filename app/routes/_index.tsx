@@ -6,7 +6,7 @@ import { json } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: '部分ったー' },
+    { title: 'bubutter' },
     { name: 'description', content: '部分ったー' },
   ];
 };
