@@ -19,9 +19,9 @@ const PostOptions: React.FC<PostOptionsProps> = ({ postId, parentId, authorId, c
     const [isOptionsOpen, setOptionsOpen] = useState(false);
 
 
-    const toggleEditModal = () => {
-        setEditModalOpen((prev) => !prev);
-    };
+    // const toggleEditModal = () => {
+    //     setEditModalOpen((prev) => !prev);
+    // };
 
     const toggleReplyModal = () => {
         setEditReplyOpen((prev) => !prev);
@@ -58,12 +58,12 @@ const PostOptions: React.FC<PostOptionsProps> = ({ postId, parentId, authorId, c
                         {/* 編集・削除: currentUserId === authorId の場合のみ表示 */}
                         {currentUserId === authorId && (
                             <>
-                                <button
+                                {/* <button
                                     onClick={toggleEditModal}
                                     className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700"
                                 >
                                     編集
-                                </button>
+                                </button> */}
                                 <DeleteButton postId={postId} />
                             </>
                         )}
@@ -72,7 +72,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({ postId, parentId, authorId, c
             </div>
 
             {/* 編集モーダルの表示 */}
-            {isEditModalOpen && (
+            {/* {isEditModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
                     <div className="bg-white p-4 rounded shadow-md dark:bg-gray-800 dark:text-white">
                         <PostEditForm 
@@ -88,7 +88,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({ postId, parentId, authorId, c
                         </button>
                     </div>
                 </div>
-            )}
+            )} */}
             {/* 返信モーダルの表示 */}
             {isReplyModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
