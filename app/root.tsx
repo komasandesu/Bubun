@@ -21,6 +21,12 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap",
   },
+  // faviconの設定
+  {
+    rel: "icon",
+    href: "/favicon.ico", // publicディレクトリに配置したfaviconのパス
+    type: "image/x-icon",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
