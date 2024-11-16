@@ -31,20 +31,18 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   // パスワードが変更されている場合は、現在のパスワードを確認
-  let isValidPassword = true;
-  if (newPassword) {
-    isValidPassword = await bcrypt.compare(currentPassword, userData.password);
-    if (!isValidPassword) {
-      return { error: "現在のパスワードが正しくありません。" };
-    }
+  if (newPassword && !currentPassword) {
+    return { error: "現在のパスワードを入力してください。" };
+  }
+
+  if (newPassword && !await bcrypt.compare(currentPassword, userData.password)) {
+    return { error: "現在のパスワードが正しくありません。" };
   }
 
   // 更新データの準備
-  const updateData: any = {};
+  const updateData: Record<string, any> = {};
   if (name) updateData.name = name;
-  if (newPassword) {
-    updateData.password = await bcrypt.hash(newPassword, 10);
-  }
+  if (newPassword) updateData.password = await bcrypt.hash(newPassword, 10);
 
   // 同じ名前やメールアドレスがすでに存在するかチェック
   const existingUser = await prisma.user.findFirst({
@@ -52,20 +50,17 @@ export async function action({ request }: ActionFunctionArgs) {
       OR: [
         { name: updateData.name },
       ],
-      NOT: {
-        id: user.id, // 自分自身のIDは除外
-      },
+      NOT: { id: user.id }, // 自分自身のIDは除外
     },
   });
 
-  // ユーザー名がアルファベット、数字、アンダーバーのみに限定されているかを確認する
-  const alphaNumericRegex = /^[a-zA-Z0-9_]+$/; // アンダーバーも許可
-  if (!alphaNumericRegex.test(name)) {
-    return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
-  }
-
-  if (existingUser) {
-    if (existingUser.name === updateData.name) {
+  // ユーザー名が指定されている場合の重複チェック
+  if (updateData.name) {
+    const alphaNumericRegex = /^[a-zA-Z0-9_]+$/; // アンダーバーも許可
+    if (!alphaNumericRegex.test(name)) {
+      return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
+    }
+    if (existingUser && existingUser.name === updateData.name) {
       return { error: "この名前は既に登録されています。" };
     }
   }
@@ -78,14 +73,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // セッションを更新
   const session = await getSession(request.headers.get("Cookie"));
-  session.set(authenticator.sessionKey, { ...user, name: updateData.name });
+  session.set(authenticator.sessionKey, { ...user, name: updateData.name || userData.name }); // nameがない場合は既存のnameを使用
 
-  // プロフィール更新後に新しいユーザー名を使ってリダイレクト
-  return redirect(`/profile/${updateData.name}`, {
+  // プロフィール更新後にリダイレクト
+  return redirect(`/profile/${updateData.name || userData.name}`, {
     headers: { "Set-Cookie": await commitSession(session) },
   });
 }
-
 
 export default function Profile() {
   const actionData = useActionData<ActionData>(); // アクションの結果を取得
@@ -111,7 +105,6 @@ export default function Profile() {
         <input
           type="password"
           name="currentPassword"
-          required
           placeholder="現在のパスワード"
           className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white mb-4"
         />
@@ -131,4 +124,3 @@ export default function Profile() {
     </div>
   );
 }
-
