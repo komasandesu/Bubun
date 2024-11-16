@@ -1,8 +1,6 @@
 // app/routes/components/PostCard.tsx
 import { Link } from "@remix-run/react";
 import FavoriteButton from '~/routes/components/FavoriteButton';
-import { Post } from '.prisma/client';
-import { useSyncExternalStore } from "react";
 
 type PostCardProps = {
     id: number;
@@ -23,10 +21,10 @@ const PostCard: React.FC<PostCardProps> = ({
     initialFavoriteCount
  }) => {
     return (
-        <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300 dark:bg-gray-800 dark:shadow-none dark:border-gray-700 dark:text-white">
             <Link
                 to={`/posts/${id}`}
-                className="block text-xl font-medium text-gray-800 hover:underline mb-2 truncate"
+                className="block text-xl font-medium text-gray-800 hover:underline mb-2 truncate dark:text-gray-200"
                 style={{
                     display: 'block',
                     overflow: 'hidden',
@@ -37,7 +35,7 @@ const PostCard: React.FC<PostCardProps> = ({
             >
                 {originalString} <span className="mx-0.5">の</span> {substring} <span className="mx-0.5">の部分</span>
             </Link>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 mb-4 dark:text-gray-400">
                 {createdAt}
             </p>
             <div className="flex justify-between items-center">

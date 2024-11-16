@@ -15,6 +15,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ error: 'タイトルとコンテンツは必須です。' }, { status: 400 });
   }
 
+  // 200文字以上の入力を拒否
+  if (originalString.length > 200 || substring.length > 200) {
+    return json({ error: 'タイトルまたはコンテンツは200文字以内で入力してください。' }, { status: 400 });
+  }
+
   try {
     // 新しい投稿を作成
     await postRepository.create({

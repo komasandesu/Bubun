@@ -59,8 +59,10 @@ export default function UserFavorites() {
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-4 text-black">{profileUser.name}さんのお気に入り投稿</h1>
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+        <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
+          {profileUser.name}さんのお気に入り投稿
+        </h1>
 
         <ul className="space-y-2">
           {favorites.length > 0 ? (
@@ -79,7 +81,7 @@ export default function UserFavorites() {
               </li>
             ))
           ) : (
-            <p className="text-gray-500">お気に入りの投稿がありません。</p>
+            <p className="text-gray-500 dark:text-gray-400">お気に入りの投稿がありません。</p>
           )}
         </ul>
       </div>
@@ -90,39 +92,49 @@ export default function UserFavorites() {
         {page > 1 && (
           <Link
             to="?page=1"
-            className={`px-4 py-2 border rounded ${page === 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+            className={`px-4 py-2 border rounded ${
+              page === 1 ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400'
+            }`}
           >
             1
           </Link>
         )}
 
         {/* 省略記号 */}
-        {page > 3 && <span className="px-2">…</span>}
+        {page > 3 && <span className="px-2 dark:text-white">…</span>}
 
         {/* 現在のページの前後 */}
         {page > 2 && (
-          <Link to={`?page=${page - 1}`} className="px-4 py-2 border rounded bg-white text-blue-500">
+          <Link
+            to={`?page=${page - 1}`}
+            className="px-4 py-2 border rounded bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400"
+          >
             {page - 1}
           </Link>
         )}
 
         {/* 現在のページ */}
-        <span className="px-4 py-2 border rounded bg-blue-500 text-white">{page}</span>
+        <span className="px-4 py-2 border rounded bg-blue-500 text-white dark:bg-blue-600">{page}</span>
 
         {page < totalPages && (
-          <Link to={`?page=${page + 1}`} className="px-4 py-2 border rounded bg-white text-blue-500">
+          <Link
+            to={`?page=${page + 1}`}
+            className="px-4 py-2 border rounded bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400"
+          >
             {page + 1}
           </Link>
         )}
 
         {/* 省略記号 */}
-        {page < totalPages - 2 && <span className="px-2">…</span>}
+        {page < totalPages - 2 && <span className="px-2 dark:text-white">…</span>}
 
         {/* 最後のページ */}
-        {page < totalPages-1 && (
+        {page < totalPages - 1 && (
           <Link
             to={`?page=${totalPages}`}
-            className={`px-4 py-2 border rounded ${page === totalPages ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
+            className={`px-4 py-2 border rounded ${
+              page === totalPages ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400'
+            }`}
           >
             {totalPages}
           </Link>
@@ -130,7 +142,10 @@ export default function UserFavorites() {
       </div>
 
       {/* プロフィールへのリンク */}
-      <Link to={`/profile/${profileUser.name}`} className="text-blue-600 hover:underline mt-4">
+      <Link
+        to={`/profile/${profileUser.name}`}
+        className="text-blue-600 hover:underline mt-4 dark:text-blue-400"
+      >
         プロフィールに戻る
       </Link>
     </div>

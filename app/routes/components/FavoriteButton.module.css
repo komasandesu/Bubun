@@ -1,32 +1,56 @@
-/* app/routes/components/FavoriteButton.module.css */
-
 .button {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    background-color: #f9fafb; /* デフォルトの背景色 */
-    border: 2px solid #374151; /* デフォルトの枠線色 */
-    color: #374151; /* デフォルトの文字色 */
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: #f3f4f6; /* 少し暗くしたライトモードの背景色 */
+  color: #1f2937; /* 濃い文字色 */
+}
+
+.favorite {
+  background-color: #f3f4f6; /* お気に入り状態でも背景は変えない */
+  color: #f62b86; /* お気に入り状態の文字色（星形の色） */
+}
+
+.star {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-block;
+  margin-right: 0.5rem;
+  fill: none; /* お気に入りでないときは星を塗りつぶさない */
+  stroke: currentColor; /* 枠線の色は親要素の color を継承 */
+  stroke-width: 2; /* 枠線の太さ */
+}
+
+/* お気に入りでない場合に白塗り */
+.notFavorite .star {
+  fill: white;
+}
+
+/* お気に入りの場合は赤く塗りつぶし */
+.favorite .star {
+  fill: #f62b86;
+}
+
+/* ダークモードのスタイル */
+@media (prefers-color-scheme: dark) {
+  .button {
+    background-color: #3b3b3b; /* ダークモードの背景色を少し明るく */
+    color: #eef4ff; /* ダークモードの文字色を明るく */
   }
-  
-  .button:not([disabled]):hover {
-    background-color: #f3f3f3;
-  }
-  
+
   .favorite {
-    background-color: #f9fafb; /* お気に入り状態でも背景は変えない */
-    border-color: #ef4444; /* お気に入り状態の枠線色 */
-    color: #ef4444; /* お気に入り状態の文字色（星形の色） */
+    background-color: #3b3b3b; /* お気に入り状態でも背景は変えない */
+    color: #e67bab; /* お気に入り状態の文字色（星形の色） */
   }
-  
-  .star {
-    width: 1.25rem;
-    height: 1.25rem;
-    display: inline-block;
-    margin-right: 0.5rem;
-    fill: currentColor; /* 親の color に依存して色を変える */
+
+  .notFavorite .star {
+    fill: #3b3b3b; /* ダークモードでは星を黒く表示 */
   }
-  
+
+  .favorite .star {
+    fill: #e67bab; /* お気に入りの場合は赤く塗りつぶし */
+  }
+}

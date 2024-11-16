@@ -12,6 +12,7 @@ services:
   app:
     build:
       context: ./ 
+      dockerfile: Dockerfile.develop
     # command: sh -c "npx prisma db push && npx prisma generate && yarn dev"
     command: sh -c "yarn dev"
     environment:
