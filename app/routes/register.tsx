@@ -21,9 +21,9 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     // ユーザー名がアルファベットと数字のみに限定されているかを確認する
-    const alphaNumericRegex = /^[a-zA-Z0-9]+$/;
+    const alphaNumericRegex = /^[a-zA-Z0-9_]+$/;
     if (!alphaNumericRegex.test(name)) {
-        return { error: "ユーザー名はアルファベットと数字のみ使用できます。" };
+    return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
     }
 
     // 名前の重複を確認

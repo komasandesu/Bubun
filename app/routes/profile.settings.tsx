@@ -40,9 +40,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const updateData: any = {};
   if (name) {
     // 名前の形式をチェック
-    const alphaNumericRegex = /^[a-zA-Z0-9]+$/;
+    const alphaNumericRegex = /^[a-zA-Z0-9_]+$/;
     if (!alphaNumericRegex.test(name)) {
-      return { error: "ユーザー名はアルファベットと数字のみ使用できます。" };
+      return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
     }
 
     // 他のユーザーと重複していないか確認
