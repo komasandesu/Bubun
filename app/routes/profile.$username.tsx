@@ -64,7 +64,7 @@ export default function UserProfile() {
           <div className="space-x-4">
             {/* お気に入り一覧ボタン */}
             <Link
-              to={`/profile/${profileUser.name}/favorite`}
+              to={`/profile/favorite`}
               className="inline-flex items-center px-4 py-2 border rounded bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="mr-2 w-6 h-6">
