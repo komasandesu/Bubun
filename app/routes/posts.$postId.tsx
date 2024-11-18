@@ -5,14 +5,14 @@ import { useLoaderData } from '@remix-run/react';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server'; // お気に入りのリポジトリをインポート
 
-import { requireAuthenticatedUser } from '~/services/auth.server';
+import { getAuthenticatedUserOrNull, requireAuthenticatedUser } from '~/services/auth.server';
 
 import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const user = await requireAuthenticatedUser(request); // ユーザー情報を取得
+  const user = await getAuthenticatedUserOrNull(request); // ユーザー情報を取得
   const postId = params.postId ? parseInt(params.postId, 10) : null;
 
   if (!postId) {
@@ -39,11 +39,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     });
 
     // 投稿のメインアイテムのお気に入り情報を取得
-    const isFavorite = await favoriteRepository.isFavorite({ PostId: postId, userId: user.id });
+    const isFavorite = user?.id ? await favoriteRepository.isFavorite({ PostId: postId, userId: user?.id || null }) : false;
     const favoriteCount = await favoriteRepository.countFavorites(postId);
 
     // posts にお気に入りデータを追加し、createdAt を JST で成形
-    const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user.id)).map(post => ({
+    const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user?.id || null)).map(post => ({
       ...post,
       createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
         timeZone: "Asia/Tokyo",
@@ -103,13 +103,13 @@ export default function PostShow() {
         createdAt={post.createdAt}
         authorId={post.authorId}
         authorName={post.author.name}
-        userId={user.id}
+        userId={user?.id || null}
         initialIsFavorite={initialIsFavorite} // 初期のお気に入り状態
         initialFavoriteCount={initialFavoriteCount} // 初期のお気に入り数
       />
       </article>
 
-      <ReplyList replies={post.replies} postId={post.id} userId={user.id} />
+      <ReplyList replies={post.replies} postId={post.id} userId={user?.id || null} />
       <ReplyForm postId={post.id}/>
     </div>
   );

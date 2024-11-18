@@ -3,7 +3,7 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "~/models/db.server";
 import { useLoaderData, Link, Form } from '@remix-run/react';
 import { json } from "@remix-run/node";
-import { requireAuthenticatedUser } from "~/services/auth.server";
+import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import PostCard from "./components/PostCard";
 import { postRepository } from "~/models/post.server"; // 追加
 import { favoriteRepository } from "~/models/favorite.server";
@@ -15,7 +15,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1", 10);
 
-  const user = await requireAuthenticatedUser(request);
+  const user = await getAuthenticatedUserOrNull(request);
   const profileUser = await prisma.user.findUnique({
     where: { name: username },
   });
@@ -36,7 +36,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   );
 
   // favorites にお気に入りデータを追加し、createdAt を JST で成形
-  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(favorites.map(f => f.post), user.id)).map(post => ({
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(favorites.map(f => f.post), user?.id || null)).map(post => ({
     ...post,
     createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
       timeZone: "Asia/Tokyo",

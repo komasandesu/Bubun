@@ -67,3 +67,12 @@ export async function requireAuthenticatedUser(request: Request) {
   }
   return user;
 }
+
+// ユーザーがログインしていない場合に null を返す関数を追加
+export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
+  const user = await authenticator.isAuthenticated(request);
+  if (!user) {
+    return null; // ユーザーが認証されていない場合は null を返す
+  }
+  return user;
+}

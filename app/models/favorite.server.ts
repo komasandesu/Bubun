@@ -81,8 +81,11 @@ class FavoriteRepository {
   }
 
   // お気に入りの状態を確認
-  async isFavorite(params: { PostId: number; userId: string }): Promise<boolean> {
+  async isFavorite(params: { PostId: number; userId: string | null }): Promise<boolean> {
     const { PostId, userId } = params;
+    if (!userId) {
+      return false; // userId がない場合、フォールバックとしてお気に入りではないと見なす
+    }
     const favorite = await prisma.favorite.findUnique({
       where: {
         userId_PostId: {
@@ -104,10 +107,11 @@ class FavoriteRepository {
   }
 
   // 特定の投稿リストに対して、お気に入りの状態とカウントを含めたデータを取得
-  async postsWithFavoriteData(posts: Post[], userId: string) {
+  async postsWithFavoriteData(posts: Post[], userId: string | null) {
     const postIds = posts.map((post) => post.id);
-
-    const favoriteStatuses = await prisma.favorite.findMany({
+  
+    // userId が null の場合、favoriteStatuses と favoriteCounts を空の配列として扱う
+    const favoriteStatuses = userId ? await prisma.favorite.findMany({
       where: {
         PostId: { in: postIds },
         userId,
@@ -115,8 +119,8 @@ class FavoriteRepository {
       select: {
         PostId: true,
       },
-    });
-
+    }) : [];
+  
     const favoriteCounts = await prisma.favorite.groupBy({
       by: ['PostId'],
       _count: true,
@@ -124,11 +128,11 @@ class FavoriteRepository {
         PostId: { in: postIds },
       },
     });
-
+  
     return posts.map((post) => {
-      const isFavorite = favoriteStatuses.some((favorite) => favorite.PostId === post.id);
+      const isFavorite = userId ? favoriteStatuses.some((favorite) => favorite.PostId === post.id) : false;
       const favoriteCount = favoriteCounts.find((count) => count.PostId === post.id)?._count || 0;
-
+  
       return {
         ...post,
         initialIsFavorite: isFavorite,

@@ -4,7 +4,7 @@ import { prisma } from "~/models/db.server";
 import { useLoaderData, Link, Form, useSearchParams } from '@remix-run/react';
 import { json } from "@remix-run/node";
 import { postRepository } from "~/models/post.server"; // 追加
-import { requireAuthenticatedUser } from "~/services/auth.server";
+import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import PostCard from "./components/PostCard";
 import { favoriteRepository } from "~/models/favorite.server";
 
@@ -16,7 +16,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1", 10);
 
-  const user = await requireAuthenticatedUser(request);
+  const user = await getAuthenticatedUserOrNull(request);
   const profileUser = await prisma.user.findUnique({
     where: { name: username },
   });
@@ -34,7 +34,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   );
 
   // posts にお気に入りデータを追加し、createdAt を JST で成形
-  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user.id)).map(post => ({
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user?.id || null)).map(post => ({
     ...post,
     createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
       timeZone: "Asia/Tokyo",
@@ -59,7 +59,7 @@ export default function UserProfile() {
       <div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:text-gray-100">
         <h1 className="text-2xl font-bold mb-4 text-black dark:text-gray-100">{profileUser.name}さんのプロフィール</h1>
         <div className="space-y-4">
-          <p className="text-gray-600 dark:text-gray-400">作成日: {user.createdAt}</p>
+          <p className="text-gray-600 dark:text-gray-400">作成日: {profileUser.createdAt}</p>
 
           <div className="space-x-4">
             {/* お気に入り一覧ボタン */}
@@ -74,7 +74,7 @@ export default function UserProfile() {
             </Link>
 
             {/* プロフィール編集ボタン */}
-            {user.id === profileUser.id && (
+            {user && user.id === profileUser.id && (
               <Link
                 to={`/profile/${profileUser.name}/settings`}
                 className="inline-flex items-center px-4 py-2 border rounded bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
@@ -86,18 +86,20 @@ export default function UserProfile() {
               </Link>
             )}
           </div>
-
+          
           <Form action="/logout" method="post" className="mt-6">
-            <button
-              type="submit"
-              className="flex items-center bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition dark:bg-red-600 dark:hover:bg-red-700"
-            >
-              {/* ログアウトアイコン */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 mr-2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-              </svg>
-              ログアウト
-            </button>
+            {user && user.id === profileUser.id && (
+              <button
+                type="submit"
+                className="flex items-center bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition dark:bg-red-600 dark:hover:bg-red-700"
+              >
+                {/* ログアウトアイコン */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 mr-2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                </svg>
+                ログアウト
+              </button>
+            )}
           </Form>
         </div>
       </div>

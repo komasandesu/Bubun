@@ -1,7 +1,7 @@
 // app/routes/search.tsx
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { requireAuthenticatedUser } from "~/services/auth.server";
+import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import { postRepository } from "~/models/post.server";
 
 import { useLoaderData, Link } from "@remix-run/react";
@@ -11,7 +11,7 @@ import { favoriteRepository } from "~/models/favorite.server";
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireAuthenticatedUser(request);
+  const user = await getAuthenticatedUserOrNull(request);
   const url = new URL(request.url);
   const query = url.searchParams.get("query") || "";
   const page = parseInt(url.searchParams.get("page") || "1", 10);
@@ -23,8 +23,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // 検索結果を取得
   const posts = await postRepository.searchPosts(query, (page - 1) * POSTS_PER_PAGE, POSTS_PER_PAGE);
 
-  // posts にお気に入りデータを追加し、createdAt を JST で成形
-  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user.id)).map(post => ({
+  // userがnullの場合には、userIdにnullを渡す
+  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user?.id || null)).map(post => ({
     ...post,
     createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
       timeZone: "Asia/Tokyo",
