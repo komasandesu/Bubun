@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 
@@ -28,6 +28,21 @@ export const links: LinksFunction = () => [
     type: "image/x-icon",
   },
 ];
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "bubutter" },
+    {
+      property: "og:title",
+      content: "bubutter の butter の部分",
+    },
+    {
+      name: "description",
+      content: "Share Partial Tweet",
+    },
+  ];
+};
+
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
