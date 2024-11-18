@@ -1,15 +1,22 @@
-// app/components/Header.tsx
-import { Link } from '@remix-run/react';
-import { useState } from 'react';
+import { Link, useNavigate } from "@remix-run/react";
+import { useState } from "react";
 
 const Header: React.FC<{ path: string; title: string; username: string | null }> = ({ path, title, username }) => {
   const [query, setQuery] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false); // メニューの表示状態を管理
+  const navigate = useNavigate(); // リダイレクト処理で使用
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query) {
       window.location.href = `/search?query=${encodeURIComponent(query)}`;
+    }
+  };
+
+  const handleProfileClick = (e: React.MouseEvent) => {
+    if (!username) {
+      e.preventDefault(); // デフォルトのリンク動作を無効化
+      navigate("/login"); // ログインページにリダイレクト
     }
   };
 
@@ -44,7 +51,7 @@ const Header: React.FC<{ path: string; title: string; username: string | null }>
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="検索..."
                 className="border border-gray-300 dark:border-gray-600 rounded py-1 px-2 flex-grow max-w-xs"
-                style={{ width: '150px' }}
+                style={{ width: "150px" }}
               />
               <button type="submit" className="flex items-center justify-center bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-900 rounded ml-2 p-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -53,7 +60,11 @@ const Header: React.FC<{ path: string; title: string; username: string | null }>
                 </svg>
               </button>
             </form>
-            <Link to={`/profile/${username}`} className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 p-2">
+            <Link
+              to={`/profile/${username ?? ""}`}
+              onClick={handleProfileClick} // ログイン確認処理を実行
+              className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 p-2"
+            >
               プロフィール
             </Link>
             <Link to="/" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 p-2">
