@@ -8,15 +8,16 @@ import { favoriteRepository } from '../models/favorite.server'; // お気に入�
 
 import PostCard from './components/PostCard';
 import PostForm from './components/PostForm';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
-  const page = parseInt(url.searchParams.get('page') || '1', 10);
+  const lastId = url.searchParams.get('lastId');
+  const parsedLastId = lastId !== null ? parseInt(lastId, 10) : undefined;
   const limit = 20;
 
-  const posts = await postRepository.findInfiniteScrollWithoutReplies(page, limit);
+  const posts = await postRepository.findInfiniteScrollWithoutReplies(limit, parsedLastId);
   const user = await getAuthenticatedUserOrNull(request);
 
   // userがnullの場合には、userIdにnullを渡す
@@ -46,33 +47,45 @@ type PostType = SerializeFrom<Post> & {
 export default function PostIndex() {
   const { posts: initialPosts, hasNextPage: initialHasNextPage } = useLoaderData<{ posts: PostType[], hasNextPage: boolean }>();
   const [posts, setPosts] = useState(initialPosts);
-  const [page, setPage] = useState(2);
+  const [lastId, setLastId] = useState<number | null>(initialPosts[initialPosts.length - 1]?.id || null);
   const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
   const observerRef = useRef<HTMLDivElement>(null);
   const [loadingDelay, setLoadingDelay] = useState(false);
 
-  const loadMorePosts = async () => {
+  const loadMorePosts = useCallback(async () => {
     if (!hasNextPage || loading || loadingDelay) return;
 
     setLoading(true);
     setLoadingDelay(true);
-    const res = await fetch(`/posts?_data=routes/posts._index&page=${page}`);
-    const data = await res.json();
 
-    if (data.posts.length > 0) {
-      setPosts((prevPosts) => [...prevPosts, ...data.posts]);
-      setPage(page + 1);
-      setHasNextPage(data.hasNextPage);
-    } else {
-      setHasNextPage(false);
+    try {
+      const query = lastId !== null ? `&lastId=${encodeURIComponent(lastId)}` : '';
+      const res = await fetch(`/posts?_data=routes/posts._index${query}`);
+      
+      if (!res.ok) {
+        throw new Error('読み込みに失敗しました。');
+      }
+
+      const data = await res.json();
+
+      if (data.posts.length > 0) {
+        setPosts((prevPosts) => [...prevPosts, ...data.posts]);
+        setLastId(data.posts[data.posts.length - 1]?.id || null);
+        setHasNextPage(data.hasNextPage);
+      } else {
+        setHasNextPage(false);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('エラーが発生しました。もう一度お試しください。');
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setLoadingDelay(false);
+      }, 1000);
     }
-
-    setLoading(false);
-    setTimeout(() => {
-      setLoadingDelay(false);
-    }, 1000);
-  };
+  }, [hasNextPage, loading, loadingDelay, lastId]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -91,7 +104,7 @@ export default function PostIndex() {
         observer.unobserve(observerRef.current);
       }
     };
-  }, [hasNextPage, loading, loadingDelay]);
+  }, [hasNextPage, loadMorePosts]);
 
   return (
     <div className="container mx-auto p-4">
