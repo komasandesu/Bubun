@@ -44,7 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (name) updateData.name = name;
   if (newPassword) updateData.password = await bcrypt.hash(newPassword, 10);
 
-  // 同じ名前やメールアドレスがすでに存在するかチェック
+  // 同じ名前がすでに存在するかチェック
   const existingUser = await prisma.user.findFirst({
     where: {
       OR: [

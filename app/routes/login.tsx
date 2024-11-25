@@ -43,7 +43,7 @@ export default function Screen() {
 
         {/* エラーメッセージがあれば表示 */}
         {errorMessage && (
-          <p className="text-red-500 mb-4 text-center">メールアドレスかパスワードが違います</p>
+          <p className="text-red-500 mb-4 text-center">ユーザー名かパスワードが違います</p>
         )}
 
 

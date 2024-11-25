@@ -17,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     // null チェックを追加
     if (!name || !password) {
-        return { error: "名前、メールアドレス、パスワードは必須です。" };
+        return { error: "ユーザー名、パスワードは必須です。" };
     }
 
     // ユーザー名がアルファベットと数字のみに限定されているかを確認する
