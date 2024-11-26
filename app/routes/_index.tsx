@@ -12,8 +12,8 @@ export const meta: MetaFunction = () => {
     { property: 'og:description', content: '部分を投稿して共有するプラットフォームです。' },
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: 'bubutter' },
-    { property: 'og:url', content: 'https://bubutter.at-math.com/' }, // 実際のURLに置き換えてください
-    { property: 'og:image', content: '/og-image.png' }, // 相対パスを指定
+    { property: 'og:url', content: 'https://bubutter.at-math.com/' },
+    { property: 'og:image', content: 'https://bubutter.at-math.com/og-image.png' },
   ];
 };
 
