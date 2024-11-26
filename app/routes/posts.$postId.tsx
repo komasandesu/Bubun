@@ -28,6 +28,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
     { property: "og:site_name", content: "bubutter" },
     { property: "og:type", content: "article" },
+    { property: 'og:url', content: 'https://bubutter.at-math.com/' }, // 実際のURLに置き換えてください
+    { property: 'og:image', content: '/og-image.png' }, // 相対パスを指定
   ];
 };
 
