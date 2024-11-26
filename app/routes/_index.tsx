@@ -6,8 +6,12 @@ import { json } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'bubutter' },
-    { name: 'description', content: '部分ったー' },
+    { title: 'bubutter | トップページ' },
+    { name: 'description', content: '部分ったー - 部分を投稿して共有するプラットフォームです。' },
+    { property: 'og:title', content: 'bubutter | トップページ' },
+    { property: 'og:description', content: '部分を投稿して共有するプラットフォームです。' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'bubutter' },
   ];
 };
 

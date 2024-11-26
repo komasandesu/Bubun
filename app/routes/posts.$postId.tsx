@@ -1,5 +1,5 @@
 // app/routes/posts.$postId.tsx
-import type { LoaderFunction, ActionFunction } from '@remix-run/node';
+import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { postRepository } from '~/models/post.server';
@@ -10,6 +10,26 @@ import { getAuthenticatedUserOrNull, requireAuthenticatedUser } from '~/services
 import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) {
+    return [
+      { title: "bubutter | 投稿が見つかりません" },
+      { name: "description", content: "投稿が見つかりませんでした。" },
+    ];
+  }
+
+  const { post } = data;
+
+  return [
+    { title: `bubutter | 投稿` },
+    { name: "description", content: `${post.originalString}の${post.substring}の部分` },
+    { property: "og:title", content: `bubutter | 投稿` },
+    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
+    { property: "og:site_name", content: "bubutter" },
+    { property: "og:type", content: "article" },
+  ];
+};
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const user = await getAuthenticatedUserOrNull(request); // ユーザー情報を取得
