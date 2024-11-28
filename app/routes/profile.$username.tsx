@@ -157,24 +157,24 @@ export default function UserProfile() {
 
       <h2 className="text-xl font-semibold mt-6 text-black dark:text-gray-100">投稿一覧</h2>
       <ul className="space-y-2">
-        {posts.length > 0 ? (
-          posts.map((post:PostCardProps) => (
-            <li key={post.id}>
-              <PostCard
-                key={post.id}
-                id={post.id}
-                parentId={post.parentId}
-                originalString={post.originalString}
-                substring={post.substring}
-                createdAt={post.createdAt}
-                initialIsFavorite={post.initialIsFavorite} // 初期のお気に入り状態
-                initialFavoriteCount={post.initialFavoriteCount} // 初期のお気に入り数
-              />
-            </li>
-          ))
-        ) : (
-          <p className="text-gray-500 dark:text-gray-400">まだ投稿がありません。</p>
-        )}
+      {posts && posts.length > 0 ? (
+        posts.map((post: PostCardProps) => (
+          <li key={post.id}>
+            <PostCard
+              key={post.id}
+              id={post.id}
+              parentId={post.parentId}
+              originalString={post.originalString}
+              substring={post.substring}
+              createdAt={post.createdAt}
+              initialIsFavorite={post.initialIsFavorite}
+              initialFavoriteCount={post.initialFavoriteCount}
+            />
+          </li>
+        ))
+      ) : (
+        <p className="text-gray-500 dark:text-gray-400">まだ投稿がありません。</p>
+      )}
       </ul>
 
       {/* ページネーション */}
