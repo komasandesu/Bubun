@@ -30,7 +30,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw new Response("ユーザー情報が見つかりません。", { status: 404 });
   }
 
-  return json<LoaderData>({
+  return Response.json({
     profile: userData.profile ?? null,  // nullの場合は明示的にnullに設定
     twitterId: userData.twitterId ?? null, // nullの場合は明示的にnullに設定
   });

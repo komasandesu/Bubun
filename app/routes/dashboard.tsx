@@ -1,13 +1,13 @@
 // app/routes/dashboard.tsx
 import { Outlet } from "@remix-run/react";
-import { json, LoaderFunction } from '@remix-run/node';
+import { LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { authenticator } from '~/services/auth.server';
 import Header from './components/Header';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request);
-  return json({ user: user });
+  return Response.json({ user: user });
 };
 
 export default function Dashboard() {

@@ -2,7 +2,7 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/services/auth.server";
 import { prisma } from "../models/db.server"; // Prismaのインポート
-import { Form, Link, useLoaderData, useActionData  } from '@remix-run/react';
+import { Form, Link, useLoaderData } from '@remix-run/react';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   let user = await authenticator.isAuthenticated(request, {

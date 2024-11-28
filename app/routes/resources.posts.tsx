@@ -1,4 +1,4 @@
-import { json, redirect, ActionFunctionArgs } from '@remix-run/node';
+import { redirect, ActionFunctionArgs } from '@remix-run/node';
 import { requireAuthenticatedUser } from '~/services/auth.server';
 import { postRepository } from '~/models/post.server';
 
@@ -12,12 +12,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   // 入力のバリデーション
   if (!originalString || !substring) {
-    return json({ error: 'タイトルとコンテンツは必須です。' }, { status: 400 });
+    return Response.json({ error: 'タイトルとコンテンツは必須です。' }, { status: 400 });
   }
 
   // 200文字以上の入力を拒否
   if (originalString.length > 200 || substring.length > 200) {
-    return json({ error: 'タイトルまたはコンテンツは200文字以内で入力してください。' }, { status: 400 });
+    return Response.json({ error: 'タイトルまたはコンテンツは200文字以内で入力してください。' }, { status: 400 });
   }
 
   try {
@@ -32,6 +32,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect('/posts'); 
   } catch (error) {
     console.error('投稿の作成に失敗しました:', error);
-    return json({ error: '投稿の作成に失敗しました' }, { status: 500 });
+    return Response.json({ error: '投稿の作成に失敗しました' }, { status: 500 });
   }
 };

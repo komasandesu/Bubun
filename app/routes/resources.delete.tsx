@@ -1,5 +1,5 @@
 // app/routes/resources.delete.tsx
-import { json, redirect, ActionFunctionArgs } from '@remix-run/node';
+import { redirect, ActionFunctionArgs } from '@remix-run/node';
 import { requireAuthenticatedUser } from '~/services/auth.server';
 import { postRepository } from '~/models/post.server';
 
@@ -11,7 +11,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const redirectTo = formData.get('redirectTo') as string | null;
 
   if (!postId) {
-    return json({ error: 'Post ID is required' }, { status: 400 });
+    return Response.json({ error: 'Post ID is required' }, { status: 400 });
   }
 
   try {

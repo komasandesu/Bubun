@@ -2,12 +2,20 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "~/models/db.server";
 import { useLoaderData, Link, Form } from '@remix-run/react';
-import { json } from "@remix-run/node";
 import { postRepository } from "~/models/post.server"; // 追加
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import PostCard from "./components/PostCard";
 import { favoriteRepository } from "~/models/favorite.server";
 
+type PostCardProps = {
+  id: number;
+  parentId: number | null;
+  originalString: string;
+  substring: string;
+  createdAt: string;
+  initialIsFavorite: boolean; // 初期のお気に入り状態
+  initialFavoriteCount: number; // 初期のお気に入り数
+};
 
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 
@@ -70,7 +78,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return json({ user, profileUser: profileUserWithFormattedDate, posts:postsWithFavoriteData, page, totalPages });
+  return Response.json({ user, profileUser: profileUserWithFormattedDate, posts:postsWithFavoriteData, page, totalPages });
 }
 
 export default function UserProfile() {
@@ -147,7 +155,7 @@ export default function UserProfile() {
       <h2 className="text-xl font-semibold mt-6 text-black dark:text-gray-100">投稿一覧</h2>
       <ul className="space-y-2">
         {posts.length > 0 ? (
-          posts.map((post) => (
+          posts.map((post:PostCardProps) => (
             <li key={post.id}>
               <PostCard
                 key={post.id}

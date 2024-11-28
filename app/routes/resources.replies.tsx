@@ -1,5 +1,5 @@
 // app/routes/resources.replies.tsx
-import { json, redirect, ActionFunctionArgs } from '@remix-run/node';
+import { redirect, ActionFunctionArgs } from '@remix-run/node';
 import { requireAuthenticatedUser } from '~/services/auth.server';
 import { postRepository } from '~/models/post.server';
 
@@ -15,7 +15,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   
   // 入力のバリデーション
   if (!originalString || !substring || isNaN(postId)) {
-    return json({ error: 'Invalid data' }, { status: 400 });
+    return Response.json({ error: 'Invalid data' }, { status: 400 });
   }
   
   try {
@@ -31,6 +31,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect(redirectTo || `/posts/${postId}`); // リダイレクト先を元の投稿ページに設定
   } catch (error) {
     console.error('Failed to create reply:', error);
-    return json({ error: 'Failed to create reply' }, { status: 500 });
+    return Response.json({ error: 'Failed to create reply' }, { status: 500 });
   }
 };

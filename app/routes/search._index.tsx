@@ -1,12 +1,21 @@
 // app/routes/search.tsx
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import { postRepository } from "~/models/post.server";
 
 import { useLoaderData, Link } from "@remix-run/react";
 import PostCard from "./components/PostCard";
 import { favoriteRepository } from "~/models/favorite.server";
+
+type PostCardProps = {
+  id: number;
+  parentId: number | null;
+  originalString: string;
+  substring: string;
+  createdAt: string;
+  initialIsFavorite: boolean; // 初期のお気に入り状態
+  initialFavoriteCount: number; // 初期のお気に入り数
+};
 
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 
@@ -38,7 +47,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return json({ user, posts: postsWithFavoriteData, page, totalPages, query });
+  return Response.json({ user, posts: postsWithFavoriteData, page, totalPages, query });
 }
 
 export default function SearchResults() {
@@ -49,7 +58,7 @@ export default function SearchResults() {
         <h1 className="text-2xl font-bold mb-4">検索結果: "{query}"</h1>
         <ul className="space-y-2">
           {posts.length > 0 ? (
-            posts.map((post) => (
+            posts.map((post:PostCardProps) => (
               <li key={post.id}>
                 <PostCard 
                   key={post.id} 

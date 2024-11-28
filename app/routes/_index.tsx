@@ -2,7 +2,6 @@
 import { Link, useLoaderData } from '@remix-run/react';
 import type { MetaFunction, LoaderFunction } from '@remix-run/node';
 import { prisma } from '~/models/db.server';
-import { json } from '@remix-run/react';
 
 export const loader: LoaderFunction = async () => {
   const posts = await prisma.post.findMany({
@@ -11,7 +10,7 @@ export const loader: LoaderFunction = async () => {
     take: 10, // 最新10件を取得
   });
 
-  return json({ posts });
+  return Response.json({ posts });
 };
 
 export default function Index() {

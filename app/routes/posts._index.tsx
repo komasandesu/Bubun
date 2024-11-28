@@ -1,6 +1,6 @@
 // app/routes/posts._index.tsx
 import { Post } from '.prisma/client';
-import { json, SerializeFrom, LoaderFunction } from '@remix-run/node';
+import { SerializeFrom, LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 
 import { postRepository } from '../models/post.server';
@@ -36,7 +36,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }));
   
   const hasNextPage = posts.length === limit;
-  return json({ posts: postsWithFavoriteData, hasNextPage });
+  return Response.json({ posts: postsWithFavoriteData, hasNextPage });
 };
 
 type PostType = SerializeFrom<Post> & {

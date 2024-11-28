@@ -1,6 +1,6 @@
 // app/routes/posts.$postId.tsx
 import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server'; // お気に入りのリポジトリをインポート
@@ -82,7 +82,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       }),
     }));
 
-    return json({
+    return Response.json({
       post: { 
         ...post, 
         createdAt: formattedPostDate,

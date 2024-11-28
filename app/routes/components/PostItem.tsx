@@ -1,9 +1,7 @@
 // app/routes/components/PostItem.tsx
 import { Link } from 'react-router-dom';
 import FavoriteButton from './FavoriteButton';
-import { User } from '.prisma/client';
 import PostOptions from './PostOptions';
-import { useSyncExternalStore } from 'react';
 
 // 型定義
 type PostItemProps = {

@@ -3,7 +3,7 @@ import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { authenticator } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import bcrypt from 'bcrypt';
-import { Form, Link, useActionData } from '@remix-run/react';
+import { Form, useActionData } from '@remix-run/react';
 import { commitSession, getSession } from "~/services/session.server";
 
 interface ActionData {
