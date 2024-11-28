@@ -4,19 +4,6 @@ import type { MetaFunction, LoaderFunction } from '@remix-run/node';
 import { prisma } from '~/models/db.server';
 import { json } from '@remix-run/react';
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: 'bubutter | トップページ' },
-    { name: 'description', content: '部分ったー - 部分を投稿して共有するプラットフォームです。' },
-    { property: 'og:title', content: 'bubutter | トップページ' },
-    { property: 'og:description', content: '部分を投稿して共有するプラットフォームです。' },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'bubutter' },
-    { property: 'og:url', content: 'https://bubutter.at-math.com/' },
-    { property: 'og:image', content: 'https://bubutter.at-math.com/og-image.png' },
-  ];
-};
-
 export const loader: LoaderFunction = async () => {
   const posts = await prisma.post.findMany({
     where: { parentId: null }, // 親投稿のみを取得
