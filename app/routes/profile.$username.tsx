@@ -79,7 +79,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }));
 
   return new Response(
-    JSON.stringify({ user, profileUser, favorites: postsWithFavoriteData, page, totalPages }),
+    JSON.stringify({ user, profileUser: profileUserWithFormattedDate, posts: postsWithFavoriteData, page, totalPages }),
     { status: 200, headers: { "Content-Type": "application/json" } }
   );
 }
@@ -157,24 +157,24 @@ export default function UserProfile() {
 
       <h2 className="text-xl font-semibold mt-6 text-black dark:text-gray-100">投稿一覧</h2>
       <ul className="space-y-2">
-      {posts && posts.length > 0 ? (
-        posts.map((post: PostCardProps) => (
-          <li key={post.id}>
-            <PostCard
-              key={post.id}
-              id={post.id}
-              parentId={post.parentId}
-              originalString={post.originalString}
-              substring={post.substring}
-              createdAt={post.createdAt}
-              initialIsFavorite={post.initialIsFavorite}
-              initialFavoriteCount={post.initialFavoriteCount}
-            />
-          </li>
-        ))
-      ) : (
-        <p className="text-gray-500 dark:text-gray-400">まだ投稿がありません。</p>
-      )}
+        {posts && posts.length > 0 ? (
+          posts.map((post: PostCardProps) => (
+            <li key={post.id}>
+              <PostCard
+                key={post.id}
+                id={post.id}
+                parentId={post.parentId}
+                originalString={post.originalString}
+                substring={post.substring}
+                createdAt={post.createdAt}
+                initialIsFavorite={post.initialIsFavorite}
+                initialFavoriteCount={post.initialFavoriteCount}
+              />
+            </li>
+          ))
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">まだ投稿がありません。</p>
+        )}
       </ul>
 
       {/* ページネーション */}
