@@ -1,6 +1,6 @@
 // app/routes/_index.tsx
 import { Link, useLoaderData } from '@remix-run/react';
-import type { MetaFunction, LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction } from '@remix-run/node';
 import { prisma } from '~/models/db.server';
 
 export const loader: LoaderFunction = async () => {
@@ -10,7 +10,11 @@ export const loader: LoaderFunction = async () => {
     take: 10, // 最新10件を取得
   });
 
-  return Response.json({ posts });
+  return new Response(JSON.stringify({ posts }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 export default function Index() {
