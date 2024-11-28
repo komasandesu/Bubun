@@ -36,7 +36,13 @@ export const loader: LoaderFunction = async ({ request }) => {
   }));
   
   const hasNextPage = posts.length === limit;
-  return Response.json({ posts: postsWithFavoriteData, hasNextPage });
+  return new Response(
+    JSON.stringify({ posts: postsWithFavoriteData, hasNextPage }), // JSON.stringifyでデータを文字列化
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }, // Content-Typeを明示的に設定
+    }
+  );
 };
 
 type PostType = SerializeFrom<Post> & {

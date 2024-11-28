@@ -11,7 +11,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const PostId = Number(formData.get('PostId'));
 
   if (!PostId) {
-    return Response.json({ error: 'Invalid post ID' }, { status: 400 });
+    return new Response(
+      JSON.stringify({ error: 'Invalid post ID' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
   try {
@@ -23,10 +26,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     // お気に入り数を取得
     const favoriteCount = await favoriteRepository.countFavorites(PostId);
 
-    return Response.json({ success: true, added: result.added, favoriteCount });
+    return new Response(
+      JSON.stringify({ success: true, added: result.added, favoriteCount }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Failed to toggle favorite:', error);
-    return Response.json({ error: 'Failed to toggle favorite' }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: 'Failed to toggle favorite' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 };
 
@@ -37,7 +46,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const PostId = Number(url.searchParams.get('PostId'));
 
   if (!PostId) {
-    return Response.json({ error: 'Invalid post ID' }, { status: 400 });
+    return new Response(
+      JSON.stringify({ error: 'Invalid post ID' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
   try {
@@ -48,9 +60,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
     const favoriteCount = await favoriteRepository.countFavorites(PostId);
 
-    return Response.json({ isFavorite, favoriteCount });
+    return new Response(
+      JSON.stringify({ isFavorite, favoriteCount }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Failed to get favorite status:', error);
-    return Response.json({ error: 'Failed to get favorite status' }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: 'Failed to get favorite status' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 };

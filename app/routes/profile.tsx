@@ -7,7 +7,11 @@ import Header from './components/Header';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request);
-  return Response.json({ user: user });
+  return new Response(JSON.stringify({ user }), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 export default function Profile() {

@@ -15,7 +15,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   
   // 入力のバリデーション
   if (!originalString || !substring || isNaN(postId)) {
-    return Response.json({ error: 'Invalid data' }, { status: 400 });
+    return new Response(
+      JSON.stringify({ error: 'Invalid data' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
   }
   
   try {
@@ -31,6 +34,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect(redirectTo || `/posts/${postId}`); // リダイレクト先を元の投稿ページに設定
   } catch (error) {
     console.error('Failed to create reply:', error);
-    return Response.json({ error: 'Failed to create reply' }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: 'Failed to create reply' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 };

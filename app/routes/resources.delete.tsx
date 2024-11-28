@@ -11,7 +11,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const redirectTo = formData.get('redirectTo') as string | null;
 
   if (!postId) {
-    return Response.json({ error: 'Post ID is required' }, { status: 400 });
+    return new Response(
+      JSON.stringify({ error: 'Post ID is required' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
   try {

@@ -82,7 +82,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       }),
     }));
 
-    return Response.json({
+    return new Response(JSON.stringify({
       post: { 
         ...post, 
         createdAt: formattedPostDate,
@@ -90,6 +90,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       user,
       initialIsFavorite: isFavorite,
       initialFavoriteCount: favoriteCount,
+    }), {
+      headers: { "Content-Type": "application/json" }
     });
   } catch (error) {
     throw new Response("Post Not Found", { status: 404 });

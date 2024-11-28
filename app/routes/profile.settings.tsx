@@ -1,5 +1,5 @@
 // app/routes/profile.settings.tsx
-import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { authenticator } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
@@ -30,10 +30,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw new Response("ユーザー情報が見つかりません。", { status: 404 });
   }
 
-  return Response.json({
-    profile: userData.profile ?? null,  // nullの場合は明示的にnullに設定
-    twitterId: userData.twitterId ?? null, // nullの場合は明示的にnullに設定
-  });
+  return new Response(
+    JSON.stringify({
+      profile: userData.profile ?? null,  // nullの場合は明示的にnullに設定
+      twitterId: userData.twitterId ?? null, // nullの場合は明示的にnullに設定
+    }),
+    { status: 200, headers: { "Content-Type": "application/json" } }
+  );
 }
 
 // Action: プロフィールを更新

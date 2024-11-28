@@ -47,7 +47,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return Response.json({ user, posts: postsWithFavoriteData, page, totalPages, query });
+  return new Response(
+    JSON.stringify({ user, posts: postsWithFavoriteData, page, totalPages, query }),
+    { status: 200, headers: { 'Content-Type': 'application/json' } }
+  );
 }
 
 export default function SearchResults() {

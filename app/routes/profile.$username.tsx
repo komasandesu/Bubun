@@ -78,7 +78,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return Response.json({ user, profileUser: profileUserWithFormattedDate, posts:postsWithFavoriteData, page, totalPages });
+  return new Response(
+    JSON.stringify({ user, profileUser, favorites: postsWithFavoriteData, page, totalPages }),
+    { status: 200, headers: { "Content-Type": "application/json" } }
+  );
 }
 
 export default function UserProfile() {
