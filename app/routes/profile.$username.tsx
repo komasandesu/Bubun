@@ -1,7 +1,7 @@
 // app/routes/profile.$username.tsx
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "~/models/db.server";
-import { useLoaderData, Link, Form, useSearchParams } from '@remix-run/react';
+import { useLoaderData, Link, Form } from '@remix-run/react';
 import { json } from "@remix-run/node";
 import { postRepository } from "~/models/post.server"; // 追加
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
@@ -19,11 +19,33 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const user = await getAuthenticatedUserOrNull(request);
   const profileUser = await prisma.user.findUnique({
     where: { name: username },
+    select: {
+      id: true,
+      name: true,
+      createdAt: true,
+      profile: true, // 追加
+      twitterId: true, // 追加
+    },
   });
 
   if (!profileUser) {
     throw new Response("User not found", { status: 404 });
   }
+
+  // profileUser の createdAt を変換
+  const profileUserWithFormattedDate = {
+    ...profileUser,
+    createdAt: new Date(profileUser.createdAt).toLocaleString("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  };
 
   const totalPosts = await postRepository.countByUserId(profileUser.id);
   const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
@@ -48,7 +70,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return json({ user, profileUser, posts:postsWithFavoriteData, page, totalPages });
+  return json({ user, profileUser: profileUserWithFormattedDate, posts:postsWithFavoriteData, page, totalPages });
 }
 
 export default function UserProfile() {
@@ -60,6 +82,24 @@ export default function UserProfile() {
         <h1 className="text-2xl font-bold mb-4 text-black dark:text-gray-100">{profileUser.name}さんのプロフィール</h1>
         <div className="space-y-4">
           <p className="text-gray-600 dark:text-gray-400">作成日: {profileUser.createdAt}</p>
+          
+          <p className="text-gray-600 dark:text-gray-400">プロフィール: {profileUser.profile}</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            Twitter: 
+            {profileUser.twitterId ? (
+              <a 
+                href={`https://twitter.com/${profileUser.twitterId}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-blue-500 hover:underline"
+              >
+                @{profileUser.twitterId}
+              </a>
+            ) : (
+              <span className="text-gray-500"></span>
+            )}
+          </p>
+
 
           <div className="space-x-4">
             {/* お気に入り一覧ボタン */}

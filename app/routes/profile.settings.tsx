@@ -1,93 +1,73 @@
-// app/routes/dashboard.profile-settings.tsx
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
+// app/routes/profile.settings.tsx
+import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { authenticator } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
-import bcrypt from 'bcrypt';
-import { Form, Link, useActionData } from '@remix-run/react';
-import { commitSession, getSession } from "~/services/session.server";
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 
 interface ActionData {
   success?: string;
   error?: string;
 }
 
+interface LoaderData {
+  profile: string | null;
+  twitterId: string | null;
+}
+
+// Loader: 現在のプロフィール情報を取得
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await authenticator.isAuthenticated(request);
+  if (!user) {
+    throw redirect("/login");
+  }
+
+  const userData = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { profile: true, twitterId: true },
+  });
+
+  if (!userData) {
+    throw new Response("ユーザー情報が見つかりません。", { status: 404 });
+  }
+
+  return json<LoaderData>({
+    profile: userData.profile ?? null,  // nullの場合は明示的にnullに設定
+    twitterId: userData.twitterId ?? null, // nullの場合は明示的にnullに設定
+  });
+}
+
+// Action: プロフィールを更新
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const currentPassword = formData.get("currentPassword") as string;
-  const newPassword = formData.get("newPassword") as string;
-  const name = formData.get("name") as string;
+  const profile = formData.get("profile") as string;
+  const twitterId = formData.get("twitterId") as string;
 
   const user = await authenticator.isAuthenticated(request);
   if (!user) {
     return { error: "ユーザーが認証されていません。" };
   }
 
-  const userData = await prisma.user.findUnique({
-    where: { id: user.id },
-  });
-
-  if (!userData) {
-    return { error: "ユーザー情報が見つかりません。" };
-  }
-
-  // パスワードが変更されている場合は、現在のパスワードを確認
-  if (newPassword && !currentPassword) {
-    return { error: "現在のパスワードを入力してください。" };
-  }
-
-  if (newPassword && !await bcrypt.compare(currentPassword, userData.password)) {
-    return { error: "現在のパスワードが正しくありません。" };
-  }
-
-  // 更新データの準備
   const updateData: Record<string, any> = {};
-  if (name) updateData.name = name;
-  if (newPassword) updateData.password = await bcrypt.hash(newPassword, 10);
+  if (profile) updateData.profile = profile;
+  if (twitterId) updateData.twitterId = twitterId;
 
-  // 同じ名前がすでに存在するかチェック
-  const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { name: updateData.name },
-      ],
-      NOT: { id: user.id }, // 自分自身のIDは除外
-    },
-  });
-
-  // ユーザー名が指定されている場合の重複チェック
-  if (updateData.name) {
-    const alphaNumericRegex = /^[a-zA-Z0-9_]+$/; // アンダーバーも許可
-    if (!alphaNumericRegex.test(name)) {
-      return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
-    }
-    if (existingUser && existingUser.name === updateData.name) {
-      return { error: "この名前は既に登録されています。" };
-    }
-  }
-
-  // ユーザー情報の更新
   await prisma.user.update({
     where: { id: user.id },
     data: updateData,
   });
 
-  // セッションを更新
-  const session = await getSession(request.headers.get("Cookie"));
-  session.set(authenticator.sessionKey, { ...user, name: updateData.name || userData.name }); // nameがない場合は既存のnameを使用
-
-  // プロフィール更新後にリダイレクト
-  return redirect(`/profile/${updateData.name || userData.name}`, {
-    headers: { "Set-Cookie": await commitSession(session) },
-  });
+  return { success: "プロフィールが更新されました。" };
 }
 
-export default function Profile() {
-  const actionData = useActionData<ActionData>(); // アクションの結果を取得
+// コンポーネント
+export default function ProfileSettings() {
+  const actionData = useActionData<ActionData>();
+  const loaderData = useLoaderData<LoaderData>();
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">
-        プロフィール編集
+        プロフィール設定
       </h1>
       {actionData?.error && (
         <p className="text-red-500 dark:text-red-400">{actionData.error}</p>
@@ -96,24 +76,34 @@ export default function Profile() {
         <p className="text-green-500 dark:text-green-400">{actionData.success}</p>
       )}
       <Form method="post" className="mt-6">
-        <input
-          type="text"
-          name="name"
-          placeholder="ユーザー名"
+        {/* プロフィール文のタイトル */}
+        <label htmlFor="profile" className="text-lg font-semibold text-black dark:text-white mb-2 block">
+          プロフィール文
+        </label>
+        <textarea
+          name="profile"
+          id="profile"
+          placeholder="プロフィール"
+          defaultValue={loaderData.profile || ""} // nullの場合は空文字列を表示
           className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white mb-4"
-        />
-        <input
-          type="password"
-          name="currentPassword"
-          placeholder="現在のパスワード"
-          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white mb-4"
-        />
-        <input
-          type="password"
-          name="newPassword"
-          placeholder="新しいパスワード（変更する場合）"
-          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white mb-4"
-        />
+        ></textarea>
+
+        {/* ツイッターIDのタイトル */}
+        <label htmlFor="twitterId" className="text-lg font-semibold text-black dark:text-white mb-2 block">
+          Twitter ID
+        </label>
+        <div className="flex items-center mb-4">
+          <span className="mr-2 text-gray-600 dark:text-gray-400">@</span>
+          <input
+            type="text"
+            name="twitterId"
+            id="twitterId"
+            placeholder="Twitter ID"
+            defaultValue={loaderData.twitterId || ""} // nullの場合は空文字列を表示
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
+          />
+        </div>
+        
         <button
           type="submit"
           className="bg-blue-600 dark:bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-700 dark:hover:bg-blue-800 transition"
@@ -121,6 +111,12 @@ export default function Profile() {
           プロフィールを更新する
         </button>
       </Form>
+      <Link
+        to="/account-settings"
+        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 underline mt-4 block"
+      >
+        アカウント設定はこちら
+      </Link>
     </div>
   );
 }
