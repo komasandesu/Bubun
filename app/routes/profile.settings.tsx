@@ -115,7 +115,7 @@ export default function ProfileSettings() {
         </button>
       </Form>
       <Link
-        to="/account-settings"
+        to="/profile/settings/account-settings"
         className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 underline mt-4 block"
       >
         アカウント設定はこちら
