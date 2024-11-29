@@ -68,7 +68,7 @@ export default function Index() {
             to="/posts"
             className="bg-blue-500 dark:bg-blue-400 text-white dark:text-gray-900 hover:bg-blue-700 dark:hover:bg-blue-500 rounded-lg py-3 px-6 text-xl transition duration-300"
           >
-            部分一覧
+            ポスト一覧
           </Link>
           <Link
             to="/login"
