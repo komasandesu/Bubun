@@ -1,16 +1,15 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     './app/**/*.{ts,tsx}', // Remixのappディレクトリ内のファイルを対象に
+    './app/routes/**/*.tsx', // routesディレクトリ内のtsxファイルを対象に
   ],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Noto Sans', 'sans-serif'], // Interをデフォルトのフォントに設定
+        sans: ['Noto Sans', 'sans-serif'], // Noto Sansをデフォルトのフォントに設定
       },
     },
   },
   plugins: [],
-  mode: 'jit',
-  content: ['./app/**/*.{js,ts,jsx,tsx}', './app/routes/**/*.tsx'], // purge -> content
 };

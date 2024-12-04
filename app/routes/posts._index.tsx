@@ -1,5 +1,5 @@
 // app/routes/posts._index.tsx
-import { LoaderFunction, SerializeFrom } from '@remix-run/node';
+import { LoaderFunction } from '@remix-run/node';
 import { useLoaderData, useLocation } from '@remix-run/react';
 
 import { postRepository } from '../models/post.server';
@@ -8,7 +8,6 @@ import { favoriteRepository } from '../models/favorite.server'; // お気に入�
 import PostCard from './components/PostCard';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
-import { Post } from '@prisma/client';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
@@ -44,13 +43,22 @@ export const loader: LoaderFunction = async ({ request }) => {
   );
 };
 
-type PostType = SerializeFrom<Post> & {
-  initialIsFavorite: boolean;
-  initialFavoriteCount: number;
+// Loader の返り値の型
+type LoaderData = {
+  posts: {
+    id: number;
+    parentId: number | null;
+    originalString: string;
+    substring: string;
+    createdAt: string;
+    initialIsFavorite: boolean;
+    initialFavoriteCount: number;
+  }[];
+  hasNextPage: boolean;
 };
 
 export default function PostIndex() {
-  const { posts: initialPosts, hasNextPage: initialHasNextPage } = useLoaderData<{ posts: PostType[], hasNextPage: boolean }>();
+  const { posts: initialPosts, hasNextPage: initialHasNextPage } = useLoaderData<LoaderData>();
   const [posts, setPosts] = useState(initialPosts);
   const [lastId, setLastId] = useState<number | null>(initialPosts[initialPosts.length - 1]?.id || null);
   const [loading, setLoading] = useState(false);
