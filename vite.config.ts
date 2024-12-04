@@ -16,10 +16,6 @@ export default defineConfig({
   server: {
     host: true, // これで全てのインターフェースでアクセスできるようになります
     port: 5173, // 必要に応じてポート番号を指定
-    watch: {
-      usePolling: true,
-      interval: 1000,  // ポーリング間隔を設定（ミリ秒）
-    },
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
