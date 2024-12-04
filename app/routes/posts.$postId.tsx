@@ -1,7 +1,7 @@
 // app/routes/posts.$postId.tsx
 import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useLocation } from '@remix-run/react';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server'; // お気に入りのリポジトリをインポート
 
@@ -119,6 +119,22 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function PostShow() {
   const { post, user, initialIsFavorite, initialFavoriteCount } = useLoaderData<typeof loader>();
 
+  // クエリパラメータからエラーメッセージを取得
+  const location = useLocation();
+  const errorType = new URLSearchParams(location.search).get('error');
+  let errorMessage = '';
+
+  switch (errorType) {
+    case 'missingFields':
+      errorMessage = 'タイトルと内容の両方が必要です。';
+      break;
+    case 'tooLong':
+      errorMessage = 'タイトルまたは内容は 200 文字未満である必要があります。';
+      break;
+    default:
+      errorMessage = '';
+  }
+
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <article className="mb-6">
@@ -137,6 +153,12 @@ export default function PostShow() {
       </article>
 
       <ReplyList replies={post.replies} postId={post.id} userId={user?.id || null} />
+      {/* エラーメッセージの表示 */}
+      {errorMessage && (
+        <div className="error-message" style={{ color: 'red' }}>
+          {errorMessage}
+        </div>
+      )}
       <ReplyForm postId={post.id}/>
     </div>
   );

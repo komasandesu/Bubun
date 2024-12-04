@@ -15,18 +15,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   
   // 入力のバリデーション
   if (!originalString || !substring || isNaN(postId)) {
-    return new Response(
-      JSON.stringify({ error: 'Invalid data' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+    return redirect('/posts/new?error=missingFields');
   }
   
   // 文字数制限
   if (originalString.length > 200 || substring.length > 200) {
-    return new Response(
-      JSON.stringify({ error: 'Invalid data' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+    return redirect(`/posts/${postId}?error=tooLong`);
   }
   
   try {
