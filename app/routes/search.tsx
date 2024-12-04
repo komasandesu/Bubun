@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 };
 
-export default function Dashboard() {
+export default function search() {
   const { user } = useLoaderData<{ user: { name: string | null } | null }>();
 
   return (

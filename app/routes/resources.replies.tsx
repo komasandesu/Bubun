@@ -21,6 +21,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
   
+  // 文字数制限
+  if (originalString.length > 200 || substring.length > 200) {
+    return new Response(
+      JSON.stringify({ error: 'Invalid data' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+  
   try {
     // リプライを作成
     await postRepository.createReply({
