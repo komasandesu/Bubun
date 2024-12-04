@@ -56,7 +56,7 @@ export default function Register() {
                 新規登録
                 </h1>
                 {actionData?.error && (
-                <p className="text-red-500 mb-4 text-center">{actionData.error}</p>
+                    <p className="text-red-500 mb-4 text-center">{actionData.error}</p>
                 )}{" "}
                 {/* エラーメッセージを表示 */}
                 <Form method="post" action="/register" className="space-y-4">
