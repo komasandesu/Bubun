@@ -15,6 +15,7 @@
     "@remix-run/node": "^2.12.1",
     "@remix-run/react": "^2.12.1",
     "@remix-run/serve": "^2.12.1",
+    "@remix-run/dev": "^2.12.1",
     "aws-sdk": "^2.1691.0",
     "bcrypt": "^5.1.1",
     "isbot": "^4.1.0",
@@ -26,16 +27,17 @@
     "remix-auth": "^3.7.0",
     "remix-auth-form": "^1.5.0",
     "remix-auth-google": "^2.0.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "autoprefixer": "^10.4.20",
+    "tailwindcss": "^3.4.13",
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.12.1",
     "@types/bcrypt": "^5.0.2",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
-    "autoprefixer": "^10.4.20",
     "csv-parser": "^3.0.0",
     "eslint": "^8.38.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -44,10 +46,8 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
     "typescript": "^5.1.6",
-    "vite": "^5.1.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite": "^5.1.0"
   },
   "engines": {
     "node": ">=20.0.0"
