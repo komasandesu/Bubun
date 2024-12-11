@@ -1,7 +1,7 @@
 // app/services/auth.server.ts
 import { redirect } from '@remix-run/node';
 import { Authenticator } from "remix-auth";
-import { sessionStorage } from "~/services/session.server";
+import {  getSession, commitSession, sessionStorage } from "~/services/session.server";
 import { PrismaClient } from "@prisma/client"; // Prisma クライアントを使ってログインする
 import { User } from ".prisma/client";
 
@@ -59,20 +59,56 @@ authenticator.use(
   "user-pass" // ストラテジーの名前を指定
 );
 
+
+export async function refreshSession(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const now = Date.now();
+  const lastActionTime = session.get("lastActionTime");
+
+  if (lastActionTime && now - lastActionTime > 30 * 60 * 1000) {
+    // 最終アクションから30分以上経過している場合、セッションを破棄
+    throw new Response("Session expired", { status: 401 });
+  }
+
+  // セッションを更新
+  session.set("lastActionTime", now);
+  return commitSession(session);
+}
+
+
 // 共通認証処理の関数を追加
 export async function requireAuthenticatedUser(request: Request) {
+  // セッションをリフレッシュ
+  const cookie = await refreshSession(request);
+
+  // 認証チェック
   const user = await authenticator.isAuthenticated(request);
   if (!user) {
-    throw redirect('/login');
+    throw redirect('/login', {
+      headers: { "Set-Cookie": cookie }, // 更新されたセッションを設定
+    });
   }
   return user;
 }
 
-// ユーザーがログインしていない場合に null を返す関数を追加
+// ユーザーがログインしていない場合に null を返す関数
 export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
-  const user = await authenticator.isAuthenticated(request);
-  if (!user) {
-    return null; // ユーザーが認証されていない場合は null を返す
+  try {
+    // セッションをリフレッシュ
+    const cookie = await refreshSession(request);
+
+    // 認証チェック
+    const user = await authenticator.isAuthenticated(request);
+    if (!user) {
+      return null;
+    }
+
+    // ヘッダーでセッション更新
+    return new Response(null, {
+      headers: { "Set-Cookie": cookie },
+    }) as unknown as User;
+  } catch (error) {
+    // セッション期限切れやエラー時は null を返す
+    return null;
   }
-  return user;
 }
