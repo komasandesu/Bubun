@@ -10,21 +10,31 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // ユーザーの認証
     const user = await authenticator.authenticate("user-pass", request);
+    console.log(user);
 
     // 認証成功した場合、セッションにユーザー情報を保存
     let session = await sessionStorage.getSession(request.headers.get("cookie"));
     session.set("user", user);
 
     // ホームページにリダイレクト（セッションのセットを含む）
-    throw redirect("/", {
+    return redirect("/", {
       headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
     });
   } catch (error) {
-    // 認証失敗時にはエラーをクエリパラメータに追加してリダイレクト
+    // 認証失敗時にエラー処理を行う
     console.error("Authentication failed", error);
-    return redirect("/login?error=Invalid%20credentials");
+
+    // 失敗した場合、セッションをクリア
+    let session = await sessionStorage.getSession(request.headers.get("cookie"));
+    session.unset("user");
+
+    // エラーメッセージをURLのクエリパラメータとして設定
+    return redirect("/login?error=Invalid%20credentials", {
+      headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
+    });
   }
 }
+
 
 // Finally, we need to export a loader function to check if the user is already
 // authenticated and redirect them to the dashboard
