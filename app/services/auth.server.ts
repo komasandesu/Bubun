@@ -36,7 +36,7 @@ export async function updatePassword(userId: string, newPassword: string): Promi
 }
 
 // Authenticator インスタンスの作成、ジェネリックには User 型を指定
-export let authenticator = new Authenticator<User>(sessionStorage);
+export let authenticator = new Authenticator<User | null>();
 
 // FormStrategy を使って、フォーム認証をセットアップ
 authenticator.use(
@@ -62,7 +62,8 @@ authenticator.use(
 
 // 共通認証処理の関数を追加
 export async function requireAuthenticatedUser(request: Request) {
-  const user = await authenticator.isAuthenticated(request);
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user");
   if (!user) {
     throw redirect("/login");
   }
@@ -70,7 +71,8 @@ export async function requireAuthenticatedUser(request: Request) {
 }
 
 export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
-  const user = await authenticator.isAuthenticated(request);
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user");
   if (!user) {
     return null; // ユーザーが認証されていない場合は null を返す
   }

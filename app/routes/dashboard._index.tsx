@@ -1,19 +1,11 @@
 // app/routes/dashboard.tsx
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { authenticator } from "~/services/auth.server";
-import { prisma } from "../models/db.server"; // Prismaのインポート
+import { requireAuthenticatedUser } from "~/services/auth.server";
 import { Form, Link, useLoaderData } from '@remix-run/react';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  let user = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/login",
-  });
-
-  const userData = await prisma.user.findUnique({
-    where: { id: user.id },
-  });
-
-  return userData;
+  const user = await requireAuthenticatedUser(request);
+  return user;
 }
 
 export default function Dashboard() {

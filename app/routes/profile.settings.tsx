@@ -1,6 +1,6 @@
 // app/routes/profile.settings.tsx
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { authenticator } from "~/services/auth.server";
+import { authenticator, requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 
@@ -16,7 +16,7 @@ interface LoaderData {
 
 // Loader: 現在のプロフィール情報を取得
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
   if (!user) {
     throw redirect("/login");
   }
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const profile = formData.get("profile") as string;
   const twitterId = formData.get("twitterId") as string;
 
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
   if (!user) {
     return { error: "ユーザーが認証されていません。" };
   }

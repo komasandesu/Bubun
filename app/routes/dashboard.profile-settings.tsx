@@ -1,10 +1,10 @@
 // app/routes/dashboard.profile-settings.tsx
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { authenticator } from "~/services/auth.server";
+import { requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import bcrypt from 'bcrypt';
 import { Form, useActionData } from '@remix-run/react';
-import { commitSession, getSession } from "~/services/session.server";
+import { commitSession } from "~/services/session.server";
 
 interface ActionData {
   success?: string;
@@ -17,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const newPassword = formData.get("newPassword") as string;
   const name = formData.get("name") as string;
 
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
   if (!user) {
     return { error: "ユーザーが認証されていません。" };
   }
@@ -72,8 +72,8 @@ export async function action({ request }: ActionFunctionArgs) {
   });
 
   // セッションを更新
-  const session = await getSession(request.headers.get("Cookie"));
-  session.set(authenticator.sessionKey, { ...user, name: updateData.name || userData.name }); // nameがない場合は既存のnameを使用
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  session.set("user", user);
 
   // プロフィール更新後にリダイレクト
   return redirect(`/profile/${updateData.name || userData.name}`, {

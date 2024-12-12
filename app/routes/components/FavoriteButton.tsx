@@ -33,23 +33,35 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   const [isFavorite, setIsFavorite] = useState<boolean>(initialIsFavorite);
   const [favoriteCount, setFavoriteCount] = useState<number>(initialFavoriteCount);
 
-  // fetcher.data の変更を監視し、状態を更新
-  useEffect(() => {
-    if (fetcher.data && 'isFavorite' in fetcher.data) {
-      setIsFavorite(fetcher.data.isFavorite);
-      setFavoriteCount(fetcher.data.favoriteCount);
-    } else if (fetcher.data && fetcher.data.success) {
-      setIsFavorite(fetcher.data.added);
-      setFavoriteCount(fetcher.data.favoriteCount);
-    }
-  }, [fetcher.data]);
-
   const handleFavoriteClick = () => {
+    // 楽観的UI更新
+    setIsFavorite(!isFavorite);
+    setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
+
+    // サーバーリクエスト送信
     fetcher.submit(
       { PostId: PostId.toString() },
       { method: 'POST', action: '/resources/favorite' }
     );
   };
+
+  // // fetcher.data の変更を監視し、状態を更新
+  // useEffect(() => {
+  //   if (fetcher.data && 'isFavorite' in fetcher.data) {
+  //     setIsFavorite(fetcher.data.isFavorite);
+  //     setFavoriteCount(fetcher.data.favoriteCount);
+  //   } else if (fetcher.data && fetcher.data.success) {
+  //     setIsFavorite(fetcher.data.added);
+  //     setFavoriteCount(fetcher.data.favoriteCount);
+  //   }
+  // }, [fetcher.data]);
+
+  // const handleFavoriteClick = () => {
+  //   fetcher.submit(
+  //     { PostId: PostId.toString() },
+  //     { method: 'POST', action: '/resources/favorite' }
+  //   );
+  // };
 
   return (
     <button

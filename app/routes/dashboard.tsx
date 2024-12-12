@@ -2,18 +2,17 @@
 import { Outlet } from "@remix-run/react";
 import { LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { authenticator } from '~/services/auth.server';
+import { requireAuthenticatedUser } from '~/services/auth.server';
 import Header from './components/Header';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
   return new Response(JSON.stringify({ user }), {
     headers: {
       'Content-Type': 'application/json',
     },
   });
 };
-
 export default function Dashboard() {
   const { user } = useLoaderData<{ user: { name: string | null } | null }>();
 

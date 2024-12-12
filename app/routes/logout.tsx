@@ -1,8 +1,10 @@
 // app/routes/logout.tsx
-import { ActionFunctionArgs } from "@remix-run/node";
-import { authenticator } from "~/services/auth.server";
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { sessionStorage } from "~/services/session.server";
 
 export async function action({ request }: ActionFunctionArgs) {
-  // ログアウト処理
-  await authenticator.logout(request, { redirectTo: "/login" });
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  return redirect("/login", {
+    headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
+  });
 }

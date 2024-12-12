@@ -1,6 +1,6 @@
 // app/routes/posts._index.tsx
 import { LoaderFunction } from '@remix-run/node';
-import { useLoaderData, useLocation } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 
 import { postRepository } from '../models/post.server';
 import { favoriteRepository } from '../models/favorite.server'; // お気に入りのリポジトリをインポート
