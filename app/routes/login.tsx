@@ -21,7 +21,7 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   } catch (error) {
     // 認証失敗時にはエラーメッセージを含んで/loginページにリダイレクト
-    return redirect("/login?error=Invalid%20credentials");
+    return redirect("/login?error=Invalid_credentials");
   }
 }
 
