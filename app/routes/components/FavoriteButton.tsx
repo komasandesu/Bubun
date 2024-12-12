@@ -1,5 +1,5 @@
 // app/routes/components/FavoriteButton.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFetcher } from '@remix-run/react';
 import styles from './FavoriteButton.module.css';
 
@@ -9,21 +9,42 @@ interface FavoriteButtonProps {
   initialFavoriteCount: number;
 }
 
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+// サーバーからのレスポンスの型定義
+interface FavoriteResponse {
+  isFavorite: boolean;
+  favoriteCount: number;
+}
+
+interface ToggleFavoriteResponse {
+  success: boolean;
+  added: boolean;
+  favoriteCount: number;
+}
+
+const FavoriteButton: React.FC<FavoriteButtonProps> = ({ 
   PostId,
   initialIsFavorite,
-  initialFavoriteCount
+  initialFavoriteCount 
 }) => {
-  const fetcher = useFetcher();
-  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
-  const [favoriteCount, setFavoriteCount] = useState(initialFavoriteCount);
+
+  const fetcher = useFetcher<FavoriteResponse | ToggleFavoriteResponse>();
+
+  // 初期値を使った描画
+  const [isFavorite, setIsFavorite] = useState<boolean>(initialIsFavorite);
+  const [favoriteCount, setFavoriteCount] = useState<number>(initialFavoriteCount);
+
+  // fetcher.data の変更を監視し、状態を更新
+  useEffect(() => {
+    if (fetcher.data && 'isFavorite' in fetcher.data) {
+      setIsFavorite(fetcher.data.isFavorite);
+      setFavoriteCount(fetcher.data.favoriteCount);
+    } else if (fetcher.data && fetcher.data.success) {
+      setIsFavorite(fetcher.data.added);
+      setFavoriteCount(fetcher.data.favoriteCount);
+    }
+  }, [fetcher.data]);
 
   const handleFavoriteClick = () => {
-    // 楽観的UI更新
-    setIsFavorite(!isFavorite);
-    setFavoriteCount(isFavorite ? favoriteCount - 1 : favoriteCount + 1);
-
-    // サーバーリクエスト送信
     fetcher.submit(
       { PostId: PostId.toString() },
       { method: 'POST', action: '/resources/favorite' }

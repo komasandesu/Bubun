@@ -1,3 +1,4 @@
+//app/services/session.server.ts
 import { createCookieSessionStorage } from '@remix-run/node'
 
 export const sessionStorage = createCookieSessionStorage({
@@ -8,7 +9,7 @@ export const sessionStorage = createCookieSessionStorage({
     httpOnly: true,
     secrets: [process.env.SESSION_SECRET || ''],
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 24,
+    maxAge: 60 * 60 * 24 * 7,
   },
 })
 
