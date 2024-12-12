@@ -7,22 +7,18 @@ import { sessionStorage } from "~/services/session.server";
 // Second, we need to export an action function, here we will use the
 // `authenticator.authenticate method`
 export async function action({ request }: ActionFunctionArgs) {
-  // 認証を試みる
-  try {
-    const user = await authenticator.authenticate("user-pass", request);
-    
-    // セッションにユーザー情報を保存
-    let session = await sessionStorage.getSession(request.headers.get("cookie"));
-    session.set("user", user);
+  // we call the method with the name of the strategy we want to use and the
+  // request object
+  let user = await authenticator.authenticate("user-pass", request);
 
-    // ホームページにリダイレクト
-    throw redirect("/", {
-      headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
-    });
-  } catch (error) {
-    // 認証失敗時にはエラーメッセージを含んで/loginページにリダイレクト
-    return redirect("/login?error=Invalid_credentials");
-  }
+  console.log(user);
+
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  session.set("user", user);
+
+  throw redirect("/", {
+    headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
+  });
 }
 
 // Finally, we need to export a loader function to check if the user is already
@@ -30,7 +26,12 @@ export async function action({ request }: ActionFunctionArgs) {
 export async function loader({ request }: LoaderFunctionArgs) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
   let user = session.get("user");
-  if (user) throw redirect("/posts");
+  if(user){
+    throw redirect("/posts");
+  }
+  else{
+    throw redirect("/login?error=Invalid%20credentials");
+  }
   return data(null);
 }
 
