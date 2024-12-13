@@ -15,7 +15,8 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
   // 親のメタデータを取得し、description と og:description を除外
   const parentMeta = matches
   .flatMap((match) => match.meta ?? [])
-  .filter((meta) => !("title" in meta));
+  .filter((meta) => !("title" in meta))
+  .filter((meta) => !("property" in meta));
 
   // data が存在しない場合の処理
   if (!data) {
