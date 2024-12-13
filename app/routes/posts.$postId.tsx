@@ -11,30 +11,35 @@ import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
 
-export const meta: MetaFunction<typeof loader> = ({  matches, data }) => {
-  const parentMeta = matches.flatMap((match) => match.meta ?? []);
-  
+export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
+  // 親のメタデータを取得し、description と og:description を除外
+  const parentMeta = matches.flatMap((match) => match.meta ?? [])
+    .filter((meta) => 
+      !(
+        ("name" in meta && meta.name === "description") ||
+        ("property" in meta && meta.property === "og:description")
+      )
+    );
+
+  // data が存在しない場合の処理
   if (!data) {
     return [
       ...parentMeta,
-      { title: "bubutter | 投稿が見つかりません" },
       { name: "description", content: "投稿が見つかりませんでした。" },
-      { property: "og:title", content: "bubutter | 投稿が見つかりません" },
       { property: "og:description", content: "投稿が見つかりませんでした。" },
-      { property: "og:type", content: "website" },
     ];
   }
 
+  // data が存在する場合の処理
   const { post } = data;
+
   return [
     ...parentMeta,
-    { title: `bubutter | ${post.originalString}の${post.substring}の部分` },
-    { name: "description", content: `${post.originalString}の${post.substring}の部分` },
-    { property: "og:title", content: `${post.originalString}の${post.substring}の部分` },
-    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
-    { property: "og:url", content: `https://bubutter.at-math.com/posts/${post.id}` },
+    { name: "description", content: `${post.originalString}の${post.substring}の部分` }, // description を上書き
+    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` }, // og:description を上書き
   ];
 };
+
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const user = await getAuthenticatedUserOrNull(request); // ユーザー情報を取得
