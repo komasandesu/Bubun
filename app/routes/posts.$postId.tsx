@@ -12,26 +12,16 @@ import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data) {
-    return [
-      { title: "bubutter | 投稿が見つかりません" },
-      { name: "description", content: "投稿が見つかりませんでした。" },
-      { property: "og:title", content: "bubutter | 投稿が見つかりません" },
-      { property: "og:description", content: "投稿が見つかりませんでした。" },
-      { property: "og:type", content: "website" },
-    ];
-  }
-
   const { post } = data;
 
   return [
-    { title: `bubutter | ${post.originalString}の${post.substring}の部分` },
-    { name: "description", content: `${post.originalString}の${post.substring}の部分` },
-    { property: "og:title", content: `${post.originalString}の${post.substring}の部分` },
-    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
+    { title: `bubutter | ${post?.originalString}の${post?.substring}の部分` },
+    { name: "description", content: `${post?.originalString}の${post?.substring}の部分` },
+    { property: "og:title", content: `${post?.originalString}の${post?.substring}の部分` },
+    { property: "og:description", content: `${post?.originalString}の${post?.substring}の部分` },
     { property: "og:site_name", content: "bubutter" },
     { property: "og:type", content: "article" },
-    { property: "og:url", content: `https://bubutter.at-math.com/posts/${post.id}` },
+    { property: "og:url", content: `https://bubutter.at-math.com/posts/${post?.id}` },
     { property: "og:image", content: "https://bubutter.at-math.com/og-image.png" },
   ];
 };
