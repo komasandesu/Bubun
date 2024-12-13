@@ -11,38 +11,30 @@ import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
 
-export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
-  // 親のメタデータを取得し、description と og:description を除外
-  const parentMeta = matches
-  .flatMap((match) => match.meta ?? [])
-  .filter((meta) => !("title" in meta))
-  .filter((meta) => !("property" in meta));
-
-  // data が存在しない場合の処理
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [
-      ...parentMeta,
-      { title: "投稿が見つかりませんでした。" },
-      {
-        property: "og:title",
-        content: "投稿が見つかりませんでした。"
-      },
+      { title: "bubutter | 投稿が見つかりません" },
+      { name: "description", content: "投稿が見つかりませんでした。" },
+      { property: "og:title", content: "bubutter | 投稿が見つかりません" },
+      { property: "og:description", content: "投稿が見つかりませんでした。" },
+      { property: "og:type", content: "website" },
     ];
   }
 
-  // data が存在する場合の処理
   const { post } = data;
 
   return [
-    ...parentMeta,
-    { title: `${post.originalString}の${post.substring}の部分` },
-    {
-      property: "og:title",
-      content: `${post.originalString}の${post.substring}の部分`
-    },
+    { title: `bubutter | ${post.originalString}の${post.substring}の部分` },
+    { name: "description", content: `${post.originalString}の${post.substring}の部分` },
+    { property: "og:title", content: `${post.originalString}の${post.substring}の部分` },
+    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
+    { property: "og:site_name", content: "bubutter" },
+    { property: "og:type", content: "article" },
+    { property: "og:url", content: `https://bubutter.at-math.com/posts/${post.id}` },
+    { property: "og:image", content: "https://bubutter.at-math.com/og-image.png" },
   ];
 };
-
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const user = await getAuthenticatedUserOrNull(request); // ユーザー情報を取得

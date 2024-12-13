@@ -1,7 +1,23 @@
 // app/routes/_index.tsx
 import { Link, useLoaderData } from '@remix-run/react';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction, MetaFunction } from '@remix-run/node';
 import { prisma } from '~/models/db.server';
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "bubutter" },
+    {
+      property: "og:title",
+      content: "bubutter の butter の部分",
+    },
+    { name: 'description', content: '部分ったー - 部分を投稿して共有するプラットフォームです。' },
+    { property: 'og:description', content: '部分を投稿して共有するプラットフォームです。' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'bubutter' },
+    { property: 'og:url', content: 'https://bubutter.at-math.com/' },
+    { property: 'og:image', content: 'https://bubutter.at-math.com/og-image.png' },
+  ];
+};
 
 export const loader: LoaderFunction = async () => {
   const posts = await prisma.post.findMany({
