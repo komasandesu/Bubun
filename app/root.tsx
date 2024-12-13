@@ -32,7 +32,6 @@ export const links: LinksFunction = () => [
 export const meta: MetaFunction = () => {
   return [
     { title: "bubutter" },
-    { name: 'description', content: '部分ったー - 部分を投稿して共有するプラットフォームです。' },
     { property: 'og:type', content: 'website' },
     { property: 'og:site_name', content: 'bubutter' },
     { property: 'og:url', content: 'https://bubutter.at-math.com/' },
