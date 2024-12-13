@@ -25,8 +25,11 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
   if (!data) {
     return [
       ...parentMeta,
-      { name: "title", content: "投稿が見つかりませんでした。" },
-      { property: "og:title", content: "投稿が見つかりませんでした。" },
+      { title: "投稿が見つかりませんでした。" },
+      {
+        property: "og:title",
+        content: "投稿が見つかりませんでした。"
+      },
     ];
   }
 
@@ -35,8 +38,11 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
 
   return [
     ...parentMeta,
-    { name: "title", content: `${post.originalString}の${post.substring}の部分` }, // title を上書き
-    { property: "og:title", content: `${post.originalString}の${post.substring}の部分` }, // og:title を上書き
+    { title: `${post.originalString}の${post.substring}の部分` },
+    {
+      property: "og:title",
+      content: `${post.originalString}の${post.substring}の部分`
+    },
   ];
 };
 
