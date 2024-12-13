@@ -11,9 +11,12 @@ import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({  matches, data }) => {
+  const parentMeta = matches.flatMap((match) => match.meta ?? []);
+  
   if (!data) {
     return [
+      ...parentMeta,
       { title: "bubutter | 投稿が見つかりません" },
       { name: "description", content: "投稿が見つかりませんでした。" },
       { property: "og:title", content: "bubutter | 投稿が見つかりません" },
@@ -23,16 +26,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   }
 
   const { post } = data;
-
   return [
+    ...parentMeta,
     { title: `bubutter | ${post.originalString}の${post.substring}の部分` },
     { name: "description", content: `${post.originalString}の${post.substring}の部分` },
     { property: "og:title", content: `${post.originalString}の${post.substring}の部分` },
     { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
-    { property: "og:site_name", content: "bubutter" },
-    { property: "og:type", content: "article" },
     { property: "og:url", content: `https://bubutter.at-math.com/posts/${post.id}` },
-    { property: "og:image", content: "https://bubutter.at-math.com/og-image.png" },
   ];
 };
 
