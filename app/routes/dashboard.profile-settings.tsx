@@ -4,7 +4,7 @@ import { requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import bcrypt from 'bcrypt';
 import { Form, useActionData } from '@remix-run/react';
-import { commitSession } from "~/services/session.server";
+import { commitSession, sessionStorage } from "~/services/session.server";
 
 interface ActionData {
   success?: string;

@@ -1,10 +1,10 @@
 // app/routes/profile.settings.account-settings.tsx
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { authenticator, requireAuthenticatedUser } from "~/services/auth.server";
+import { requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import bcrypt from 'bcrypt';
 import { Form, Link, useActionData } from '@remix-run/react';
-import { commitSession, getSession } from "~/services/session.server";
+import { commitSession, sessionStorage } from "~/services/session.server";
 
 interface ActionData {
   success?: string;
