@@ -32,10 +32,6 @@ export const links: LinksFunction = () => [
 export const meta: MetaFunction = () => {
   return [
     { title: "bubutter" },
-    {
-      property: "og:title",
-      content: "bubutter の butter の部分",
-    },
     { name: 'description', content: '部分ったー - 部分を投稿して共有するプラットフォームです。' },
     { property: 'og:description', content: '部分を投稿して共有するプラットフォームです。' },
     { property: 'og:type', content: 'website' },
