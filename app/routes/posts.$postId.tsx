@@ -16,8 +16,8 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
   const parentMeta = matches.flatMap((match) => match.meta ?? [])
     .filter((meta) => 
       !(
-        ("name" in meta && meta.name === "description") ||
-        ("property" in meta && meta.property === "og:description")
+        ("name" in meta && meta.name === "title") ||
+        ("property" in meta && meta.property === "og:title")
       )
     );
 
@@ -25,8 +25,8 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
   if (!data) {
     return [
       ...parentMeta,
-      { name: "description", content: "投稿が見つかりませんでした。" },
-      { property: "og:description", content: "投稿が見つかりませんでした。" },
+      { name: "title", content: "投稿が見つかりませんでした。" },
+      { property: "og:title", content: "投稿が見つかりませんでした。" },
     ];
   }
 
@@ -35,8 +35,8 @@ export const meta: MetaFunction<typeof loader> = ({ matches, data }) => {
 
   return [
     ...parentMeta,
-    { name: "description", content: `${post.originalString}の${post.substring}の部分` }, // description を上書き
-    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` }, // og:description を上書き
+    { name: "title", content: `${post.originalString}の${post.substring}の部分` }, // title を上書き
+    { property: "og:title", content: `${post.originalString}の${post.substring}の部分` }, // og:title を上書き
   ];
 };
 
