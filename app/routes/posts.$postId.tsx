@@ -15,13 +15,15 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) {
     return [
       { name: "description", content: "投稿が見つかりませんでした。" },
+      { property: "og:description", content: "投稿が見つかりませんでした。" },
     ];
   }
 
   const { post } = data;
 
   return [
-    { title: `bubutter | ${post.originalString}の${post.substring}の部分` },
+    { name: "description", content: `${post.originalString}の${post.substring}の部分` },
+    { property: "og:description", content: `${post.originalString}の${post.substring}の部分` },
   ];
 };
 
