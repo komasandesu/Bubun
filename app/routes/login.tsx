@@ -16,7 +16,7 @@ export async function action({ request }: ActionFunctionArgs) {
     session.set("user", user);
 
     // ホームページにリダイレクト（セッションのセットを含む）
-    return redirect("/", {
+    return redirect("/posts", {
       headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
     });
   } catch (error) {
