@@ -60,48 +60,21 @@ authenticator.use(
 );
 
 
-// ユーザーIDから最新のユーザー情報を取得
-async function getUserById(id: string) {
-  const user = await prisma.user.findUnique({ where: { id } });
+// 共通認証処理の関数を追加
+export async function requireAuthenticatedUser(request: Request) {
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+  let user = session.get("user");
+  if (!user) {
+    throw redirect("/login");
+  }
   return user;
 }
 
-// 共通認証処理の関数を追加
-export async function requireAuthenticatedUser(request: Request): Promise<User | null> {
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let user = session.get("user");
-
-  // ユーザー情報がセッションに存在しない場合はnullを返す
-  if (!user) {
-    redirect("/login");
-  }
-
-  // ユーザーIDを元に最新のユーザー情報を取得
-  const updatedUser = await getUserById(user.id);
-
-  // セッションを更新
-  session.set("user", updatedUser);
-
-  // セッションをコミットして更新後の情報を返す
-  return updatedUser;
-}
-
-// ユーザー情報が存在しない場合は最新情報を取得してセッションを更新
 export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
   let user = session.get("user");
-
-  // ユーザー情報がセッションに存在しない場合はnullを返す
   if (!user) {
-    return null;
+    return null; // ユーザーが認証されていない場合は null を返す
   }
-
-  // ユーザーIDを元に最新のユーザー情報を取得
-  const updatedUser = await getUserById(user.id);
-
-  // セッションを更新
-  session.set("user", updatedUser);
-
-  // セッションをコミットして更新後の情報を返す
-  return updatedUser;
+  return user;
 }
