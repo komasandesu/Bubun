@@ -61,38 +61,20 @@ authenticator.use(
 
 
 // 共通認証処理の関数を追加
-async function getUserById(id: string) {
-  return await prisma.user.findUnique({ where: { id } });
-}
-
-// 認証されているユーザーを取得する関数
 export async function requireAuthenticatedUser(request: Request) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let id = session.get("id"); // セッションからユーザーIDを取得
-
-  if (!id) {
-    throw redirect("/login");
-  }
-
-  // ユーザー情報をデータベースから取得
-  const user = await getUserById(id);
+  let user = session.get("user");
   if (!user) {
     throw redirect("/login");
   }
-
   return user;
 }
 
-// 認証されているユーザーを取得する関数（認証されていない場合はnullを返す）
-export async function getAuthenticatedUserOrNull(request: Request) {
+export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let id = session.get("id"); // セッションからユーザーIDを取得
-
-  if (!id) {
-    return null;
+  let user = session.get("user");
+  if (!user) {
+    return null; // ユーザーが認証されていない場合は null を返す
   }
-
-  // ユーザー情報をデータベースから取得
-  const user = await getUserById(id);
-  return user || null; // ユーザーがいない場合はnullを返す
+  return user;
 }
