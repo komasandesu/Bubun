@@ -64,35 +64,17 @@ authenticator.use(
 export async function requireAuthenticatedUser(request: Request) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
   let user = session.get("user");
-
-  // ユーザーがセッションに保存されていない場合、ログイン画面にリダイレクト
   if (!user) {
     throw redirect("/login");
   }
-
-  // セッションからユーザー情報を最新のものに更新
-  const userName = session.get("userName");
-  if (userName) {
-    user.name = userName; // ユーザー名が変更されている場合に更新
-  }
-
   return user;
 }
 
 export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
   let user = session.get("user");
-
-  // ユーザーがセッションに保存されていない場合、null を返す
   if (!user) {
     return null; // ユーザーが認証されていない場合は null を返す
   }
-
-  // セッションから最新のユーザー名を取得して、ユーザー情報を更新
-  const userName = session.get("userName");
-  if (userName) {
-    user.name = userName; // ユーザー名が変更されている場合に更新
-  }
-
   return user;
 }
