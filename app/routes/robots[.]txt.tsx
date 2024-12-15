@@ -3,11 +3,11 @@
 import { LoaderFunction } from "@remix-run/node";
 
 export const loader: LoaderFunction = async () => {
-    const robotText = `
-        # Allow general web crawlers
-        User-agent: *
-        Disallow: 
-        `.trim();
+const robotText = `
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:
+`.trim();
 
     return new Response(robotText, {
         headers: {
