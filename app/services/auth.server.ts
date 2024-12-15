@@ -68,14 +68,14 @@ async function getUserById(id: string) {
 // 認証されているユーザーを取得する関数
 export async function requireAuthenticatedUser(request: Request) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let userId = session.get("userId"); // セッションからユーザーIDを取得
+  let id = session.get("id"); // セッションからユーザーIDを取得
 
-  if (!userId) {
+  if (!id) {
     throw redirect("/login");
   }
 
   // ユーザー情報をデータベースから取得
-  const user = await getUserById(userId);
+  const user = await getUserById(id);
   if (!user) {
     throw redirect("/login");
   }
@@ -86,13 +86,13 @@ export async function requireAuthenticatedUser(request: Request) {
 // 認証されているユーザーを取得する関数（認証されていない場合はnullを返す）
 export async function getAuthenticatedUserOrNull(request: Request) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let userId = session.get("userId"); // セッションからユーザーIDを取得
+  let id = session.get("id"); // セッションからユーザーIDを取得
 
-  if (!userId) {
+  if (!id) {
     return null;
   }
 
   // ユーザー情報をデータベースから取得
-  const user = await getUserById(userId);
+  const user = await getUserById(id);
   return user || null; // ユーザーがいない場合はnullを返す
 }
