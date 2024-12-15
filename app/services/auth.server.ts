@@ -67,14 +67,13 @@ async function getUserById(id: string) {
 }
 
 // 共通認証処理の関数を追加
-export async function requireAuthenticatedUser(request: Request): Promise<User | null> {
+export async function requireAuthenticatedUser(request: Request) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
   let user = session.get("user");
 
   // ユーザー情報がセッションに存在しない場合はnullを返す
   if (!user) {
-    redirect("/login");
-    return null;
+    throw redirect("/login");
   }
 
   // ユーザーIDを元に最新のユーザー情報を取得
