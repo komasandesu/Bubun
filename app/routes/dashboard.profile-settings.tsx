@@ -71,12 +71,17 @@ export async function action({ request }: ActionFunctionArgs) {
     data: updateData,
   });
 
+  // プロフィール更新後にリダイレクト
+  const updatedUser = {
+    ...user,
+    name: updateData.name || userData.name
+  };
+
   // セッションを更新
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  session.set("user", user);
+  session.set("user", updatedUser);
 
-  // プロフィール更新後にリダイレクト
-  return redirect(`/profile/${updateData.name || userData.name}`, {
+  return redirect(`/profile/${updatedUser.name}`, {
     headers: { "Set-Cookie": await commitSession(session) },
   });
 }
