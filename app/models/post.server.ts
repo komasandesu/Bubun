@@ -172,7 +172,7 @@ class PostRepository {
   async findInfiniteScrollWithoutReplies(limit: number, lastId?: number) {
     const posts = await prisma.post.findMany({
       where: {
-        parentId: null, // 親投稿のみを取得
+        // parentId: null, // 親投稿のみを取得
         id: lastId ? { lt: lastId } : undefined, // 指定された ID より小さい投稿を取得
       },
       orderBy: {
@@ -189,7 +189,7 @@ class PostRepository {
     return prisma.post.count({
       where: {
         authorId: userId,
-        parentId: null, // 親投稿のみをカウント
+        // parentId: null, // 親投稿のみをカウント
       },
     });
   }
