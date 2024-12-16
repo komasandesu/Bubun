@@ -54,8 +54,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     });
 
     // 投稿のメインアイテムのお気に入り情報を取得
-    const isFavorite = user?.id ? await favoriteRepository.isFavorite({ PostId: postId, userId: user?.id || null }) : false;
-    const favoriteCount = await favoriteRepository.countFavorites(postId);
+    const [isFavorite, favoriteCount] = await Promise.all([
+      user?.id ? favoriteRepository.isFavorite({ PostId: postId, userId: user?.id || null }) : Promise.resolve(false),
+      favoriteRepository.countFavorites(postId)
+    ]);
+    
 
     // posts にお気に入りデータを追加し、createdAt を JST で成形
     const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user?.id || null)).map(post => ({
@@ -90,6 +93,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const user = await requireAuthenticatedUser(request);
+  
+  if(user === null){
+    return redirect("/login");
+  }
 
   const formData = new URLSearchParams(await request.text());
   const originalString = formData.get('originalString');

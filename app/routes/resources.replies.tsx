@@ -5,6 +5,11 @@ import { postRepository } from '~/models/post.server';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const user = await requireAuthenticatedUser(request);
+  
+  if(user === null){
+    return redirect("/login");
+  }
+  
   const formData = await request.formData();
   
   // 型ガードを使用して値を取得

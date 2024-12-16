@@ -1,11 +1,15 @@
 // app/routes/resources.favorite.tsx
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { requireAuthenticatedUser } from '~/services/auth.server';
 import { favoriteRepository } from '~/models/favorite.server';
 
 // POSTリクエスト用のアクション（お気に入りのトグル）
 export const action = async ({ request }: ActionFunctionArgs) => {
   const user = await requireAuthenticatedUser(request);
+
+  if(user === null){
+    return redirect("/login");
+  }
 
   const formData = await request.formData();
   const PostId = Number(formData.get('PostId'));
@@ -42,6 +46,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 // GETリクエスト用のローダー（初期のデータ取得用）
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireAuthenticatedUser(request);
+  
+  if(user === null){
+    return redirect("/login");
+  }
+
   const url = new URL(request.url);
   const PostId = Number(url.searchParams.get('PostId'));
 

@@ -5,6 +5,11 @@ import { postRepository } from '~/models/post.server';
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const user = await requireAuthenticatedUser(request);
+  
+  if(user === null){
+    return redirect("/login");
+  }
+  
   const formData = await request.formData();
 
   const originalString = (formData.get('originalString') as string | null)?.trim();

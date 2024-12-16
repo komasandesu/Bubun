@@ -1,10 +1,15 @@
 // // app/routes/resources.edit.tsx
-// import { json, redirect, type ActionFunctionArgs } from '@remix-run/node';
+// import { redirect, type ActionFunctionArgs } from '@remix-run/node';
 // import { postRepository } from '~/models/post.server';
 // import { requireAuthenticatedUser } from '~/services/auth.server';
 
 // export const action = async ({ request, params }: ActionFunctionArgs) => {
 //   const user = await requireAuthenticatedUser(request);
+  
+//   if(user === null){
+//     return redirect("/login");
+//   }
+  
 //   const formData = await request.formData();
   
 //   const postId = formData.get('postId') as string | null;
@@ -13,7 +18,10 @@
 //   const redirectTo = formData.get('redirectTo') as string | null;
 
 //   if (!postId || !originalString || !substring) {
-//     return json({ error: 'Post ID, originalString, and substring are required' }, { status: 400 });
+//     return new Response(
+//         JSON.stringify({ error: 'Post ID, title, and content are required' }),
+//         { status: 400, headers: { 'Content-Type': 'application/json' } }
+//       );
 //   }
 
 //   try {
