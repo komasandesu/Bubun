@@ -197,7 +197,7 @@ class PostRepository {
       return prisma.post.findMany({
         where: {
           authorId: userId,
-          parentId: null,
+          // parentId: null,
         },
         orderBy: {
           createdAt: "desc",
