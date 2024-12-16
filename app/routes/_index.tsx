@@ -5,7 +5,6 @@ import { prisma } from '~/models/db.server';
 
 export const loader: LoaderFunction = async () => {
   const posts = await prisma.post.findMany({
-    where: { parentId: null }, // 親投稿のみを取得
     orderBy: { createdAt: 'desc' },
     take: 10, // 最新10件を取得
   });
