@@ -96,7 +96,7 @@ export default function Index() {
           <p className="text-gray-100 dark:text-gray-900">の陽キャの部分</p>
         </div>
         <div className="mb-4 flex justify-center items-center space-x-1">
-          <Link to="/privacy" className="text-blue-500 dark:text-blue-400 hover:underline">
+          <Link to="/privacy-policy" className="text-blue-500 dark:text-blue-400 hover:underline">
             プライバシーポリシー
           </Link>
           <p className="text-gray-100 dark:text-gray-900">の利子の部分</p>
