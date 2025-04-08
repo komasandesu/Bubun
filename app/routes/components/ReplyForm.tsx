@@ -34,12 +34,12 @@ const ReplyForm: React.FC<ReplyFormProps> = ({ postId, redirectTo, onClose }) =>
               name="originalString"
               required
               rows={1}
-              className="dark:text-gray-500 border rounded p-2 flex-1"  // flex-1 で入力欄の幅を広げる
+              className="dark:text-gray-300 border rounded p-2 flex-1"  // flex-1 で入力欄の幅を広げる
               placeholder="○○"
               value={originalString}
               onChange={(e) => setOriginalString(e.target.value)}
           />
-          <span className="dark:text-gray-500 ml-2">の</span>
+          <span className="dark:text-gray-300 ml-2">の</span>
       </div>
 
       {/* 下段：××の部分 */}
@@ -48,12 +48,12 @@ const ReplyForm: React.FC<ReplyFormProps> = ({ postId, redirectTo, onClose }) =>
               name="substring"
               required
               rows={1}
-              className="dark:text-gray-500 border rounded p-2 flex-1 resize-y"
+              className="dark:text-gray-300 border rounded p-2 flex-1 resize-y"
               placeholder="××"
               value={substring}
               onChange={(e) => setSubstring(e.target.value)}
           />
-          <span className="dark:text-gray-500 ml-2 whitespace-nowrap">の部分</span>
+          <span className="dark:text-gray-300 ml-2 whitespace-nowrap">の部分</span>
       </div>
 
       <input type="hidden" name="postId" value={postId} />
