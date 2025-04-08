@@ -25,12 +25,12 @@ const PostForm: React.FC = () => {
                     name="originalString"
                     required
                     rows={1}
-                    className="dark:text-gray-500 border border-gray-300 rounded p-2 flex-1"  // 枠線のみ
+                    className="dark:text-gray-300 border border-gray-300 rounded p-2 flex-1"  // 枠線のみ
                     placeholder="○○"
                     value={originalString}
                     onChange={(e) => setOriginalString(e.target.value)}
                 />
-                <span className="dark:text-gray-500 ml-2 whitespace-nowrap">の</span>
+                <span className="dark:text-gray-300 ml-2 whitespace-nowrap">の</span>
             </div>
 
             {/* 下段：××の部分 */}
@@ -39,12 +39,12 @@ const PostForm: React.FC = () => {
                     name="substring"
                     required
                     rows={1}
-                    className="dark:text-gray-500 border border-gray-300 rounded p-2 flex-1 resize-y"  // 枠線のみ
+                    className="dark:text-gray-300 border border-gray-300 rounded p-2 flex-1 resize-y"  // 枠線のみ
                     placeholder="××"
                     value={substring}
                     onChange={(e) => setSubstring(e.target.value)}
                 />
-                <span className="dark:text-gray-500 ml-2 whitespace-nowrap">の部分</span>
+                <span className="dark:text-gray-300 ml-2 whitespace-nowrap">の部分</span>
             </div>
 
             <button

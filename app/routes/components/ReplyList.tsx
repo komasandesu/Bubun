@@ -25,7 +25,7 @@ export default function ReplyList({
   userId: string;
 }) {
   if (!replies || replies.length === 0) {
-    return <p className="dark:text-gray-500">リプライはまだありません。</p>; // リプライがない場合の表示
+    return <p className="dark:text-gray-300">リプライはまだありません。</p>; // リプライがない場合の表示
   }
 
   return (
