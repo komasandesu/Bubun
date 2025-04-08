@@ -38,13 +38,13 @@ export default function PostItem({
                 {originalString} <span className="mx-0.5">の</span> {substring} <span className="mx-0.5">の部分</span>
             </h1>
 
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="dark:text-gray-400">
                 投稿者: 
                 <Link to={`/profile/${authorName}`} className="text-blue-600 hover:underline ml-1 dark:text-blue-400">
                     {authorName || '不明'}
                 </Link>
             </p>
-            <p className="text-gray-500 dark:text-gray-400">投稿日時: {createdAt}</p>
+            <p className="dark:text-gray-400">投稿日時: {createdAt}</p>
             <div className="flex items-center justify-between mt-2">
                 {/* FavoriteButton に初期データを渡す */}
                 <FavoriteButton 

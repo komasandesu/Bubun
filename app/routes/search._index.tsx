@@ -76,7 +76,7 @@ export default function SearchResults() {
               </li>
             ))
           ) : (
-            <p className="text-gray-500">一致する投稿がありません。</p>
+            <p className="dark:text-gray-500">一致する投稿がありません。</p>
           )}
         </ul>
   

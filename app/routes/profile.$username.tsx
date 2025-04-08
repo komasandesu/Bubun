@@ -107,7 +107,7 @@ export default function UserProfile() {
                 @{profileUser.twitterId}
               </a>
             ) : (
-              <span className="text-gray-500"></span>
+              <span className="dark:text-gray-500"></span>
             )}
           </p>
 
@@ -173,7 +173,7 @@ export default function UserProfile() {
             </li>
           ))
         ) : (
-          <p className="text-gray-500 dark:text-gray-400">まだ投稿がありません。</p>
+          <p className="dark:text-gray-400">まだ投稿がありません。</p>
         )}
       </ul>
 
@@ -194,7 +194,7 @@ export default function UserProfile() {
         )}
 
         {/* 省略記号 */}
-        {page > 3 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
+        {page > 3 && <span className="px-2 dark:text-gray-400">…</span>}
 
         {/* 現在のページの前後 */}
         {page > 2 && (
@@ -219,7 +219,7 @@ export default function UserProfile() {
         )}
 
         {/* 省略記号 */}
-        {page < totalPages - 2 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
+        {page < totalPages - 2 && <span className="px-2 dark:text-gray-400">…</span>}
 
         {/* 最後のページ */}
         {page < totalPages - 1 && (

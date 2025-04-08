@@ -93,7 +93,7 @@ export default function UserFavorites() {
               </li>
             ))
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">お気に入りの投稿がありません。</p>
+            <p className="dark:text-gray-400">お気に入りの投稿がありません。</p>
           )}
         </ul>
       </div>
