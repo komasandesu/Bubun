@@ -30,7 +30,7 @@ export default function ReplyList({
 
   return (
     <div className="mt-4 border-t border-gray-300 pt-4">
-      <h2 className="text-2xl font-bold mb-4">リプライ</h2>
+      <h2 className="dark:text-white text-2xl font-bold mb-4">リプライ</h2>
       <ul className="space-y-4">
         {replies.map((reply) => (
           <PostItem
