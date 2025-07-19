@@ -8,7 +8,7 @@
 docker-composeを用いて起動
 
 ```shellscript
-docker compose up -d
+docker compose -f docker-compose.develop.yml up -d
 ```
 
 ## Deployment
