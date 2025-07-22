@@ -1,11 +1,23 @@
 // app/routes/dashboard.tsx
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireAuthenticatedUser } from "~/services/auth.server";
+import { commitSession } from "~/services/session.server"; // commitSessionをインポート！
 import { Form, Link, useLoaderData } from '@remix-run/react';
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireAuthenticatedUser(request);
-  return user;
+  // user と session を受け取る
+  const { user, session } = await requireAuthenticatedUser(request);
+
+  // user情報をJSONにして、ヘッダーに更新したセッションを付けて返す
+  const body = JSON.stringify({ user });
+  const headers = new Headers();
+  headers.set('Content-Type', 'application/json');
+  headers.set('Set-Cookie', await commitSession(session));
+
+  return new Response(body, {
+    status: 200,
+    headers: headers,
+  });
 }
 
 export default function Dashboard() {

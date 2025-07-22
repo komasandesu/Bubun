@@ -1,11 +1,11 @@
 // app/routes/search.tsx
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@remix-run/node";
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import { postRepository } from "~/models/post.server";
-
 import { useLoaderData, Link } from "@remix-run/react";
-import PostCard from "./components/PostCard";
 import { favoriteRepository } from "~/models/favorite.server";
+import { commitSession } from "~/services/session.server";
+import PostCard from "./components/PostCard";
 
 type PostCardProps = {
   id: number;
@@ -20,7 +20,9 @@ type PostCardProps = {
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await getAuthenticatedUserOrNull(request);
+  // user と session を受け取る
+  const { user, session } = await getAuthenticatedUserOrNull(request);
+
   const url = new URL(request.url);
   const query = url.searchParams.get("query") || "";
   const page = parseInt(url.searchParams.get("page") || "1", 10);
@@ -47,10 +49,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return new Response(
-    JSON.stringify({ user, posts: postsWithFavoriteData, page, totalPages, query }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
-  );
+  // 最後に、セッションを更新するヘッダーを付けてレスポンスを返す
+  const body = JSON.stringify({ user, posts: postsWithFavoriteData, page, totalPages, query });
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  headers.set('Set-Cookie', await commitSession(session));
+
+  return new Response(body, { status: 200, headers });
 }
 
 export default function SearchResults() {

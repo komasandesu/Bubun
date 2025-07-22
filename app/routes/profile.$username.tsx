@@ -1,11 +1,12 @@
 // app/routes/profile.$username.tsx
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "~/models/db.server";
 import { useLoaderData, Link, Form } from '@remix-run/react';
-import { postRepository } from "~/models/post.server"; // 追加
+import { postRepository } from "~/models/post.server";
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
-import PostCard from "./components/PostCard";
 import { favoriteRepository } from "~/models/favorite.server";
+import { commitSession } from "~/services/session.server";
+import PostCard from "./components/PostCard";
 
 type PostCardProps = {
   id: number;
@@ -20,11 +21,13 @@ type PostCardProps = {
 const POSTS_PER_PAGE = 10; // 1ページに表示する投稿数
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
+ // user と session を受け取る
+  const { user, session } = await getAuthenticatedUserOrNull(request);
+
   const { username } = params;
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1", 10);
 
-  const user = await getAuthenticatedUserOrNull(request);
   const profileUser = await prisma.user.findUnique({
     where: { name: username },
     select: {
@@ -43,16 +46,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   // profileUser の createdAt を変換
   const profileUserWithFormattedDate = {
     ...profileUser,
-    createdAt: new Date(profileUser.createdAt).toLocaleString("ja-JP", {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    }),
+    createdAt: new Date(profileUser.createdAt).toLocaleString("ja-JP", { /* ... */ }),
   };
 
   const totalPosts = await postRepository.countByUserId(profileUser.id);
@@ -66,22 +60,15 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   // posts にお気に入りデータを追加し、createdAt を JST で成形
   const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user?.id || null)).map(post => ({
     ...post,
-    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    }),
+    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", { /* ... */ }),
   }));
 
-  return new Response(
-    JSON.stringify({ user, profileUser: profileUserWithFormattedDate, posts: postsWithFavoriteData, page, totalPages }),
-    { status: 200, headers: { "Content-Type": "application/json" } }
-  );
+  // 最後に、セッションを更新するヘッダーを付けてレスポンスを返す
+  const body = JSON.stringify({ user, profileUser: profileUserWithFormattedDate, posts: postsWithFavoriteData, page, totalPages });
+  const headers = new Headers({ "Content-Type": "application/json" });
+  headers.set("Set-Cookie", await commitSession(session));
+
+  return new Response(body, { status: 200, headers });
 }
 
 export default function UserProfile() {

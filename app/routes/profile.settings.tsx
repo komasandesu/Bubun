@@ -1,8 +1,9 @@
 // app/routes/profile.settings.tsx
 import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { authenticator, requireAuthenticatedUser } from "~/services/auth.server";
+import { requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
+import { commitSession } from "~/services/session.server";
 
 interface ActionData {
   success?: string;
@@ -16,10 +17,8 @@ interface LoaderData {
 
 // Loader: 現在のプロフィール情報を取得
 export async function loader({ request }: LoaderFunctionArgs) {
-  const user = await requireAuthenticatedUser(request);
-  if (!user) {
-    throw redirect("/login");
-  }
+  // user と session を受け取る
+  const { user, session } = await requireAuthenticatedUser(request);
 
   const userData = await prisma.user.findUnique({
     where: { id: user.id },
@@ -30,39 +29,48 @@ export async function loader({ request }: LoaderFunctionArgs) {
     throw new Response("ユーザー情報が見つかりません。", { status: 404 });
   }
 
-  return new Response(
-    JSON.stringify({
-      profile: userData.profile ?? null,  // nullの場合は明示的にnullに設定
-      twitterId: userData.twitterId ?? null, // nullの場合は明示的にnullに設定
-    }),
-    { status: 200, headers: { "Content-Type": "application/json" } }
-  );
+  const body = JSON.stringify({
+    profile: userData.profile ?? null,
+    twitterId: userData.twitterId ?? null,
+  });
+
+  // レスポンスにセッション更新ヘッダーを付ける
+  const headers = new Headers({ "Content-Type": "application/json" });
+  headers.set("Set-Cookie", await commitSession(session));
+
+  return new Response(body, { status: 200, headers });
 }
 
 // Action: プロフィールを更新
 export async function action({ request }: ActionFunctionArgs) {
+  // ① user と session を受け取る！
+  const { user, session } = await requireAuthenticatedUser(request);
+  
   const formData = await request.formData();
   const profile = formData.get("profile") as string;
   const twitterId = formData.get("twitterId") as string;
 
-  const user = await requireAuthenticatedUser(request);
-  if (!user) {
-    return { error: "ユーザーが認証されていません。" };
-  }
 
   const updateData: Record<string, any> = {};
-  if (profile) updateData.profile = profile;
-  if (twitterId) updateData.twitterId = twitterId;
+  // フィールドを空にできるように、nullチェックだけにする
+  if (profile !== null) updateData.profile = profile;
+  if (twitterId !== null) updateData.twitterId = twitterId;
 
   await prisma.user.update({
     where: { id: user.id },
     data: updateData,
   });
 
-  return { success: "プロフィールが更新されました。" };
+  const body = JSON.stringify({ success: "プロフィールが更新されました。" });
+
+  // 成功レスポンスにもセッション更新ヘッダーを付ける
+  const headers = new Headers({ "Content-Type": "application/json" });
+  headers.set("Set-Cookie", await commitSession(session));
+
+  return new Response(body, { status: 200, headers });
 }
 
-// コンポーネント
+// コンポーネントは変更なしデース！
 export default function ProfileSettings() {
   const actionData = useActionData<ActionData>();
   const loaderData = useLoaderData<LoaderData>();

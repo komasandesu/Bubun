@@ -4,7 +4,7 @@ import { requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import bcrypt from 'bcrypt';
 import { Form, useActionData } from '@remix-run/react';
-import { commitSession, sessionStorage } from "~/services/session.server";
+import { commitSession } from "~/services/session.server";
 
 interface ActionData {
   success?: string;
@@ -12,31 +12,38 @@ interface ActionData {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  // user と一緒に session を受け取る
+  const { user, session } = await requireAuthenticatedUser(request);
+
+  // 更新したセッション情報を持つヘッダーを先に作っておく
+  const sessionCookie = await commitSession(session);
+  const responseHeaders = new Headers({ 'Content-Type': 'application/json' });
+  responseHeaders.set('Set-Cookie', sessionCookie);
+
   const formData = await request.formData();
   const currentPassword = formData.get("currentPassword") as string;
   const newPassword = formData.get("newPassword") as string;
   const name = formData.get("name") as string;
-
-  const user = await requireAuthenticatedUser(request);
-  if (!user) {
-    return { error: "ユーザーが認証されていません。" };
-  }
 
   const userData = await prisma.user.findUnique({
     where: { id: user.id },
   });
 
   if (!userData) {
-    return { error: "ユーザー情報が見つかりません。" };
+    const body = JSON.stringify({ error: "ユーザー情報が見つかりません。" });
+    // エラーの時も new Response() でヘッダーを付けて返す(status: 404 Not Found)
+    return new Response(body, { status: 404, headers: responseHeaders });
   }
 
-  // パスワードが変更されている場合は、現在のパスワードを確認
   if (newPassword && !currentPassword) {
-    return { error: "現在のパスワードを入力してください。" };
+    const body = JSON.stringify({ error: "現在のパスワードを入力してください。" });
+    // (status: 400 Bad Request)
+    return new Response(body, { status: 400, headers: responseHeaders });
   }
 
   if (newPassword && !await bcrypt.compare(currentPassword, userData.password)) {
-    return { error: "現在のパスワードが正しくありません。" };
+    const body = JSON.stringify({ error: "現在のパスワードが正しくありません。" });
+    return new Response(body, { status: 400, headers: responseHeaders });
   }
 
   // 更新データの準備
@@ -44,44 +51,36 @@ export async function action({ request }: ActionFunctionArgs) {
   if (name) updateData.name = name;
   if (newPassword) updateData.password = await bcrypt.hash(newPassword, 10);
 
-  // 同じ名前がすでに存在するかチェック
-  const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { name: updateData.name },
-      ],
-      NOT: { id: user.id }, // 自分自身のIDは除外
-    },
-  });
-
-  // ユーザー名が指定されている場合の重複チェック
+  if (Object.keys(updateData).length === 0) {
+    const body = JSON.stringify({ error: "変更する情報がありません。" });
+    return new Response(body, { status: 400, headers: responseHeaders });
+  }
+  
   if (updateData.name) {
     const alphaNumericRegex = /^[a-zA-Z0-9_]+$/; // アンダーバーも許可
     if (!alphaNumericRegex.test(name)) {
-      return { error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" };
+      const body = JSON.stringify({ error: "ユーザー名はアルファベット、数字、アンダーバーのみ使用できます。" });
+      return new Response(body, { status: 400, headers: responseHeaders });
     }
-    if (existingUser && existingUser.name === updateData.name) {
-      return { error: "この名前は既に登録されています。" };
+    const existingUser = await prisma.user.findFirst({
+      where: { name: updateData.name, NOT: { id: user.id } },
+    });
+    if (existingUser) {
+      const body = JSON.stringify({ error: "この名前は既に登録されています。" });
+      return new Response(body, { status: 400, headers: responseHeaders });
     }
   }
 
-  // ユーザー情報の更新
-  await prisma.user.update({
+  const updatedDbUser = await prisma.user.update({
     where: { id: user.id },
     data: updateData,
   });
 
-  // プロフィール更新後にリダイレクト
-  const updatedUser = {
-    ...user,
-    name: updateData.name || userData.name
-  };
+  // セッションに保存するユーザー情報を更新
+  session.set("user", updatedDbUser);
 
-  // セッションを更新
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  session.set("user", updatedUser);
-
-  return redirect(`/profile/${updatedUser.name}`, {
+  // 成功した時は /profile/新しいユーザー名 にリダイレクト！
+  return redirect(`/profile/${updatedDbUser.name}`, {
     headers: { "Set-Cookie": await commitSession(session) },
   });
 }

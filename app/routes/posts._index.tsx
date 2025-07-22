@@ -8,17 +8,21 @@ import { favoriteRepository } from '../models/favorite.server'; // お気に入�
 import PostCard from './components/PostCard';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
+import { commitSession } from '~/services/session.server'; 
 
 export const loader: LoaderFunction = async ({ request }) => {
+  // user と session を受け取る
+  const { user, session } = await getAuthenticatedUserOrNull(request);
+
+  // 次に、投稿データを取得する
   const url = new URL(request.url);
   const lastId = url.searchParams.get('lastId');
   const parsedLastId = lastId !== null ? parseInt(lastId, 10) : undefined;
   const limit = 20;
 
   const posts = await postRepository.findInfiniteScrollWithoutReplies(limit, parsedLastId);
-  const user = await getAuthenticatedUserOrNull(request);
 
-  // userがnullの場合には、userIdにnullを渡す
+  // user?.id を使ってお気に入り情報を取る
   const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(posts, user?.id || null)).map(post => ({
     ...post,
     createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
@@ -34,13 +38,13 @@ export const loader: LoaderFunction = async ({ request }) => {
   }));
   
   const hasNextPage = posts.length === limit;
-  return new Response(
-    JSON.stringify({ posts: postsWithFavoriteData, hasNextPage }), // JSON.stringifyでデータを文字列化
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }, // Content-Typeを明示的に設定
-    }
-  );
+
+  // 最後に、セッションを更新するヘッダーを付けてレスポンスを返す
+  const body = JSON.stringify({ posts: postsWithFavoriteData, hasNextPage });
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  headers.set('Set-Cookie', await commitSession(session));
+
+  return new Response(body, { status: 200, headers });
 };
 
 // Loader の返り値の型
@@ -135,7 +139,7 @@ export default function PostIndex() {
           />
         ))}
       </div>
-      <div ref={observerRef} className="loading-spinner">
+      <div ref={observerRef} className="loading-spinner, dark:text-gray-400">
         {loading && hasNextPage && <p>Loading...</p>}
       </div>
     </div>

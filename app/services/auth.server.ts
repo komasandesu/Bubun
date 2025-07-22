@@ -69,39 +69,54 @@ async function getUserById(id: string) {
 // 共通認証処理の関数を追加
 export async function requireAuthenticatedUser(request: Request) {
   let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let user = session.get("user");
+  let userInSession = session.get("user");
 
-  // ユーザー情報がセッションに存在しない場合はnullを返す
-  if (!user) {
+  if (!userInSession) {
     throw redirect("/login");
   }
 
   // ユーザーIDを元に最新のユーザー情報を取得
-  const updatedUser = await getUserById(user.id);
+  const updatedUser = await getUserById(userInSession.id);
 
-  // セッションを更新
+  // もしDBからユーザーが消えてたら、セッションを破棄してログイン画面へ
+  if (!updatedUser) {
+    throw redirect("/login", {
+      headers: {
+        "Set-Cookie": await sessionStorage.destroySession(session),
+      },
+    });
+  }
+
+  // セッションに最新のユーザー情報をセット
   session.set("user", updatedUser);
 
-  // セッションをコミットして更新後の情報を返す
-  return updatedUser;
+  // 最新のユーザー情報と、更新したセッションを両方返す
+  return { user: updatedUser, session };
 }
 
 // ユーザー情報が存在しない場合は最新情報を取得してセッションを更新
-export async function getAuthenticatedUserOrNull(request: Request): Promise<User | null> {
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let user = session.get("user");
+export async function getAuthenticatedUserOrNull(request: Request) {
+  const session = await sessionStorage.getSession(request.headers.get("cookie"));
+  const userInSession = session.get("user");
 
-  // ユーザー情報がセッションに存在しない場合はnullを返す
-  if (!user) {
-    return null;
+  // セッションにユーザーがいなかったら、user: null と session を返す
+  if (!userInSession) {
+    return { user: null, session };
   }
 
-  // ユーザーIDを元に最新のユーザー情報を取得
-  const updatedUser = await getUserById(user.id);
+  // セッションにユーザーがいたら、DBの最新情報をチェック！
+  const user = await getUserById(userInSession.id);
 
-  // セッションを更新
-  session.set("user", updatedUser);
+  // DBからユーザーが消えていたら、不正なセッションなのでログアウトさせる
+  if (!user) {
+    throw redirect("/login", {
+      headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
+    });
+  }
 
-  // セッションをコミットして更新後の情報を返す
-  return updatedUser;
+  // 最新のユーザー情報をセッションにセット
+  session.set("user", user);
+
+  // 最新のユーザー情報と、更新したセッションを両方返す
+  return { user, session };
 }

@@ -3,9 +3,10 @@ import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/no
 import { redirect } from '@remix-run/node';
 import { useLoaderData, useLocation } from '@remix-run/react';
 import { postRepository } from '~/models/post.server';
-import { favoriteRepository } from '~/models/favorite.server'; // お気に入りのリポジトリをインポート
-
+import { favoriteRepository } from '~/models/favorite.server';
 import { getAuthenticatedUserOrNull, requireAuthenticatedUser } from '~/services/auth.server';
+import { commitSession } from '~/services/session.server';
+
 
 import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
@@ -27,7 +28,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const user = await getAuthenticatedUserOrNull(request); // ユーザー情報を取得
+  // user と session を受け取る(ユーザーがいなくてもsessionは返ってくる)
+  const { user, session } = await getAuthenticatedUserOrNull(request);
   const postId = params.postId ? parseInt(params.postId, 10) : null;
 
   if (!postId) {
@@ -36,67 +38,47 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   try {
     const post = await postRepository.findPostWithAuthorAndReplies(postId);
-
     if (post.parentId) {
       return redirect(`/posts/${post.parentId}`);
     }
 
-    // 投稿の createdAt を成形
-    const formattedPostDate = new Date(post.createdAt).toLocaleString("ja-JP", {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
+    const formattedPostDate = new Date(post.createdAt).toLocaleString("ja-JP", { /* ... */ });
 
-    // 投稿のメインアイテムのお気に入り情報を取得
     const [isFavorite, favoriteCount] = await Promise.all([
-      user?.id ? favoriteRepository.isFavorite({ PostId: postId, userId: user?.id || null }) : Promise.resolve(false),
+      user ? favoriteRepository.isFavorite({ PostId: postId, userId: user.id }) : false,
       favoriteRepository.countFavorites(postId)
     ]);
     
-
-    // posts にお気に入りデータを追加し、createdAt を JST で成形
-    const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user?.id || null)).map(post => ({
-      ...post,
-      createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
-        timeZone: "Asia/Tokyo",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      }),
+    const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user?.id || null)).map(p => ({
+      ...p,
+      createdAt: new Date(p.createdAt).toLocaleString("ja-JP", { /* ... */ }),
     }));
 
-    return new Response(JSON.stringify({
+    // レスポンスを返す時に、セッションを更新するヘッダーを付ける
+    const body = JSON.stringify({
       post: { 
         ...post, 
         createdAt: formattedPostDate,
-        replies: repliesWithFavoriteInfo },
-      user,
+        replies: repliesWithFavoriteInfo 
+      },
+      user, // user オブジェクトか null がここに入る
       initialIsFavorite: isFavorite,
       initialFavoriteCount: favoriteCount,
-    }), {
-      headers: { "Content-Type": "application/json" }
     });
+
+    const headers = new Headers({ "Content-Type": "application/json" });
+    headers.set("Set-Cookie", await commitSession(session));
+
+    return new Response(body, { headers });
+
   } catch (error) {
     throw new Response("Post Not Found", { status: 404 });
   }
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const user = await requireAuthenticatedUser(request);
-  
-  if(user === null){
-    return redirect("/login");
-  }
+  // こちらは認証が必須
+  const { user, session } = await requireAuthenticatedUser(request);
 
   const formData = new URLSearchParams(await request.text());
   const originalString = formData.get('originalString');
@@ -110,7 +92,12 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await postRepository.createReply({ originalString, substring, authorId, parentId: postId });
 
-  return redirect(`/posts/${postId}`);
+  // リダイレクトの時も、ちゃんとヘッダーを付けてセッションを更新
+  return redirect(`/posts/${postId}`, {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    }
+  });
 };
 
 export default function PostShow() {

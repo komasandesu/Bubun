@@ -1,11 +1,12 @@
 // app/routes/profile.$username_.favorite.tsx
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "@remix-run/node";
 import { prisma } from "~/models/db.server";
-import { useLoaderData, Link, Form } from '@remix-run/react';
+import { useLoaderData, Link } from '@remix-run/react';
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
-import PostCard from "./components/PostCard";
-import { postRepository } from "~/models/post.server"; // 追加
+import { postRepository } from "~/models/post.server";
 import { favoriteRepository } from "~/models/favorite.server";
+import { commitSession } from "~/services/session.server";
+import PostCard from "./components/PostCard";
 
 type PostCardProps = {
   id: number;
@@ -20,11 +21,13 @@ type PostCardProps = {
 const FAVORITES_PER_PAGE = 10; // お気に入りの投稿数
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
+ // user と session を受け取る
+  const { user, session } = await getAuthenticatedUserOrNull(request);
+
   const { username } = params;
   const url = new URL(request.url);
   const page = parseInt(url.searchParams.get("page") || "1", 10);
 
-  const user = await getAuthenticatedUserOrNull(request);
   const profileUser = await prisma.user.findUnique({
     where: { name: username },
   });
@@ -59,10 +62,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }),
   }));
 
-  return new Response(
-    JSON.stringify({ user, profileUser, favorites: postsWithFavoriteData, page, totalPages }),
-    { status: 200, headers: { "Content-Type": "application/json" } }
-  );
+  // 最後に、セッションを更新するヘッダーを付けてレスポンスを返す
+  const body = JSON.stringify({ user, profileUser, favorites: postsWithFavoriteData, page, totalPages });
+  const headers = new Headers({ "Content-Type": "application/json" });
+  headers.set("Set-Cookie", await commitSession(session));
+
+  return new Response(body, { status: 200, headers });
 }
 
 
