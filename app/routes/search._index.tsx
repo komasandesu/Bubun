@@ -62,7 +62,7 @@ export default function SearchResults() {
   
     return (
       <div className="container mx-auto p-6 max-w-3xl">
-        <h1 className="text-2xl font-bold mb-4 dark:text-gray-500">検索結果: "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-4 dark:text-gray-200">検索結果: "{query}"</h1>
         <ul className="space-y-2">
           {posts.length > 0 ? (
             posts.map((post:PostCardProps) => (
