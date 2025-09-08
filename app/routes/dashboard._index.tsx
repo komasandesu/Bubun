@@ -1,7 +1,7 @@
 // app/routes/dashboard.tsx
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireAuthenticatedUser } from "~/services/auth.server";
-import { commitSession } from "~/services/session.server"; // commitSessionをインポート！
+import { commitSession } from "~/services/session.server";
 import { Form, Link, useLoaderData } from '@remix-run/react';
 
 export async function loader({ request }: LoaderFunctionArgs) {
