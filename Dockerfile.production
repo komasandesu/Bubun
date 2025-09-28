@@ -26,4 +26,4 @@ RUN yarn build
 EXPOSE 3000
 
 # アプリケーションを起動（ポート3000を指定）
-CMD ["sh", "-c", "HOST=0.0.0.0 PORT=${PORT:-3000} npx remix-serve build/index.js"]
+CMD ["npm", "run", "start"]
