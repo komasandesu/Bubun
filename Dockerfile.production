@@ -1,4 +1,8 @@
-FROM node:22-alpine
+# -----------------------------------------------
+# ステージ１：ビルド専用ステージ (ビルダー)
+# -----------------------------------------------
+FROM node:22-alpine AS builder
+
 
 # 環境変数の設定
 ENV CHOKIDAR_USEPOLLING=true
@@ -6,24 +10,37 @@ ENV CHOKIDAR_USEPOLLING=true
 # 作業ディレクトリを設定
 WORKDIR /app
 
-# アプリケーションの依存関係をインストール
+# まずは依存関係を全部インストール！
 COPY package.json yarn.lock ./
-RUN yarn install --production
+RUN yarn install
 
-# OpenSSLをインストール
-RUN apk add --no-cache openssl
-
-# アプリケーションのソースコードをコピー
+# ソースコードを全部コピー
 COPY . .
 
-# Prismaの生成（本番環境用）
+# Prismaを生成
 RUN npx prisma generate
 
-# 本番用にアプリをビルド
+# アプリをビルド！
 RUN yarn build
 
-# ポート3001を公開
+
+# -----------------------------------------------
+# ステージ２：実行専用ステージ (ランナー)
+# -----------------------------------------------
+FROM node:22-alpine
+
+WORKDIR /app
+
+# 必要なモノだけビルダーからコピーしてきマス！
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/public ./public
+
+# OpenSSLは実行にも必要なのでインストール
+RUN apk add --no-cache openssl
+
 EXPOSE 3000
 
-# アプリケーションを起動（ポート3001を指定）
+# コマンドは同じデース！
 CMD ["sh", "-c", "HOST=0.0.0.0 PORT=${PORT:-3000} npx remix-serve build/index.js"]
