@@ -26,4 +26,4 @@ RUN yarn build
 EXPOSE 3000
 
 # アプリケーションを起動（ポート3000を指定）
-CMD ["npm", "run", "start"]
+CMD ["yarn", "start"]
