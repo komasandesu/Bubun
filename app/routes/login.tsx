@@ -71,6 +71,7 @@ export default function Screen() {
               name="name"
               required
               placeholder="ユーザー名"
+              autoComplete="username"
               className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           <input
@@ -78,7 +79,7 @@ export default function Screen() {
               name="password"
               required
               placeholder="パスワード"
-              autoComplete="new-password"
+              autoComplete="current-password"
               className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           <button
