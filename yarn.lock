@@ -1100,10 +1100,10 @@
   dependencies:
     "@prisma/debug" "6.12.0"
 
-"@remix-run/dev@^2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@remix-run/dev/-/dev-2.16.8.tgz#575fbdc0f7a6c4bd88eed12ff3cf12dd449a2b1f"
-  integrity sha512-2EKByaD5CDwh7H56UFVCqc90kCZ9LukPlSwkcsR3gj7WlfL7sXtcIqIopcToAlKAeao3HDbhBlBT2CTOivxZCg==
+"@remix-run/dev@^2.17.3":
+  version "2.17.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/dev/-/dev-2.17.3.tgz#42de03db04bac2d4a75e15dca888b65dcfb3473c"
+  integrity sha512-iMu7PXBwcg4NxoDTltM/qoaQ4Q9V1VkF5xeOTAXHaPC4ibm5nbn5Eo5PxzRUcs0+KmQ6pqcRn0JWM++MEz1Lng==
   dependencies:
     "@babel/core" "^7.21.8"
     "@babel/generator" "^7.21.5"
@@ -1115,9 +1115,9 @@
     "@babel/types" "^7.22.5"
     "@mdx-js/mdx" "^2.3.0"
     "@npmcli/package-json" "^4.0.1"
-    "@remix-run/node" "2.16.8"
+    "@remix-run/node" "2.17.3"
     "@remix-run/router" "1.23.0"
-    "@remix-run/server-runtime" "2.16.8"
+    "@remix-run/server-runtime" "2.17.3"
     "@types/mdx" "^2.0.5"
     "@vanilla-extract/integration" "^6.2.0"
     arg "^5.0.1"
@@ -1158,23 +1158,23 @@
     set-cookie-parser "^2.6.0"
     tar-fs "^2.1.3"
     tsconfig-paths "^4.0.0"
-    valibot "^0.41.0"
+    valibot "^1.2.0"
     vite-node "^3.1.3"
     ws "^7.5.10"
 
-"@remix-run/express@2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@remix-run/express/-/express-2.16.8.tgz#a5f4236182968285b3105cf79fc51a9cdb799523"
-  integrity sha512-NNTosiAJ4jZCRDfWSjV+3Fyu7KoHPeEHruLZEPRNDuXO6Nm5EkRvIkMwdfwyJ+ajE5IPotu8MFtPyNtm3sw/gw==
+"@remix-run/express@2.17.3":
+  version "2.17.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/express/-/express-2.17.3.tgz#f863b2f749b9aa8cdb56855cdd0f89b377ff0eb2"
+  integrity sha512-rg5dd0ADbr6Q7VCV2BoKh7omSCtoDts6o17jTEFzncqTt18t5M9kzlH00QqEzcZ6i20UoH3EqJK4Lkj8wKGEuw==
   dependencies:
-    "@remix-run/node" "2.16.8"
+    "@remix-run/node" "2.17.3"
 
-"@remix-run/node@2.16.8", "@remix-run/node@^2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@remix-run/node/-/node-2.16.8.tgz#a008168f40390376cdecff0e1c5f9df9d5b34f06"
-  integrity sha512-foeYXU3mdaBJZnbtGbM8mNdHowz2+QnVGDRo7P3zgFkmsccMEflArGZNbkACGKd9xwDguTxxMJ6cuXBC4jIfgQ==
+"@remix-run/node@2.17.3", "@remix-run/node@^2.17.3":
+  version "2.17.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/node/-/node-2.17.3.tgz#ae2c5e44b8a6797f63ee2a54e68910287e2a0a53"
+  integrity sha512-8ZxzI7PPoulP2D+Xlyl8RrJUnFw7NlaeVSR8ZSrvUh9AKOR/r75FuOB4/IIOCEKJgQ/tEDj7yaM4ecVUZ+kJww==
   dependencies:
-    "@remix-run/server-runtime" "2.16.8"
+    "@remix-run/server-runtime" "2.17.3"
     "@remix-run/web-fetch" "^4.4.2"
     "@web3-storage/multipart-parser" "^1.0.0"
     cookie-signature "^1.1.0"
@@ -1182,13 +1182,13 @@
     stream-slice "^0.1.2"
     undici "^6.21.2"
 
-"@remix-run/react@^2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@remix-run/react/-/react-2.16.8.tgz#fde00b85034437fe554058b30478d9131f082efd"
-  integrity sha512-JmoBUnEu/nPLkU6NGNIG7rfLM97gPpr1LYRJeV680hChr0/2UpfQQwcRLtHz03w1Gz1i/xONAAVOvRHVcXkRlA==
+"@remix-run/react@^2.17.3":
+  version "2.17.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/react/-/react-2.17.3.tgz#8641ce8ae0d41109feb48d9af69895173a7a69f8"
+  integrity sha512-Ns4YmtuRZpsgoUoq39K/lhPJ92/N2JkMBHIRPINNZ6/o9MiT7cN1qMwjGoqVfoCy6ZFCpMadsw4sPrwMGdkZiQ==
   dependencies:
     "@remix-run/router" "1.23.0"
-    "@remix-run/server-runtime" "2.16.8"
+    "@remix-run/server-runtime" "2.17.3"
     react-router "6.30.0"
     react-router-dom "6.30.0"
     turbo-stream "2.4.1"
@@ -1198,24 +1198,24 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.0.tgz#35390d0e7779626c026b11376da6789eb8389242"
   integrity sha512-O3rHJzAQKamUz1fvE0Qaw0xSFqsA/yafi2iqeE0pvdFtCO1viYx8QL6f3Ln/aCCTLxs68SLf0KPM9eSeM8yBnA==
 
-"@remix-run/serve@^2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@remix-run/serve/-/serve-2.16.8.tgz#86b0e3d68b08734e017e9c7d47fbc190ffefa229"
-  integrity sha512-4exyeXCZoc/Vo8Zc+6Eyao3ONwOyNOK3Yeb0LLkWXd4aeFQ4v59i5fq/j/E+68UnpD/UZQl1Bj0k2hQnGQZhlQ==
+"@remix-run/serve@^2.17.3":
+  version "2.17.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/serve/-/serve-2.17.3.tgz#acc708982382a06c4af66c95e200ffead00993ac"
+  integrity sha512-mgymD5IBWa/avwx9pi+FOA72uiK7kwXkGf1+l7k0i7s9uCVieWwJAZJIMI+TvbEn7PhV/Vrn07KBPtSVsdaflw==
   dependencies:
-    "@remix-run/express" "2.16.8"
-    "@remix-run/node" "2.16.8"
+    "@remix-run/express" "2.17.3"
+    "@remix-run/node" "2.17.3"
     chokidar "^3.5.3"
-    compression "^1.7.4"
+    compression "^1.8.1"
     express "^4.20.0"
     get-port "5.1.1"
-    morgan "^1.10.0"
+    morgan "^1.10.1"
     source-map-support "^0.5.21"
 
-"@remix-run/server-runtime@2.16.8":
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/@remix-run/server-runtime/-/server-runtime-2.16.8.tgz#79fe6274a37a5f5e18db6cb867b127b364a957da"
-  integrity sha512-ZwWOam4GAQTx10t+wK09YuYctd2Koz5Xy/klDgUN3lmTXmwbV0tZU0baiXEqZXrvyD+WDZ4b0ADDW9Df3+dpzA==
+"@remix-run/server-runtime@2.17.3":
+  version "2.17.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/server-runtime/-/server-runtime-2.17.3.tgz#3eb185669ee15d7c71928b640135bf544ddeea40"
+  integrity sha512-8uuV0COprImDpyDB8Rx0VLDKxsttBsMjtdv9BFViz8WfJz79jr8YRfp27hXUs9P4/NU6+wQQYcJawkBj/5uuSg==
   dependencies:
     "@remix-run/router" "1.23.0"
     "@types/cookie" "^0.6.0"
@@ -2431,7 +2431,7 @@ compressible@~2.0.18:
   dependencies:
     mime-db ">= 1.43.0 < 2"
 
-compression@^1.7.4:
+compression@^1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/compression/-/compression-1.8.1.tgz#4a45d909ac16509195a9a28bd91094889c180d79"
   integrity sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==
@@ -5111,7 +5111,7 @@ modern-ahocorasick@^1.0.0:
   resolved "https://registry.yarnpkg.com/modern-ahocorasick/-/modern-ahocorasick-1.1.0.tgz#9b1fa15d4f654be20a2ad7ecc44ec9d7645bb420"
   integrity sha512-sEKPVl2rM+MNVkGQt3ChdmD8YsigmXdn5NifZn6jiwn9LRJpWm8F3guhaqrJT/JOat6pwpbXEk6kv+b9DMIjsQ==
 
-morgan@^1.10.0:
+morgan@^1.10.1:
   version "1.10.1"
   resolved "https://registry.yarnpkg.com/morgan/-/morgan-1.10.1.tgz#4e02e6a4465a48e26af540191593955d17f61570"
   integrity sha512-223dMRJtI/l25dJKWpgij2cMtywuG/WiUKXdvwfbhGKBhy1puASqXwFzmWZ7+K73vUPoR7SS2Qz2cI/g9MKw0A==
@@ -6961,10 +6961,10 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-valibot@^0.41.0:
-  version "0.41.0"
-  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.41.0.tgz#5c2efd49c078e455f7862379365f6036f3cd9f96"
-  integrity sha512-igDBb8CTYr8YTQlOKgaN9nSS0Be7z+WRuaeYqGf3Cjz3aKmSnqEmYnkfVjzIuumGqfHpa3fLIvMEAfhrpqN8ng==
+valibot@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-1.2.0.tgz#8fc720d9e4082ba16e30a914064a39619b2f1d6f"
+  integrity sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==
 
 validate-npm-package-license@^3.0.4:
   version "3.0.4"
