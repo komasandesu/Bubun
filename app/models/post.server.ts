@@ -2,11 +2,9 @@
 import { PrismaClient } from '@prisma/client';
 import { Post } from '.prisma/client';
 
-
 const prisma = new PrismaClient();
 
 class PostRepository {
-
   async find(params: { id: number }) {
     const post = await prisma.post.findUnique({ where: { id: params.id } });
     if (!post) {
@@ -19,9 +17,14 @@ class PostRepository {
     return prisma.post.findMany();
   }
 
-  async create(params: { originalString: string; substring: string; authorId: string }) {
+  async create(params: {
+    originalString: string;
+    substring: string;
+    authorId: string;
+  }) {
     const { originalString, substring, authorId } = params;
-    if (!originalString || !substring) throw new Error('OriginalString and substring are required');
+    if (!originalString || !substring)
+      throw new Error('OriginalString and substring are required');
     return prisma.post.create({
       data: {
         originalString,
@@ -32,11 +35,17 @@ class PostRepository {
   }
 
   // リプライの作成
-  async createReply(params: { originalString: string; substring: string; authorId: string; parentId: number }) {
+  async createReply(params: {
+    originalString: string;
+    substring: string;
+    authorId: string;
+    parentId: number;
+  }) {
     const { originalString, substring, authorId, parentId } = params;
-    
-    if (!originalString || !substring) throw new Error('OriginalString and substring are required');
-    
+
+    if (!originalString || !substring)
+      throw new Error('OriginalString and substring are required');
+
     // 親投稿の存在確認
     const parentPost = await prisma.post.findUnique({
       where: { id: parentId },
@@ -49,7 +58,6 @@ class PostRepository {
       throw new Error('Replies to replies are not allowed');
     }
 
-
     return prisma.post.create({
       data: {
         originalString,
@@ -60,7 +68,7 @@ class PostRepository {
     });
   }
 
-  async delete(params: { id: number, userId: string }) {
+  async delete(params: { id: number; userId: string }) {
     // 1. 投稿を取得して作成者を確認
     const post = await prisma.post.findUnique({
       where: { id: params.id },
@@ -94,9 +102,13 @@ class PostRepository {
       where: { id: params.id },
     });
   }
-  
-  
-  async update(params: { id: number, originalString: string, substring: string, userId: string }) {
+
+  async update(params: {
+    id: number;
+    originalString: string;
+    substring: string;
+    userId: string;
+  }) {
     const { id, originalString, substring, userId } = params;
 
     // 投稿者が現在のユーザーか確認
@@ -141,16 +153,15 @@ class PostRepository {
         createdAt: 'desc',
       },
     });
-  
+
     return Posts;
   }
-  
 
   async findPostWithAuthorAndReplies(postId: number) {
     const post = await prisma.post.findUnique({
       where: { id: postId },
       include: {
-        author: true,  // 投稿の著者情報を含めて取得
+        author: true, // 投稿の著者情報を含めて取得
         replies: {
           include: {
             author: true, // リプライの著者情報を含めて取得
@@ -161,13 +172,12 @@ class PostRepository {
         },
       },
     });
-  
+
     if (!post) {
       throw new Error(`Post with id ${postId} not found`);
     }
     return post;
   }
-
 
   async findInfiniteScrollWithoutReplies(limit: number, lastId?: number) {
     const posts = await prisma.post.findMany({
@@ -180,7 +190,7 @@ class PostRepository {
       },
       take: limit, // 最大取得件数
     });
-  
+
     return posts;
   }
 
@@ -194,16 +204,16 @@ class PostRepository {
     });
   }
   async findByUserId(userId: string, skip: number, take: number) {
-      return prisma.post.findMany({
-        where: {
-          authorId: userId,
-          // parentId: null,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip,
-        take,
+    return prisma.post.findMany({
+      where: {
+        authorId: userId,
+        // parentId: null,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip,
+      take,
     });
   }
 
@@ -213,12 +223,12 @@ class PostRepository {
       where: { userId },
     });
   }
-  
+
   async findFavoritesByUserId(userId: string, skip: number, take: number) {
     return prisma.favorite.findMany({
       where: { userId },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       include: { post: true },
       skip,
@@ -236,13 +246,13 @@ class PostRepository {
         ],
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
       skip,
       take,
     });
   }
-  
+
   async countSearchPosts(query: string) {
     return prisma.post.count({
       where: {
@@ -253,7 +263,6 @@ class PostRepository {
       },
     });
   }
-
 }
 
 const postRepository = new PostRepository();

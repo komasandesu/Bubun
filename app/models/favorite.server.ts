@@ -52,7 +52,10 @@ class FavoriteRepository {
   }
 
   // お気に入りの切り替え
-  async toggleFavorite(params: { PostId: number; userId: string }): Promise<{ added: boolean }> {
+  async toggleFavorite(params: {
+    PostId: number;
+    userId: string;
+  }): Promise<{ added: boolean }> {
     const { PostId, userId } = params;
 
     const existingFavorite = await prisma.favorite.findUnique({
@@ -81,7 +84,10 @@ class FavoriteRepository {
   }
 
   // お気に入りの状態を確認
-  async isFavorite(params: { PostId: number; userId: string | null }): Promise<boolean> {
+  async isFavorite(params: {
+    PostId: number;
+    userId: string | null;
+  }): Promise<boolean> {
     const { PostId, userId } = params;
     if (!userId) {
       return false; // userId がない場合、フォールバックとしてお気に入りではないと見なす
@@ -109,18 +115,20 @@ class FavoriteRepository {
   // 特定の投稿リストに対して、お気に入りの状態とカウントを含めたデータを取得
   async postsWithFavoriteData(posts: Post[], userId: string | null) {
     const postIds = posts.map((post) => post.id);
-  
+
     // userId が null の場合、favoriteStatuses と favoriteCounts を空の配列として扱う
-    const favoriteStatuses = userId ? await prisma.favorite.findMany({
-      where: {
-        PostId: { in: postIds },
-        userId,
-      },
-      select: {
-        PostId: true,
-      },
-    }) : [];
-  
+    const favoriteStatuses = userId
+      ? await prisma.favorite.findMany({
+          where: {
+            PostId: { in: postIds },
+            userId,
+          },
+          select: {
+            PostId: true,
+          },
+        })
+      : [];
+
     const favoriteCounts = await prisma.favorite.groupBy({
       by: ['PostId'],
       _count: true,
@@ -128,11 +136,14 @@ class FavoriteRepository {
         PostId: { in: postIds },
       },
     });
-  
+
     return posts.map((post) => {
-      const isFavorite = userId ? favoriteStatuses.some((favorite) => favorite.PostId === post.id) : false;
-      const favoriteCount = favoriteCounts.find((count) => count.PostId === post.id)?._count || 0;
-  
+      const isFavorite = userId
+        ? favoriteStatuses.some((favorite) => favorite.PostId === post.id)
+        : false;
+      const favoriteCount =
+        favoriteCounts.find((count) => count.PostId === post.id)?._count || 0;
+
       return {
         ...post,
         initialIsFavorite: isFavorite,
@@ -140,7 +151,6 @@ class FavoriteRepository {
       };
     });
   }
-  
 }
 
 const favoriteRepository = new FavoriteRepository();

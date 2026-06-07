@@ -11,13 +11,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   // どのレスポンスでも使えるように、ヘッダーを先に作っておく
   const headers = {
     headers: {
-      "Set-Cookie": await commitSession(session),
+      'Set-Cookie': await commitSession(session),
     },
   };
-  
+
   const formData = await request.formData();
 
-  const originalString = (formData.get('originalString') as string | null)?.trim();
+  const originalString = (
+    formData.get('originalString') as string | null
+  )?.trim();
   const substring = (formData.get('substring') as string | null)?.trim();
 
   // 入力のバリデーションでリダイレクトする時もヘッダーを付ける

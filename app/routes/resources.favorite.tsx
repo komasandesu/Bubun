@@ -30,9 +30,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const favoriteCount = await favoriteRepository.countFavorites(PostId);
 
     // 成功レスポンスにもヘッダーを付ける
-    const body = JSON.stringify({ success: true, added: result.added, favoriteCount });
+    const body = JSON.stringify({
+      success: true,
+      added: result.added,
+      favoriteCount,
+    });
     return new Response(body, { status: 200, headers: responseHeaders });
-
   } catch (error) {
     console.error('Failed to toggle favorite:', error);
     // エラーレスポンスにもヘッダーを付ける
@@ -70,7 +73,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     // 成功レスポンスにもヘッダーを付ける
     const body = JSON.stringify({ isFavorite, favoriteCount });
     return new Response(body, { status: 200, headers: responseHeaders });
-
   } catch (error) {
     console.error('Failed to get favorite status:', error);
     // エラーレスポンスにもヘッダーを付ける

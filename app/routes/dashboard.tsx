@@ -1,5 +1,5 @@
 // app/routes/dashboard.tsx
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet, useLoaderData } from 'react-router';
 import type { LoaderFunction } from 'react-router';
 import type { User } from '@prisma/client';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';

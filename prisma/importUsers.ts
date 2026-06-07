@@ -37,6 +37,5 @@ main().catch((e) => {
   process.exit(1);
 });
 
-
 //$ npx node --loader ts-node/esm prisma/importUsers.ts
 //$ npx prisma studio

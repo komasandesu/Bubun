@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 services:
   app:
     build:
@@ -9,8 +9,8 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SESSION_SECRET: ${SESSION_SECRET}
     ports:
-      - '3000:3000'  # 通常の本番用ポート
-    restart: always  # 障害が発生した場合に自動再起動
+      - '3000:3000' # 通常の本番用ポート
+    restart: always # 障害が発生した場合に自動再起動
     networks:
       - app-network
 networks:

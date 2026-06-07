@@ -4,7 +4,9 @@
   padding: 0.5rem;
   border-radius: 9999px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   background-color: #f3f4f6; /* 少し暗くしたライトモードの背景色 */
   color: #1f2937; /* 濃い文字色 */
 }

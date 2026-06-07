@@ -1,12 +1,12 @@
 // app/routes/profile.$username_.favorite.tsx
-import { type LoaderFunctionArgs } from "react-router";
-import { prisma } from "~/models/db.server";
+import { type LoaderFunctionArgs } from 'react-router';
+import { prisma } from '~/models/db.server';
 import { useLoaderData, Link } from 'react-router';
-import { getAuthenticatedUserOrNull } from "~/services/auth.server";
-import { postRepository } from "~/models/post.server";
-import { favoriteRepository } from "~/models/favorite.server";
-import { commitSession } from "~/services/session.server";
-import PostCard from "./components/PostCard";
+import { getAuthenticatedUserOrNull } from '~/services/auth.server';
+import { postRepository } from '~/models/post.server';
+import { favoriteRepository } from '~/models/favorite.server';
+import { commitSession } from '~/services/session.server';
+import PostCard from './components/PostCard';
 
 type PostCardProps = {
   id: number;
@@ -21,23 +21,25 @@ type PostCardProps = {
 const FAVORITES_PER_PAGE = 10; // お気に入りの投稿数
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
- // user と session を受け取る
+  // user と session を受け取る
   const { user, session } = await getAuthenticatedUserOrNull(request);
 
   const { username } = params;
   const url = new URL(request.url);
-  const page = parseInt(url.searchParams.get("page") || "1", 10);
+  const page = parseInt(url.searchParams.get('page') || '1', 10);
 
   const profileUser = await prisma.user.findUnique({
     where: { name: username },
   });
 
   if (!profileUser) {
-    throw new Response("User not found", { status: 404 });
+    throw new Response('User not found', { status: 404 });
   }
 
   // お気に入り投稿の総数をカウント
-  const totalFavorites = await postRepository.countFavoritesByUserId(profileUser.id);
+  const totalFavorites = await postRepository.countFavoritesByUserId(
+    profileUser.id
+  );
   const totalPages = Math.ceil(totalFavorites / FAVORITES_PER_PAGE);
 
   // お気に入りの投稿を取得
@@ -48,28 +50,38 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   );
 
   // favorites にお気に入りデータを追加し、createdAt を JST で成形
-  const postsWithFavoriteData = (await favoriteRepository.postsWithFavoriteData(favorites.map(f => f.post), user?.id || null)).map(post => ({
+  const postsWithFavoriteData = (
+    await favoriteRepository.postsWithFavoriteData(
+      favorites.map((f) => f.post),
+      user?.id || null
+    )
+  ).map((post) => ({
     ...post,
-    createdAt: new Date(post.createdAt).toLocaleString("ja-JP", {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+    createdAt: new Date(post.createdAt).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
       hour12: false,
     }),
   }));
 
   // 最後に、セッションを更新するヘッダーを付けてレスポンスを返す
-  const body = JSON.stringify({ user, profileUser, favorites: postsWithFavoriteData, page, totalPages });
-  const headers = new Headers({ "Content-Type": "application/json" });
-  headers.set("Set-Cookie", await commitSession(session));
+  const body = JSON.stringify({
+    user,
+    profileUser,
+    favorites: postsWithFavoriteData,
+    page,
+    totalPages,
+  });
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  headers.set('Set-Cookie', await commitSession(session));
 
   return new Response(body, { status: 200, headers });
 }
-
 
 export default function UserFavorites() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,10 +96,10 @@ export default function UserFavorites() {
 
         <ul className="space-y-2">
           {favorites.length > 0 ? (
-            favorites.map((favorite:PostCardProps) => (
+            favorites.map((favorite: PostCardProps) => (
               <li key={favorite.id}>
-                <PostCard 
-                  key={favorite.id} 
+                <PostCard
+                  key={favorite.id}
                   id={favorite.id}
                   parentId={favorite.parentId}
                   originalString={favorite.originalString}
@@ -111,7 +123,9 @@ export default function UserFavorites() {
           <Link
             to="?page=1"
             className={`px-4 py-2 border rounded ${
-              page === 1 ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400'
+              page === 1
+                ? 'bg-blue-500 text-white dark:bg-blue-600'
+                : 'bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400'
             }`}
           >
             1
@@ -132,7 +146,9 @@ export default function UserFavorites() {
         )}
 
         {/* 現在のページ */}
-        <span className="px-4 py-2 border rounded bg-blue-500 text-white dark:bg-blue-600">{page}</span>
+        <span className="px-4 py-2 border rounded bg-blue-500 text-white dark:bg-blue-600">
+          {page}
+        </span>
 
         {page < totalPages && (
           <Link
@@ -144,14 +160,18 @@ export default function UserFavorites() {
         )}
 
         {/* 省略記号 */}
-        {page < totalPages - 2 && <span className="px-2 dark:text-white">…</span>}
+        {page < totalPages - 2 && (
+          <span className="px-2 dark:text-white">…</span>
+        )}
 
         {/* 最後のページ */}
         {page < totalPages - 1 && (
           <Link
             to={`?page=${totalPages}`}
             className={`px-4 py-2 border rounded ${
-              page === totalPages ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400'
+              page === totalPages
+                ? 'bg-blue-500 text-white dark:bg-blue-600'
+                : 'bg-white text-blue-500 dark:bg-gray-700 dark:text-blue-400'
             }`}
           >
             {totalPages}

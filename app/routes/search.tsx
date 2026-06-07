@@ -1,7 +1,7 @@
 // app/routes/search.tsx
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet, useLoaderData } from 'react-router';
 import type { LoaderFunction } from 'react-router';
-import type { User } from "@prisma/client";
+import type { User } from '@prisma/client';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
 import Header from './components/Header';

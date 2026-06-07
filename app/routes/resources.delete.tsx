@@ -11,12 +11,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   // ② どのリダイレクトでも使えるように、ヘッダーを先に作っておく！
   const headers = {
     headers: {
-      "Set-Cookie": await commitSession(session),
+      'Set-Cookie': await commitSession(session),
     },
   };
-  
+
   const formData = await request.formData();
-  
+
   const postId = formData.get('postId') as string | null;
   const redirectTo = formData.get('redirectTo') as string | null;
 
@@ -35,7 +35,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     // 成功した時のリダイレクトにヘッダーを付ける
     return redirect(redirectTo || `/posts/`, headers);
   } catch (error) {
-    console.error("Error deleting post:", error);
+    console.error('Error deleting post:', error);
     // エラーでリダイレクトする時も、ちゃんとヘッダーを付けてあげる
     return redirect(redirectTo || `/posts/`, headers);
   }
