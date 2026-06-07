@@ -105,6 +105,7 @@ export default function PostIndex() {
   }, [hasNextPage, loading, loadingDelay, lastId]);
 
   useEffect(() => {
+    const currentObserverRef = observerRef.current;
     const observer = new IntersectionObserver((entries) => {
       const entry = entries[0];
       if (entry.isIntersecting && hasNextPage && entry.intersectionRatio > 0.95) {
@@ -112,13 +113,13 @@ export default function PostIndex() {
       }
     }, { threshold: 0.95 });
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
     }
 
     return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
       }
     };
   }, [hasNextPage, loadMorePosts]);

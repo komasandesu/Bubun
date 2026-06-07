@@ -12,8 +12,7 @@ interface PostOptionsProps {
     substring?: string;  // コンテンツを追加
 }
 
-const PostOptions: React.FC<PostOptionsProps> = ({ postId, parentId, authorId, currentUserId, originalString, substring }) => {
-    const [isEditModalOpen, setEditModalOpen] = useState(false);
+const PostOptions: React.FC<PostOptionsProps> = ({ postId, parentId, authorId, currentUserId }) => {
     const [isReplyModalOpen, setEditReplyOpen] = useState(false);
     const [isOptionsOpen, setOptionsOpen] = useState(false);
 

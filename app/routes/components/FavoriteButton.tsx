@@ -1,5 +1,4 @@
-// app/routes/components/FavoriteButton.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useFetcher } from '@remix-run/react';
 import styles from './FavoriteButton.module.css';
 

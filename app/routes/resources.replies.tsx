@@ -43,7 +43,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     
     // リダイレクト処理
     return redirect(redirectTo || `/posts/${postId}`, headersForRedirect); // リダイレクト先を元の投稿ページに設定
-  } catch (error) {
+  } catch {
     // console.error('Failed to create reply:', error);
     const body = JSON.stringify({ error: 'Failed to create reply' });
     

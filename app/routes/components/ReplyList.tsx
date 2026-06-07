@@ -17,11 +17,9 @@ type Reply = {
 
 export default function ReplyList({
   replies,
-  postId,
   userId,
 }: {
   replies: Reply[];
-  postId: number;
   userId: string;
 }) {
   if (!replies || replies.length === 0) {

@@ -1,5 +1,4 @@
-// app/routes/resources.favorite.tsx
-import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { requireAuthenticatedUser } from '~/services/auth.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { commitSession } from '~/services/session.server';

@@ -12,18 +12,18 @@ export async function action({ request }: ActionFunctionArgs) {
     const user = await authenticator.authenticate("user-pass", request);
 
     // 認証成功した場合、セッションにユーザー情報を保存
-    let session = await sessionStorage.getSession(request.headers.get("cookie"));
+    const session = await sessionStorage.getSession(request.headers.get("cookie"));
     session.set("user", user);
 
     // ホームページにリダイレクト（セッションのセットを含む）
     return redirect("/posts", {
       headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
     });
-  } catch (error) {
+  } catch {
     // 認証失敗時にエラー処理を行う
 
     // 失敗した場合、セッションをクリア
-    let session = await sessionStorage.getSession(request.headers.get("cookie"));
+    const session = await sessionStorage.getSession(request.headers.get("cookie"));
     session.unset("user");
 
     // エラーメッセージをURLのクエリパラメータとして設定
@@ -37,8 +37,8 @@ export async function action({ request }: ActionFunctionArgs) {
 // Finally, we need to export a loader function to check if the user is already
 // authenticated and redirect them to the dashboard
 export async function loader({ request }: LoaderFunctionArgs) {
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-  let user = session.get("user");
+  const session = await sessionStorage.getSession(request.headers.get("cookie"));
+  const user = session.get("user");
   if(user){
     throw redirect("/posts");
   }

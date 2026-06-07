@@ -72,7 +72,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 
 export default function UserFavorites() {
-  const { user, profileUser, favorites, page, totalPages } = useLoaderData<typeof loader>();
+  const { profileUser, favorites, page, totalPages } = useLoaderData<typeof loader>();
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">

@@ -1,5 +1,4 @@
-// app/routes/profile.settings.tsx
-import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { requireAuthenticatedUser } from "~/services/auth.server";
 import { prisma } from "../models/db.server";
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
@@ -51,7 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const twitterId = formData.get("twitterId") as string;
 
 
-  const updateData: Record<string, any> = {};
+  const updateData: { profile?: string; twitterId?: string } = {};
   // フィールドを空にできるように、nullチェックだけにする
   if (profile !== null) updateData.profile = profile;
   if (twitterId !== null) updateData.twitterId = twitterId;

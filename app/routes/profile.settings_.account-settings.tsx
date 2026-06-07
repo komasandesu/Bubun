@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   // 更新データの準備
-  const updateData: Record<string, any> = {};
+  const updateData: { name?: string; password?: string } = {};
   if (name) updateData.name = name;
   if (newPassword) updateData.password = await bcrypt.hash(newPassword, 10);
 

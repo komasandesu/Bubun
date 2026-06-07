@@ -12,7 +12,7 @@ const ReplyForm: React.FC<ReplyFormProps> = ({ postId, redirectTo, onClose }) =>
   const [originalString, setOriginalString] = useState('');
   const [substring, setSubstring] = useState('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = () => {
     // フォームが送信された後にタイトルとコンテンツを空にする
     setOriginalString('');
     setSubstring('');

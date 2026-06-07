@@ -71,7 +71,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
     return new Response(body, { headers });
 
-  } catch (error) {
+  } catch {
     throw new Response("Post Not Found", { status: 404 });
   }
 };
@@ -136,7 +136,7 @@ export default function PostShow() {
       />
       </article>
 
-      <ReplyList replies={post.replies} postId={post.id} userId={user?.id || null} />
+      <ReplyList replies={post.replies} userId={user?.id || null} />
       {/* エラーメッセージの表示 */}
       {errorMessage && (
         <div className="error-message" style={{ color: 'red' }}>

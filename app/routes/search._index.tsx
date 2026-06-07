@@ -58,11 +58,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function SearchResults() {
-    const { user, posts, page, totalPages, query } = useLoaderData<typeof loader>();
+    const { posts, page, totalPages, query } = useLoaderData<typeof loader>();
   
     return (
       <div className="container mx-auto p-6 max-w-3xl">
-        <h1 className="text-2xl font-bold mb-4 dark:text-gray-200">検索結果: "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-4 dark:text-gray-200">検索結果: &quot;{query}&quot;</h1>
         <ul className="space-y-2">
           {posts.length > 0 ? (
             posts.map((post:PostCardProps) => (
