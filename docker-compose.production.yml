@@ -7,6 +7,7 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
     ports:
       - '3000:3000'  # 通常の本番用ポート
     restart: always  # 障害が発生した場合に自動再起動
