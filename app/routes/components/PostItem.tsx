@@ -1,5 +1,4 @@
-// app/routes/components/PostItem.tsx
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import FavoriteButton from './FavoriteButton';
 import PostOptions from './PostOptions';
 

@@ -1,6 +1,6 @@
 // app/routes/_index.tsx
-import { Link, useLoaderData } from '@remix-run/react';
-import type { LoaderFunction } from '@remix-run/node';
+import { Link, useLoaderData } from 'react-router';
+import type { LoaderFunction } from 'react-router';
 import { prisma } from '~/models/db.server';
 
 export const loader: LoaderFunction = async () => {

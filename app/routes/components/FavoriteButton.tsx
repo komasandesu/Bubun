@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useFetcher } from '@remix-run/react';
+import { useFetcher } from 'react-router';
 import styles from './FavoriteButton.module.css';
 
 interface FavoriteButtonProps {

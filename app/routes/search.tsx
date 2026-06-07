@@ -1,6 +1,6 @@
 // app/routes/search.tsx
-import { Outlet, useLoaderData } from "@remix-run/react";
-import type { LoaderFunction } from '@remix-run/node';
+import { Outlet, useLoaderData } from "react-router";
+import type { LoaderFunction } from 'react-router';
 import type { User } from "@prisma/client";
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';

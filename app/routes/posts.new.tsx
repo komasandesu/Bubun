@@ -1,5 +1,5 @@
 //app/routes/posts.new.tsx
-import { useLocation } from '@remix-run/react';
+import { useLocation } from 'react-router';
 import PostForm from './components/PostForm';
 
 export default function PostNew() {

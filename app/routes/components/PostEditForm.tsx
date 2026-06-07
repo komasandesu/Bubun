@@ -1,5 +1,5 @@
 // app/routes/components/PostEditForm.tsx
-import { Form } from '@remix-run/react';
+import { Form } from 'react-router';
 import { useState, useEffect } from 'react';
 
 interface PostEditFormProps {

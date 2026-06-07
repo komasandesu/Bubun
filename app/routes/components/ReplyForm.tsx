@@ -1,5 +1,5 @@
 // app/routes/components/ReplyForm.tsx
-import { Form } from '@remix-run/react';
+import { Form } from 'react-router';
 import { useState } from 'react';
 
 interface ReplyFormProps {

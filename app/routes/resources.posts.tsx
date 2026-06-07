@@ -1,5 +1,5 @@
 // app/routes/resources.posts.tsx
-import { redirect, ActionFunctionArgs } from '@remix-run/node';
+import { redirect, ActionFunctionArgs } from 'react-router';
 import { requireAuthenticatedUser } from '~/services/auth.server';
 import { postRepository } from '~/models/post.server';
 import { commitSession } from '~/services/session.server';

@@ -1,6 +1,4 @@
-// app/routes/terms.tsx
-import { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { Link, type MetaFunction } from "react-router";
 
 export const meta: MetaFunction = () => {
     return [
