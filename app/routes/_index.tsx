@@ -23,7 +23,6 @@ export default function Index() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      
       <main>
         {/* サービス名 */}
         <div className="flex justify-center mb-10">
@@ -48,14 +47,14 @@ export default function Index() {
                     to={`/posts/${post.id}`}
                     className="text-blue-500 dark:text-blue-400 hover:underline text-base block truncate"
                     style={{
-                      display: "block",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      textOverflow: "ellipsis",
-                      maxWidth: "100%",
+                      display: 'block',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      maxWidth: '100%',
                     }}
                   >
-                    {post.originalString} <span className="mx-0.5">の</span>{" "}
+                    {post.originalString} <span className="mx-0.5">の</span>{' '}
                     {post.substring} <span className="mx-0.5">の部分</span>
                   </Link>
                 </div>
@@ -90,20 +89,24 @@ export default function Index() {
       {/* フッター */}
       <footer className="mt-8 pt-4 border-t border-gray-300 dark:border-gray-700 text-center text-sm">
         <div className="mb-4 flex justify-center items-center space-x-1">
-          <Link to="/terms" className="text-blue-500 dark:text-blue-400 hover:underline">
+          <Link
+            to="/terms"
+            className="text-blue-500 dark:text-blue-400 hover:underline"
+          >
             利用規約
           </Link>
           <p className="text-gray-100 dark:text-gray-900">の陽キャの部分</p>
         </div>
         <div className="mb-4 flex justify-center items-center space-x-1">
-          <Link to="/privacy-policy" className="text-blue-500 dark:text-blue-400 hover:underline">
+          <Link
+            to="/privacy-policy"
+            className="text-blue-500 dark:text-blue-400 hover:underline"
+          >
             プライバシーポリシー
           </Link>
           <p className="text-gray-100 dark:text-gray-900">の利子の部分</p>
         </div>
       </footer>
-
-
     </div>
   );
 }

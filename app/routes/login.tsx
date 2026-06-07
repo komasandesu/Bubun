@@ -1,46 +1,57 @@
 // app/routes/login.tsx
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { data, Form, redirect, useActionData, useSearchParams } from "react-router";
-import { authenticator } from "~/services/auth.server";
-import { sessionStorage } from "~/services/session.server";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
+import {
+  data,
+  Form,
+  redirect,
+  useActionData,
+  useSearchParams,
+} from 'react-router';
+import { authenticator } from '~/services/auth.server';
+import { sessionStorage } from '~/services/session.server';
 
 // Second, we need to export an action function, here we will use the
 // `authenticator.authenticate method`
 export async function action({ request }: ActionFunctionArgs) {
   try {
     // ユーザーの認証
-    const user = await authenticator.authenticate("user-pass", request);
+    const user = await authenticator.authenticate('user-pass', request);
 
     // 認証成功した場合、セッションにユーザー情報を保存
-    const session = await sessionStorage.getSession(request.headers.get("cookie"));
-    session.set("user", user);
+    const session = await sessionStorage.getSession(
+      request.headers.get('cookie')
+    );
+    session.set('user', user);
 
     // ホームページにリダイレクト（セッションのセットを含む）
-    return redirect("/posts", {
-      headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
+    return redirect('/posts', {
+      headers: { 'Set-Cookie': await sessionStorage.commitSession(session) },
     });
   } catch {
     // 認証失敗時にエラー処理を行う
 
     // 失敗した場合、セッションをクリア
-    const session = await sessionStorage.getSession(request.headers.get("cookie"));
-    session.unset("user");
+    const session = await sessionStorage.getSession(
+      request.headers.get('cookie')
+    );
+    session.unset('user');
 
     // エラーメッセージをURLのクエリパラメータとして設定
-    return redirect("/login?error=Invalid%20credentials", {
-      headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
+    return redirect('/login?error=Invalid%20credentials', {
+      headers: { 'Set-Cookie': await sessionStorage.commitSession(session) },
     });
   }
 }
 
-
 // Finally, we need to export a loader function to check if the user is already
 // authenticated and redirect them to the dashboard
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await sessionStorage.getSession(request.headers.get("cookie"));
-  const user = session.get("user");
-  if(user){
-    throw redirect("/posts");
+  const session = await sessionStorage.getSession(
+    request.headers.get('cookie')
+  );
+  const user = session.get('user');
+  if (user) {
+    throw redirect('/posts');
   }
   return data(null);
 }
@@ -50,7 +61,7 @@ export default function Screen() {
   const [searchParams] = useSearchParams(); // URLのクエリパラメータを取得
 
   // クエリパラメータの error を取得
-  const errorMessage = searchParams.get("error") || actionData?.error;
+  const errorMessage = searchParams.get('error') || actionData?.error;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -61,26 +72,27 @@ export default function Screen() {
 
         {/* エラーメッセージがあれば表示 */}
         {errorMessage && (
-          <p className="text-red-500 mb-4 text-center">ユーザー名かパスワードが違います</p>
+          <p className="text-red-500 mb-4 text-center">
+            ユーザー名かパスワードが違います
+          </p>
         )}
-
 
         <Form method="post" className="space-y-4">
           <input
-              type="text"
-              name="name"
-              required
-              placeholder="ユーザー名"
-              autoComplete="username"
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            type="text"
+            name="name"
+            required
+            placeholder="ユーザー名"
+            autoComplete="username"
+            className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           <input
-              type="password"
-              name="password"
-              required
-              placeholder="パスワード"
-              autoComplete="current-password"
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            type="password"
+            name="password"
+            required
+            placeholder="パスワード"
+            autoComplete="current-password"
+            className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           <button
             type="submit"
@@ -93,7 +105,10 @@ export default function Screen() {
         <div className="mt-4 text-center text-black dark:text-gray-300">
           <p>
             新規登録は
-            <a href="/register" className="text-blue-600 dark:text-blue-400 hover:underline">
+            <a
+              href="/register"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
               こちら
             </a>
             からどうぞ。

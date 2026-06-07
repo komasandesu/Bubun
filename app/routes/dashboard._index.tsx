@@ -1,7 +1,12 @@
-import { Form, Link, useLoaderData, type LoaderFunctionArgs } from 'react-router';
-import { requireAuthenticatedUser } from "~/services/auth.server";
-import { commitSession } from "~/services/session.server";
-import { type User } from "@prisma/client";
+import {
+  Form,
+  Link,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router';
+import { requireAuthenticatedUser } from '~/services/auth.server';
+import { commitSession } from '~/services/session.server';
+import { type User } from '@prisma/client';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // user と session を受け取る
@@ -34,15 +39,17 @@ export default function Dashboard() {
             <p className="text-gray-600">作成日: {String(user.createdAt)}</p>
 
             {/* パスワード変更用画面へのリンク */}
-            <Link to="/dashboard/profile-settings" className="text-blue-600 hover:underline">
+            <Link
+              to="/dashboard/profile-settings"
+              className="text-blue-600 hover:underline"
+            >
               プロフィールを編集する
             </Link>
-
           </div>
         ) : (
           <p className="text-red-500">ユーザー情報が見つかりません。</p>
         )}
-        
+
         {/* ログアウトボタン */}
         <Form action="/logout" method="post" className="mt-6">
           <button

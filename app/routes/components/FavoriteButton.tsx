@@ -20,17 +20,17 @@ interface ToggleFavoriteResponse {
   favoriteCount: number;
 }
 
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({ 
+const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   PostId,
   initialIsFavorite,
-  initialFavoriteCount 
+  initialFavoriteCount,
 }) => {
-
   const fetcher = useFetcher<FavoriteResponse | ToggleFavoriteResponse>();
 
   // 初期値を使った描画
   const [isFavorite, setIsFavorite] = useState<boolean>(initialIsFavorite);
-  const [favoriteCount, setFavoriteCount] = useState<number>(initialFavoriteCount);
+  const [favoriteCount, setFavoriteCount] =
+    useState<number>(initialFavoriteCount);
 
   const handleFavoriteClick = () => {
     // 楽観的UI更新

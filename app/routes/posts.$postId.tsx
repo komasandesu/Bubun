@@ -1,9 +1,18 @@
-import { redirect, useLoaderData, useLocation, type LoaderFunction, type ActionFunction, type MetaFunction } from 'react-router';
+import {
+  redirect,
+  useLoaderData,
+  useLocation,
+  type LoaderFunction,
+  type ActionFunction,
+  type MetaFunction,
+} from 'react-router';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server';
-import { getAuthenticatedUserOrNull, requireAuthenticatedUser } from '~/services/auth.server';
+import {
+  getAuthenticatedUserOrNull,
+  requireAuthenticatedUser,
+} from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
-
 
 import ReplyForm from './components/ReplyForm';
 import ReplyList from './components/ReplyList';
@@ -15,13 +24,28 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
   return [
     { title: `bubutter | ${post?.originalString}の${post?.substring}の部分` },
-    { name: "description", content: `${post?.originalString}の${post?.substring}の部分` },
-    { property: "og:title", content: `${post?.originalString}の${post?.substring}の部分` },
-    { property: "og:description", content: `${post?.originalString}の${post?.substring}の部分` },
-    { property: "og:site_name", content: "bubutter" },
-    { property: "og:type", content: "article" },
-    { property: "og:url", content: `https://bubutter.at-math.com/posts/${post?.id}` },
-    { property: "og:image", content: "https://bubutter.at-math.com/og-image.png" },
+    {
+      name: 'description',
+      content: `${post?.originalString}の${post?.substring}の部分`,
+    },
+    {
+      property: 'og:title',
+      content: `${post?.originalString}の${post?.substring}の部分`,
+    },
+    {
+      property: 'og:description',
+      content: `${post?.originalString}の${post?.substring}の部分`,
+    },
+    { property: 'og:site_name', content: 'bubutter' },
+    { property: 'og:type', content: 'article' },
+    {
+      property: 'og:url',
+      content: `https://bubutter.at-math.com/posts/${post?.id}`,
+    },
+    {
+      property: 'og:image',
+      content: 'https://bubutter.at-math.com/og-image.png',
+    },
   ];
 };
 
@@ -31,7 +55,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const postId = params.postId ? parseInt(params.postId, 10) : null;
 
   if (!postId) {
-    throw new Response("Not Found", { status: 404 });
+    throw new Response('Not Found', { status: 404 });
   }
 
   try {
@@ -40,37 +64,47 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       return redirect(`/posts/${post.parentId}`);
     }
 
-    const formattedPostDate = new Date(post.createdAt).toLocaleString("ja-JP", { /* ... */ });
+    const formattedPostDate = new Date(post.createdAt).toLocaleString('ja-JP', {
+      /* ... */
+    });
 
     const [isFavorite, favoriteCount] = await Promise.all([
-      user ? favoriteRepository.isFavorite({ PostId: postId, userId: user.id }) : false,
-      favoriteRepository.countFavorites(postId)
+      user
+        ? favoriteRepository.isFavorite({ PostId: postId, userId: user.id })
+        : false,
+      favoriteRepository.countFavorites(postId),
     ]);
-    
-    const repliesWithFavoriteInfo = (await favoriteRepository.postsWithFavoriteData(post.replies, user?.id || null)).map(p => ({
+
+    const repliesWithFavoriteInfo = (
+      await favoriteRepository.postsWithFavoriteData(
+        post.replies,
+        user?.id || null
+      )
+    ).map((p) => ({
       ...p,
-      createdAt: new Date(p.createdAt).toLocaleString("ja-JP", { /* ... */ }),
+      createdAt: new Date(p.createdAt).toLocaleString('ja-JP', {
+        /* ... */
+      }),
     }));
 
     // レスポンスを返す時に、セッションを更新するヘッダーを付ける
     const body = JSON.stringify({
-      post: { 
-        ...post, 
+      post: {
+        ...post,
         createdAt: formattedPostDate,
-        replies: repliesWithFavoriteInfo 
+        replies: repliesWithFavoriteInfo,
       },
       user, // user オブジェクトか null がここに入る
       initialIsFavorite: isFavorite,
       initialFavoriteCount: favoriteCount,
     });
 
-    const headers = new Headers({ "Content-Type": "application/json" });
-    headers.set("Set-Cookie", await commitSession(session));
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    headers.set('Set-Cookie', await commitSession(session));
 
     return new Response(body, { headers });
-
   } catch {
-    throw new Response("Post Not Found", { status: 404 });
+    throw new Response('Post Not Found', { status: 404 });
   }
 };
 
@@ -85,22 +119,28 @@ export const action: ActionFunction = async ({ request, params }) => {
   const authorId = user.id;
 
   if (!originalString || !substring || isNaN(postId)) {
-    throw new Response("Invalid Data", { status: 400 });
+    throw new Response('Invalid Data', { status: 400 });
   }
 
-  await postRepository.createReply({ originalString, substring, authorId, parentId: postId });
+  await postRepository.createReply({
+    originalString,
+    substring,
+    authorId,
+    parentId: postId,
+  });
 
   // リダイレクトの時も、ちゃんとヘッダーを付けてセッションを更新
   return redirect(`/posts/${postId}`, {
     headers: {
-      "Set-Cookie": await commitSession(session),
-    }
+      'Set-Cookie': await commitSession(session),
+    },
   });
 };
 
 export default function PostShow() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { post, user, initialIsFavorite, initialFavoriteCount } = useLoaderData() as any;
+  const loaderData = useLoaderData() as any;
+  const { post, user, initialIsFavorite, initialFavoriteCount } = loaderData;
 
   // クエリパラメータからエラーメッセージを取得
   const location = useLocation();
@@ -121,18 +161,18 @@ export default function PostShow() {
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <article className="mb-6">
-      <PostItem
-        id={post.id}
-        parentId={post.parentId}
-        originalString={post.originalString}
-        substring={post.substring}
-        createdAt={post.createdAt}
-        authorId={post.authorId}
-        authorName={post.author.name}
-        userId={user?.id || null}
-        initialIsFavorite={initialIsFavorite} // 初期のお気に入り状態
-        initialFavoriteCount={initialFavoriteCount} // 初期のお気に入り数
-      />
+        <PostItem
+          id={post.id}
+          parentId={post.parentId}
+          originalString={post.originalString}
+          substring={post.substring}
+          createdAt={post.createdAt}
+          authorId={post.authorId}
+          authorName={post.author.name}
+          userId={user?.id || null}
+          initialIsFavorite={initialIsFavorite} // 初期のお気に入り状態
+          initialFavoriteCount={initialFavoriteCount} // 初期のお気に入り数
+        />
       </article>
 
       <ReplyList replies={post.replies} userId={user?.id || null} />
@@ -142,7 +182,7 @@ export default function PostShow() {
           {errorMessage}
         </div>
       )}
-      <ReplyForm postId={post.id}/>
+      <ReplyForm postId={post.id} />
     </div>
   );
 }

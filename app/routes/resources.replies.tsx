@@ -15,23 +15,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   };
 
   const formData = await request.formData();
-  
+
   // 型ガードを使用して値を取得
-  const originalString = (formData.get('originalString') as string | null)?.trim();
+  const originalString = (
+    formData.get('originalString') as string | null
+  )?.trim();
   const substring = (formData.get('substring') as string | null)?.trim();
   const postId = Number(formData.get('postId'));
   const redirectTo = formData.get('redirectTo') as string | null;
-  
+
   // 入力のバリデーション
   if (!originalString || !substring || isNaN(postId)) {
     return redirect('/posts/new?error=missingFields', headersForRedirect);
   }
-  
+
   // 文字数制限
   if (originalString.length > 200 || substring.length > 200) {
     return redirect(`/posts/${postId}?error=tooLong`, headersForRedirect);
   }
-  
+
   try {
     // リプライを作成
     await postRepository.createReply({
@@ -40,13 +42,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       authorId: user.id,
       parentId: postId,
     });
-    
+
     // リダイレクト処理
     return redirect(redirectTo || `/posts/${postId}`, headersForRedirect); // リダイレクト先を元の投稿ページに設定
   } catch {
     // console.error('Failed to create reply:', error);
     const body = JSON.stringify({ error: 'Failed to create reply' });
-    
+
     // ヘッダーを組み立てる
     const responseHeaders = new Headers(headersForRedirect.headers);
     responseHeaders.set('Content-Type', 'application/json');

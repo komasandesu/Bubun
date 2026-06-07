@@ -1,18 +1,18 @@
 // app/routes/robots[.]txt.ts
 // https://www.robotstxt.org/robotstxt.html
-import { LoaderFunction } from "react-router";
+import { LoaderFunction } from 'react-router';
 
 export const loader: LoaderFunction = async () => {
-const robotText = `
+  const robotText = `
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
 `.trim();
 
-    return new Response(robotText, {
-        headers: {
-        "Content-Type": "text/plain",
-        "Cache-Control": "public, max-age=3600",
-        },
-    });
+  return new Response(robotText, {
+    headers: {
+      'Content-Type': 'text/plain',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
 };
