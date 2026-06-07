@@ -1,5 +1,5 @@
 // app/routes/logout.tsx
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, redirect } from "react-router";
 import { sessionStorage } from "~/services/session.server";
 
 export async function action({ request }: ActionFunctionArgs) {

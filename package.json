@@ -4,18 +4,16 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix vite:build",
-    "dev": "remix vite:dev",
+    "build": "react-router build",
+    "dev": "react-router dev",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint .",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "react-router-serve ./build/server/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {
     "@prisma/client": "6.12.0",
-    "@remix-run/dev": "^2.17.5",
-    "@remix-run/node": "^2.17.5",
-    "@remix-run/react": "^2.17.5",
-    "@remix-run/serve": "^2.17.5",
+    "@react-router/node": "^7.17.0",
+    "@react-router/serve": "^7.17.0",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.20",
     "aws-sdk": "^2.1691.0",
@@ -26,6 +24,7 @@
     "prisma": "6.12.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router": "^7.17.0",
     "remix-auth": "^4.2.0",
     "remix-auth-form": "^3.0.0",
     "remix-auth-google": "^2.0.0",
@@ -34,6 +33,8 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {
+    "@react-router/dev": "^7.17.0",
+    "@react-router/fs-routes": "^7.17.0",
     "@types/bcrypt": "^6.0.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",

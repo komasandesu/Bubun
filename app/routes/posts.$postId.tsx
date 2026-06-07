@@ -1,7 +1,4 @@
-// app/routes/posts.$postId.tsx
-import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
-import { useLoaderData, useLocation } from '@remix-run/react';
+import { redirect, useLoaderData, useLocation, type LoaderFunction, type ActionFunction, type MetaFunction } from 'react-router';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { getAuthenticatedUserOrNull, requireAuthenticatedUser } from '~/services/auth.server';
@@ -13,7 +10,8 @@ import ReplyList from './components/ReplyList';
 import PostItem from './components/PostItem';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  const { post } = data;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { post } = data as any;
 
   return [
     { title: `bubutter | ${post?.originalString}の${post?.substring}の部分` },
@@ -101,7 +99,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function PostShow() {
-  const { post, user, initialIsFavorite, initialFavoriteCount } = useLoaderData<typeof loader>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { post, user, initialIsFavorite, initialFavoriteCount } = useLoaderData() as any;
 
   // クエリパラメータからエラーメッセージを取得
   const location = useLocation();

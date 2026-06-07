@@ -1,8 +1,8 @@
 // app/routes/search.tsx
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "react-router";
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import { postRepository } from "~/models/post.server";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData, Link } from "react-router";
 import { favoriteRepository } from "~/models/favorite.server";
 import { commitSession } from "~/services/session.server";
 import PostCard from "./components/PostCard";
@@ -58,7 +58,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function SearchResults() {
-    const { posts, page, totalPages, query } = useLoaderData<typeof loader>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { posts, page, totalPages, query } = useLoaderData() as any;
   
     return (
       <div className="container mx-auto p-6 max-w-3xl">

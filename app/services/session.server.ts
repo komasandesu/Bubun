@@ -1,5 +1,5 @@
 //app/services/session.server.ts
-import { createCookieSessionStorage } from '@remix-run/node'
+import { createCookieSessionStorage } from 'react-router'
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -7,7 +7,7 @@ export const sessionStorage = createCookieSessionStorage({
     sameSite: 'lax',
     path: '/',
     httpOnly: true,
-    secrets: [process.env.SESSION_SECRET || ''],
+    secrets: [process.env.SESSION_SECRET || 'default-session-secret-key-fallback-replace-in-production'],
     secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 30, // 30日間有効
   },

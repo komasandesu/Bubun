@@ -1,6 +1,6 @@
 // app/routes/robots[.]txt.ts
 // https://www.robotstxt.org/robotstxt.html
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction } from "react-router";
 
 export const loader: LoaderFunction = async () => {
 const robotText = `

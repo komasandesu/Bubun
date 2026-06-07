@@ -1,8 +1,7 @@
-// app/routes/dashboard.tsx
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { Form, Link, useLoaderData, type LoaderFunctionArgs } from 'react-router';
 import { requireAuthenticatedUser } from "~/services/auth.server";
 import { commitSession } from "~/services/session.server";
-import { Form, Link, useLoaderData } from '@remix-run/react';
+import { type User } from "@prisma/client";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // user と session を受け取る
@@ -21,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Dashboard() {
-  const user = useLoaderData<typeof loader>();
+  const { user } = useLoaderData() as { user: User };
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
@@ -32,7 +31,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold text-gray-700">
               {user.name}さん、ようこそ！
             </h2>
-            <p className="text-gray-600">作成日: {user.createdAt}</p>
+            <p className="text-gray-600">作成日: {String(user.createdAt)}</p>
 
             {/* パスワード変更用画面へのリンク */}
             <Link to="/dashboard/profile-settings" className="text-blue-600 hover:underline">

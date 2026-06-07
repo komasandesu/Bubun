@@ -1,5 +1,5 @@
 // app/routes/components/PostForm.tsx
-import { Form } from '@remix-run/react';
+import { Form } from 'react-router';
 import { useState } from 'react';
 
 const PostForm: React.FC = () => {

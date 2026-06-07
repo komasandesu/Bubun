@@ -1,7 +1,7 @@
 // app/routes/profile.$username.tsx
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "react-router";
 import { prisma } from "~/models/db.server";
-import { useLoaderData, Link, Form } from '@remix-run/react';
+import { useLoaderData, Link, Form } from 'react-router';
 import { postRepository } from "~/models/post.server";
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import { favoriteRepository } from "~/models/favorite.server";
@@ -72,7 +72,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 export default function UserProfile() {
-  const { user, profileUser, posts, page, totalPages } = useLoaderData<typeof loader>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { user, profileUser, posts, page, totalPages } = useLoaderData() as any;
 
   return (
     <div className="container mx-auto p-6 max-w-3xl bg-gray-100 dark:bg-gray-900">

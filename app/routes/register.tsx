@@ -1,8 +1,8 @@
 // app/routes/register.tsx
-import { Form, redirect, useActionData } from "@remix-run/react";
+import { Form, redirect, useActionData } from "react-router";
 import { prisma } from "~/models/db.server"; // Prismaの設定をインポートする
 import bcrypt from "bcrypt";
-import type { ActionFunctionArgs } from "@remix-run/node"; // 型をインポート
+import type { ActionFunctionArgs } from "react-router"; // 型をインポート
 
 interface ActionData {
     error?: string;

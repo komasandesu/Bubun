@@ -1,6 +1,6 @@
 // app/routes/login.tsx
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { data, Form, redirect, useActionData, useSearchParams } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { data, Form, redirect, useActionData, useSearchParams } from "react-router";
 import { authenticator } from "~/services/auth.server";
 import { sessionStorage } from "~/services/session.server";
 

@@ -1,5 +1,5 @@
 // app/routes/components/PostDeleteButton.tsx
-import { Form } from '@remix-run/react';
+import { Form } from 'react-router';
 
 interface DeleteButtonProps {
     postId: number;

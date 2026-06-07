@@ -1,7 +1,7 @@
 // app/routes/profile.$username_.favorite.tsx
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import { type LoaderFunctionArgs } from "react-router";
 import { prisma } from "~/models/db.server";
-import { useLoaderData, Link } from '@remix-run/react';
+import { useLoaderData, Link } from 'react-router';
 import { getAuthenticatedUserOrNull } from "~/services/auth.server";
 import { postRepository } from "~/models/post.server";
 import { favoriteRepository } from "~/models/favorite.server";
@@ -72,7 +72,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 
 export default function UserFavorites() {
-  const { profileUser, favorites, page, totalPages } = useLoaderData<typeof loader>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { profileUser, favorites, page, totalPages } = useLoaderData() as any;
 
   return (
     <div className="container mx-auto p-6 max-w-3xl">
