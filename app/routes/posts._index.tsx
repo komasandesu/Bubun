@@ -1,4 +1,4 @@
-import { useLoaderData, type LoaderFunction } from 'react-router';
+import { useLoaderData, type LoaderFunction, useFetcher } from 'react-router';
 
 import { postRepository } from '../models/post.server';
 import { favoriteRepository } from '../models/favorite.server'; // お気に入りのリポジトリをインポート
@@ -71,45 +71,44 @@ export default function PostIndex() {
   const [lastId, setLastId] = useState<number | null>(
     initialPosts[initialPosts.length - 1]?.id || null
   );
-  const [loading, setLoading] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
   const observerRef = useRef<HTMLDivElement>(null);
   const [loadingDelay, setLoadingDelay] = useState(false);
 
-  const loadMorePosts = useCallback(async () => {
-    if (!hasNextPage || loading || loadingDelay) return;
+  const fetcher = useFetcher<LoaderData>();
 
-    setLoading(true);
-    setLoadingDelay(true);
-
-    try {
-      const query =
-        lastId !== null ? `&lastId=${encodeURIComponent(lastId)}` : '';
-      const res = await fetch(`/posts?_data=routes/posts._index${query}`);
-
-      if (!res.ok) {
-        throw new Error('読み込みに失敗しました。');
-      }
-
-      const data = await res.json();
-
-      if (data.posts.length > 0) {
-        setPosts((prevPosts) => [...prevPosts, ...data.posts]);
-        setLastId(data.posts[data.posts.length - 1]?.id || null);
-        setHasNextPage(data.hasNextPage);
+  useEffect(() => {
+    if (fetcher.data && fetcher.data.posts) {
+      const newPosts = fetcher.data.posts;
+      if (newPosts.length > 0) {
+        setPosts((prevPosts) => {
+          const prevIds = new Set(prevPosts.map((p) => p.id));
+          const filtered = newPosts.filter((p) => !prevIds.has(p.id));
+          return [...prevPosts, ...filtered];
+        });
+        setLastId(newPosts[newPosts.length - 1]?.id || null);
+        setHasNextPage(fetcher.data.hasNextPage);
       } else {
         setHasNextPage(false);
       }
-    } catch (error) {
-      console.error(error);
-      alert('エラーが発生しました。もう一度お試しください。');
-    } finally {
-      setLoading(false);
-      setTimeout(() => {
-        setLoadingDelay(false);
-      }, 1000);
     }
-  }, [hasNextPage, loading, loadingDelay, lastId]);
+  }, [fetcher.data]);
+
+  const loading = fetcher.state !== 'idle';
+
+  const loadMorePosts = useCallback(() => {
+    if (!hasNextPage || fetcher.state !== 'idle' || loadingDelay) return;
+
+    setLoadingDelay(true);
+
+    const query =
+      lastId !== null ? `&lastId=${encodeURIComponent(lastId)}` : '';
+    fetcher.load(`/posts?index${query}`);
+
+    setTimeout(() => {
+      setLoadingDelay(false);
+    }, 1000);
+  }, [hasNextPage, fetcher, loadingDelay, lastId]);
 
   useEffect(() => {
     const currentObserverRef = observerRef.current;
