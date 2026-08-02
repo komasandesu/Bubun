@@ -93,19 +93,19 @@ type RouteFiles = {
     id: "root";
     page: "/" | "/resources/favorite" | "/resources/replies" | "/resources/delete" | "/resources/posts" | "/privacy-policy" | "/resources/edit" | "/robots.txt" | "/register" | "/logout" | "/login" | "/terms" | "/dashboard" | "/dashboard/profile-settings" | "/profile" | "/profile/settings/account-settings" | "/profile/:username/favorite" | "/profile/:username" | "/profile/settings" | "/search" | "/posts" | "/posts/:postId" | "/posts/new";
   };
-  "routes/resources.favorite/route.tsx": {
+  "routes/resources.favorite.tsx": {
     id: "routes/resources.favorite";
     page: "/resources/favorite";
   };
-  "routes/resources.replies/route.tsx": {
+  "routes/resources.replies.tsx": {
     id: "routes/resources.replies";
     page: "/resources/replies";
   };
-  "routes/resources.delete/route.tsx": {
+  "routes/resources.delete.tsx": {
     id: "routes/resources.delete";
     page: "/resources/delete";
   };
-  "routes/resources.posts/route.tsx": {
+  "routes/resources.posts.tsx": {
     id: "routes/resources.posts";
     page: "/resources/posts";
   };
@@ -113,7 +113,7 @@ type RouteFiles = {
     id: "routes/privacy-policy";
     page: "/privacy-policy";
   };
-  "routes/resources.edit/route.tsx": {
+  "routes/resources.edit.tsx": {
     id: "routes/resources.edit";
     page: "/resources/edit";
   };
@@ -141,63 +141,63 @@ type RouteFiles = {
     id: "routes/terms";
     page: "/terms";
   };
-  "routes/_app/route.tsx": {
+  "routes/_app.tsx": {
     id: "routes/_app";
     page: "/dashboard" | "/dashboard/profile-settings" | "/profile" | "/profile/settings/account-settings" | "/profile/:username/favorite" | "/profile/:username" | "/profile/settings" | "/search" | "/posts" | "/posts/:postId" | "/posts/new";
   };
-  "routes/_app.dashboard/route.tsx": {
+  "routes/_app.dashboard.tsx": {
     id: "routes/_app.dashboard";
     page: "/dashboard" | "/dashboard/profile-settings";
   };
-  "routes/_app.dashboard.profile-settings/route.tsx": {
+  "routes/_app.dashboard.profile-settings.tsx": {
     id: "routes/_app.dashboard.profile-settings";
     page: "/dashboard/profile-settings";
   };
-  "routes/_app.dashboard._index/route.tsx": {
+  "routes/_app.dashboard._index.tsx": {
     id: "routes/_app.dashboard._index";
     page: "/dashboard";
   };
-  "routes/_app.profile/route.tsx": {
+  "routes/_app.profile.tsx": {
     id: "routes/_app.profile";
     page: "/profile" | "/profile/settings/account-settings" | "/profile/:username/favorite" | "/profile/:username" | "/profile/settings";
   };
-  "routes/_app.profile.settings_.account-settings/route.tsx": {
+  "routes/_app.profile.settings_.account-settings.tsx": {
     id: "routes/_app.profile.settings_.account-settings";
     page: "/profile/settings/account-settings";
   };
-  "routes/_app.profile.$username_.favorite/route.tsx": {
+  "routes/_app.profile.$username_.favorite.tsx": {
     id: "routes/_app.profile.$username_.favorite";
     page: "/profile/:username/favorite";
   };
-  "routes/_app.profile.$username/route.tsx": {
+  "routes/_app.profile.$username.tsx": {
     id: "routes/_app.profile.$username";
     page: "/profile/:username";
   };
-  "routes/_app.profile.settings/route.tsx": {
+  "routes/_app.profile.settings.tsx": {
     id: "routes/_app.profile.settings";
     page: "/profile/settings";
   };
-  "routes/_app.search/route.tsx": {
+  "routes/_app.search.tsx": {
     id: "routes/_app.search";
     page: "/search";
   };
-  "routes/_app.search._index/route.tsx": {
+  "routes/_app.search._index.tsx": {
     id: "routes/_app.search._index";
     page: "/search";
   };
-  "routes/_app.posts/route.tsx": {
+  "routes/_app.posts.tsx": {
     id: "routes/_app.posts";
     page: "/posts" | "/posts/:postId" | "/posts/new";
   };
-  "routes/_app.posts.$postId/route.tsx": {
+  "routes/_app.posts.$postId.tsx": {
     id: "routes/_app.posts.$postId";
     page: "/posts/:postId";
   };
-  "routes/_app.posts._index/route.tsx": {
+  "routes/_app.posts._index.tsx": {
     id: "routes/_app.posts._index";
     page: "/posts";
   };
-  "routes/_app.posts.new/route.tsx": {
+  "routes/_app.posts.new.tsx": {
     id: "routes/_app.posts.new";
     page: "/posts/new";
   };
@@ -205,31 +205,31 @@ type RouteFiles = {
 
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
-  "routes/resources.favorite": typeof import("./app/routes/resources.favorite/route.tsx");
-  "routes/resources.replies": typeof import("./app/routes/resources.replies/route.tsx");
-  "routes/resources.delete": typeof import("./app/routes/resources.delete/route.tsx");
-  "routes/resources.posts": typeof import("./app/routes/resources.posts/route.tsx");
+  "routes/resources.favorite": typeof import("./app/routes/resources.favorite.tsx");
+  "routes/resources.replies": typeof import("./app/routes/resources.replies.tsx");
+  "routes/resources.delete": typeof import("./app/routes/resources.delete.tsx");
+  "routes/resources.posts": typeof import("./app/routes/resources.posts.tsx");
   "routes/privacy-policy": typeof import("./app/routes/privacy-policy.tsx");
-  "routes/resources.edit": typeof import("./app/routes/resources.edit/route.tsx");
+  "routes/resources.edit": typeof import("./app/routes/resources.edit.tsx");
   "routes/robots[.]txt": typeof import("./app/routes/robots[.]txt.tsx");
   "routes/register": typeof import("./app/routes/register.tsx");
   "routes/_index": typeof import("./app/routes/_index.tsx");
   "routes/logout": typeof import("./app/routes/logout.tsx");
   "routes/login": typeof import("./app/routes/login.tsx");
   "routes/terms": typeof import("./app/routes/terms.tsx");
-  "routes/_app": typeof import("./app/routes/_app/route.tsx");
-  "routes/_app.dashboard": typeof import("./app/routes/_app.dashboard/route.tsx");
-  "routes/_app.dashboard.profile-settings": typeof import("./app/routes/_app.dashboard.profile-settings/route.tsx");
-  "routes/_app.dashboard._index": typeof import("./app/routes/_app.dashboard._index/route.tsx");
-  "routes/_app.profile": typeof import("./app/routes/_app.profile/route.tsx");
-  "routes/_app.profile.settings_.account-settings": typeof import("./app/routes/_app.profile.settings_.account-settings/route.tsx");
-  "routes/_app.profile.$username_.favorite": typeof import("./app/routes/_app.profile.$username_.favorite/route.tsx");
-  "routes/_app.profile.$username": typeof import("./app/routes/_app.profile.$username/route.tsx");
-  "routes/_app.profile.settings": typeof import("./app/routes/_app.profile.settings/route.tsx");
-  "routes/_app.search": typeof import("./app/routes/_app.search/route.tsx");
-  "routes/_app.search._index": typeof import("./app/routes/_app.search._index/route.tsx");
-  "routes/_app.posts": typeof import("./app/routes/_app.posts/route.tsx");
-  "routes/_app.posts.$postId": typeof import("./app/routes/_app.posts.$postId/route.tsx");
-  "routes/_app.posts._index": typeof import("./app/routes/_app.posts._index/route.tsx");
-  "routes/_app.posts.new": typeof import("./app/routes/_app.posts.new/route.tsx");
+  "routes/_app": typeof import("./app/routes/_app.tsx");
+  "routes/_app.dashboard": typeof import("./app/routes/_app.dashboard.tsx");
+  "routes/_app.dashboard.profile-settings": typeof import("./app/routes/_app.dashboard.profile-settings.tsx");
+  "routes/_app.dashboard._index": typeof import("./app/routes/_app.dashboard._index.tsx");
+  "routes/_app.profile": typeof import("./app/routes/_app.profile.tsx");
+  "routes/_app.profile.settings_.account-settings": typeof import("./app/routes/_app.profile.settings_.account-settings.tsx");
+  "routes/_app.profile.$username_.favorite": typeof import("./app/routes/_app.profile.$username_.favorite.tsx");
+  "routes/_app.profile.$username": typeof import("./app/routes/_app.profile.$username.tsx");
+  "routes/_app.profile.settings": typeof import("./app/routes/_app.profile.settings.tsx");
+  "routes/_app.search": typeof import("./app/routes/_app.search.tsx");
+  "routes/_app.search._index": typeof import("./app/routes/_app.search._index.tsx");
+  "routes/_app.posts": typeof import("./app/routes/_app.posts.tsx");
+  "routes/_app.posts.$postId": typeof import("./app/routes/_app.posts.$postId.tsx");
+  "routes/_app.posts._index": typeof import("./app/routes/_app.posts._index.tsx");
+  "routes/_app.posts.new": typeof import("./app/routes/_app.posts.new.tsx");
 };
