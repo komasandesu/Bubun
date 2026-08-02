@@ -18,9 +18,8 @@ import ReplyForm from '~/routes/components/ReplyForm';
 import ReplyList from '~/routes/components/ReplyList';
 import PostItem from '~/routes/components/PostItem';
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { post } = data as any;
+export const meta: MetaFunction = (args: any) => {
+  const { post } = args?.data || args?.loaderData || {};
 
   return [
     { title: `bubutter | ${post?.originalString}の${post?.substring}の部分` },
