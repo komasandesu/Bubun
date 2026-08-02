@@ -2,6 +2,7 @@
 FROM node:24-alpine AS builder
 
 WORKDIR /app
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable
 
 # すべての依存関係（devDependencies含む）をインストール
@@ -17,6 +18,7 @@ RUN yarn build
 FROM node:24-alpine AS runner
 
 WORKDIR /app
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable
 
 ENV NODE_ENV=production
