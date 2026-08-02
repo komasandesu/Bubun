@@ -9,8 +9,8 @@ export const meta: MetaFunction = () => {
 
 export default function PrivacyPolicyOfService() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">プライバシーポリシー</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl text-slate-800 dark:text-slate-200">
+      <h1 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white border-b pb-3 border-slate-200 dark:border-slate-700">プライバシーポリシー</h1>
 
       <section className="mb-6">
         <p className="mb-4">
@@ -18,7 +18,7 @@ export default function PrivacyPolicyOfService() {
           以下のとおりプライバシーポリシー（以下，「本ポリシー」といいます。）を定めます。
         </p>
 
-        <h3 className="text-xl font-semibold mb-4">第1条（個人情報）</h3>
+        <h3 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第1条（個人情報）</h3>
         <p className="mb-4">
           「個人情報」とは，個人情報保護法にいう「個人情報」を指すものとし，生存する個人に関する情報であって，
           当該情報に含まれる氏名，生年月日，住所，電話番号，
@@ -26,10 +26,10 @@ export default function PrivacyPolicyOfService() {
           及び健康保険証の保険者番号などの当該情報単体から特定の個人を識別できる情報（個人識別情報）を指します。
         </p>
 
-        <h3 className="text-xl font-semibold mb-4">第2条（個人情報の利用）</h3>
+        <h3 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第2条（個人情報の利用）</h3>
         <p className="mb-4">当サイトでは個人情報を扱っておりません。</p>
 
-        <h3 className="text-xl font-semibold mb-4">第3条（利用目的の変更）</h3>
+        <h3 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第3条（利用目的の変更）</h3>
         <ol className="list-decimal pl-6 mb-4">
           <li className="mb-2">
             当サイトは，利用目的が変更前と関連性を有すると合理的に認められる場合に限り，個人情報の利用目的を変更するものとします。
@@ -40,7 +40,7 @@ export default function PrivacyPolicyOfService() {
           </li>
         </ol>
 
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第4条（プライバシーポリシーの変更）
         </h3>
         <ol className="list-decimal pl-6 mb-4">
@@ -54,7 +54,7 @@ export default function PrivacyPolicyOfService() {
           </li>
         </ol>
 
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第5条（お問い合わせ窓口）
         </h3>
         <p className="mb-4">

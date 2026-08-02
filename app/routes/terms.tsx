@@ -9,8 +9,8 @@ export const meta: MetaFunction = () => {
 
 export default function TermsOfService() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">利用規約</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl text-slate-800 dark:text-slate-200">
+      <h1 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white border-b pb-3 border-slate-200 dark:border-slate-700">利用規約</h1>
 
       <section className="mb-6">
         <p className="mb-4">
@@ -19,7 +19,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">第1条（適用）</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第1条（適用）</h2>
         <ol className="list-decimal pl-6">
           <li className="mb-2">
             本規約は，ユーザーと当サイトとの間の本サービスの利用に関わる一切の関係に適用されるものとします。
@@ -34,7 +34,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">第2条（利用登録）</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第2条（利用登録）</h2>
         <ol className="list-decimal pl-6">
           <li className="mb-2">
             本サービスにおいては，登録希望者が本規約に同意の上，当サイトの定める方法によって利用登録を申請し，当サイトがこれを承認することによって，利用登録が完了するものとします。
@@ -53,7 +53,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第3条（ユーザーIDおよびパスワードの管理）
         </h2>
         <ol className="list-decimal pl-6">
@@ -74,7 +74,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第4条（利用料金および支払方法）
         </h2>
         <ol className="list-decimal pl-6">
@@ -89,7 +89,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">第5条（禁止事項）</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第5条（禁止事項）</h2>
         <p className="mb-4">
           ユーザーは，本サービスの利用にあたり，以下の行為をしてはなりません。
         </p>
@@ -129,7 +129,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第6条（本サービスの提供の停止等）
         </h2>
         <ol className="list-decimal pl-6">
@@ -155,7 +155,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第7条（利用制限および登録抹消）
         </h2>
         <ol className="list-decimal pl-6">
@@ -181,14 +181,14 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">第8条（退会）</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">第8条（退会）</h2>
         <p className="mb-4">
           ユーザーは，当サイトの定める退会手続により，本サービスから退会できるものとします。
         </p>
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第9条（保証の否認および免責事項）
         </h2>
         <ol className="list-decimal pl-6">
@@ -217,7 +217,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第10条（サービス内容の変更等）
         </h2>
         <p className="mb-4">
@@ -227,7 +227,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第11条（利用規約の変更）
         </h2>
         <p className="mb-4">
@@ -237,7 +237,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第12条（個人情報の取扱い）
         </h2>
         <p className="mb-4">
@@ -247,7 +247,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第13条（通知または連絡）
         </h2>
         <p className="mb-4">
@@ -258,7 +258,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第14条（権利義務の譲渡の禁止）
         </h2>
         <p className="mb-4">
@@ -268,7 +268,7 @@ export default function TermsOfService() {
       </section>
 
       <section className="mb-6">
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
           第15条（準拠法・裁判管轄）
         </h2>
         <ol className="list-decimal pl-6">
