@@ -5,6 +5,8 @@ RUN ulimit -n 10000
 # 作業ディレクトリを設定
 WORKDIR /app
 
+RUN corepack enable
+
 
 # ルートディレクトリから package.json と package-lock.json をコンテナにコピー
 # COPY ./package*.json /app/
