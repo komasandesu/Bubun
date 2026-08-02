@@ -15,6 +15,8 @@ services:
       dockerfile: Dockerfile.develop
     # command: sh -c "npx prisma db push && npx prisma generate && yarn dev"
     command: sh -c "yarn dev --host 0.0.0.0"
+    env_file:
+      - .env
     environment:
       NODE_ENV: development
       # DATABASE_URL: postgresql://user:password@db:5432/mydatabase
