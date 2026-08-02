@@ -1,4 +1,3 @@
-// app/routes/profile.$username.tsx
 import { type LoaderFunctionArgs } from 'react-router';
 import { prisma } from '~/models/db.server';
 import { useLoaderData, Link, Form } from 'react-router';
@@ -6,7 +5,7 @@ import { postRepository } from '~/models/post.server';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { commitSession } from '~/services/session.server';
-import PostCard from './components/PostCard';
+import PostCard from '~/routes/components/PostCard';
 
 type PostCardProps = {
   id: number;
@@ -34,8 +33,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       id: true,
       name: true,
       createdAt: true,
-      profile: true, // 追加
-      twitterId: true, // 追加
+      profile: true,
+      twitterId: true,
     },
   });
 
@@ -47,7 +46,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const profileUserWithFormattedDate = {
     ...profileUser,
     createdAt: new Date(profileUser.createdAt).toLocaleString('ja-JP', {
-      /* ... */
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
     }),
   };
 
@@ -65,7 +71,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   ).map((post) => ({
     ...post,
     createdAt: new Date(post.createdAt).toLocaleString('ja-JP', {
-      /* ... */
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
     }),
   }));
 
@@ -171,7 +184,6 @@ export default function UserProfile() {
                 type="submit"
                 className="flex items-center bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition dark:bg-red-600 dark:hover:bg-red-700"
               >
-                {/* ログアウトアイコン */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -219,7 +231,6 @@ export default function UserProfile() {
 
       {/* ページネーション */}
       <div className="flex justify-center space-x-2 mt-4">
-        {/* 最初のページ */}
         {page > 1 && (
           <Link
             to="?page=1"
@@ -233,10 +244,8 @@ export default function UserProfile() {
           </Link>
         )}
 
-        {/* 省略記号 */}
         {page > 3 && <span className="px-2 dark:text-gray-400">…</span>}
 
-        {/* 現在のページの前後 */}
         {page > 2 && (
           <Link
             to={`?page=${page - 1}`}
@@ -246,7 +255,6 @@ export default function UserProfile() {
           </Link>
         )}
 
-        {/* 現在のページ */}
         <span className="px-4 py-2 border rounded bg-blue-500 text-white">
           {page}
         </span>
@@ -260,12 +268,10 @@ export default function UserProfile() {
           </Link>
         )}
 
-        {/* 省略記号 */}
         {page < totalPages - 2 && (
           <span className="px-2 dark:text-gray-400">…</span>
         )}
 
-        {/* 最後のページ */}
         {page < totalPages - 1 && (
           <Link
             to={`?page=${totalPages}`}

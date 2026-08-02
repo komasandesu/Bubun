@@ -7,7 +7,7 @@ import {
   useLoaderData,
 } from 'react-router';
 import { requireAuthenticatedUser } from '~/services/auth.server';
-import { prisma } from '../models/db.server';
+import { prisma } from '~/models/db.server';
 import { commitSession } from '~/services/session.server';
 
 interface ActionData {
@@ -20,9 +20,7 @@ interface LoaderData {
   twitterId: string | null;
 }
 
-// Loader: 現在のプロフィール情報を取得
 export async function loader({ request }: LoaderFunctionArgs) {
-  // user と session を受け取る
   const { user, session } = await requireAuthenticatedUser(request);
 
   const userData = await prisma.user.findUnique({
@@ -39,16 +37,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     twitterId: userData.twitterId ?? null,
   });
 
-  // レスポンスにセッション更新ヘッダーを付ける
   const headers = new Headers({ 'Content-Type': 'application/json' });
   headers.set('Set-Cookie', await commitSession(session));
 
   return new Response(body, { status: 200, headers });
 }
 
-// Action: プロフィールを更新
 export async function action({ request }: ActionFunctionArgs) {
-  // ① user と session を受け取る！
   const { user, session } = await requireAuthenticatedUser(request);
 
   const formData = await request.formData();
@@ -56,7 +51,6 @@ export async function action({ request }: ActionFunctionArgs) {
   const twitterId = formData.get('twitterId') as string;
 
   const updateData: { profile?: string; twitterId?: string } = {};
-  // フィールドを空にできるように、nullチェックだけにする
   if (profile !== null) updateData.profile = profile;
   if (twitterId !== null) updateData.twitterId = twitterId;
 
@@ -67,14 +61,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const body = JSON.stringify({ success: 'プロフィールが更新されました。' });
 
-  // 成功レスポンスにもセッション更新ヘッダーを付ける
   const headers = new Headers({ 'Content-Type': 'application/json' });
   headers.set('Set-Cookie', await commitSession(session));
 
   return new Response(body, { status: 200, headers });
 }
 
-// コンポーネントは変更なしデース！
 export default function ProfileSettings() {
   const actionData = useActionData<ActionData>();
   const loaderData = useLoaderData<LoaderData>();
@@ -93,7 +85,6 @@ export default function ProfileSettings() {
         </p>
       )}
       <Form method="post" className="mt-6">
-        {/* プロフィール文のタイトル */}
         <label
           htmlFor="profile"
           className="text-lg font-semibold text-black dark:text-white mb-2 block"
@@ -104,11 +95,10 @@ export default function ProfileSettings() {
           name="profile"
           id="profile"
           placeholder="プロフィール"
-          defaultValue={loaderData.profile || ''} // nullの場合は空文字列を表示
+          defaultValue={loaderData.profile || ''}
           className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white mb-4"
         ></textarea>
 
-        {/* ツイッターIDのタイトル */}
         <label
           htmlFor="twitterId"
           className="text-lg font-semibold text-black dark:text-white mb-2 block"
@@ -122,7 +112,7 @@ export default function ProfileSettings() {
             name="twitterId"
             id="twitterId"
             placeholder="Twitter ID"
-            defaultValue={loaderData.twitterId || ''} // nullの場合は空文字列を表示
+            defaultValue={loaderData.twitterId || ''}
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-800 text-black dark:text-white"
           />
         </div>

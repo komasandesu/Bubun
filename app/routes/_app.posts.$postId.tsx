@@ -14,9 +14,9 @@ import {
 } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
 
-import ReplyForm from './components/ReplyForm';
-import ReplyList from './components/ReplyList';
-import PostItem from './components/PostItem';
+import ReplyForm from '~/routes/components/ReplyForm';
+import ReplyList from '~/routes/components/ReplyList';
+import PostItem from '~/routes/components/PostItem';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,7 +65,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     }
 
     const formattedPostDate = new Date(post.createdAt).toLocaleString('ja-JP', {
-      /* ... */
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
     });
 
     const [isFavorite, favoriteCount] = await Promise.all([
@@ -83,7 +90,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     ).map((p) => ({
       ...p,
       createdAt: new Date(p.createdAt).toLocaleString('ja-JP', {
-        /* ... */
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
       }),
     }));
 

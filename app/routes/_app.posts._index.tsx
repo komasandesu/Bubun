@@ -1,12 +1,10 @@
 import { useLoaderData, type LoaderFunction, useFetcher } from 'react-router';
-
-import { postRepository } from '../models/post.server';
-import { favoriteRepository } from '../models/favorite.server'; // お気に入りのリポジトリをインポート
-
-import PostCard from './components/PostCard';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { postRepository } from '~/models/post.server';
+import { favoriteRepository } from '~/models/favorite.server';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
+import PostCard from '~/routes/components/PostCard';
 
 export const loader: LoaderFunction = async ({ request }) => {
   // user と session を受け取る
