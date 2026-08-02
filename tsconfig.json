@@ -16,7 +16,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "target": "ES2022",
     "strict": true,
@@ -24,6 +24,7 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,
+    "rootDirs": [".", "./.react-router/types"],
 
     "paths": {
       "~/*": ["./app/*"]
