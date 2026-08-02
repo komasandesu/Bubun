@@ -4,7 +4,7 @@ RUN ulimit -n 10000
 
 # 作業ディレクトリを設定
 WORKDIR /app
-
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable
 
 
