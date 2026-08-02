@@ -1,6 +1,5 @@
-//app/routes/posts.new.tsx
 import { useLocation } from 'react-router';
-import PostForm from './components/PostForm';
+import PostForm from '~/routes/components/PostForm';
 
 export default function PostNew() {
   // クエリパラメータからエラーメッセージを取得

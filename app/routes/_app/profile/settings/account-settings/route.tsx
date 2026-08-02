@@ -6,7 +6,7 @@ import {
   redirect,
 } from 'react-router';
 import { requireAuthenticatedUser } from '~/services/auth.server';
-import { prisma } from '../models/db.server';
+import { prisma } from '~/models/db.server';
 import bcrypt from 'bcrypt';
 import { commitSession } from '~/services/session.server';
 

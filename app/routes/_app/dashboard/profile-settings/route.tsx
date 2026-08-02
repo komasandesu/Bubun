@@ -5,7 +5,7 @@ import {
   redirect,
 } from 'react-router';
 import { requireAuthenticatedUser } from '~/services/auth.server';
-import { prisma } from '../models/db.server';
+import { prisma } from '~/models/db.server';
 import bcrypt from 'bcrypt';
 import { commitSession } from '~/services/session.server';
 
@@ -34,7 +34,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
   if (!userData) {
     const body = JSON.stringify({ error: 'ユーザー情報が見つかりません。' });
-    // エラーの時も new Response() でヘッダーを付けて返す(status: 404 Not Found)
     return new Response(body, { status: 404, headers: responseHeaders });
   }
 
@@ -42,7 +41,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const body = JSON.stringify({
       error: '現在のパスワードを入力してください。',
     });
-    // (status: 400 Bad Request)
     return new Response(body, { status: 400, headers: responseHeaders });
   }
 

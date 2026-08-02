@@ -1,4 +1,3 @@
-// app/routes/profile.$username_.favorite.tsx
 import { type LoaderFunctionArgs } from 'react-router';
 import { prisma } from '~/models/db.server';
 import { useLoaderData, Link } from 'react-router';
@@ -6,7 +5,7 @@ import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { commitSession } from '~/services/session.server';
-import PostCard from './components/PostCard';
+import PostCard from '~/routes/components/PostCard';
 
 type PostCardProps = {
   id: number;
@@ -105,8 +104,8 @@ export default function UserFavorites() {
                   originalString={favorite.originalString}
                   substring={favorite.substring}
                   createdAt={favorite.createdAt}
-                  initialIsFavorite={favorite.initialIsFavorite} // 初期のお気に入り状態
-                  initialFavoriteCount={favorite.initialFavoriteCount} // 初期のお気に入り数
+                  initialIsFavorite={favorite.initialIsFavorite}
+                  initialFavoriteCount={favorite.initialFavoriteCount}
                 />
               </li>
             ))
@@ -118,7 +117,6 @@ export default function UserFavorites() {
 
       {/* ページネーション */}
       <div className="flex justify-center space-x-2 mt-4">
-        {/* 最初のページ */}
         {page > 1 && (
           <Link
             to="?page=1"
@@ -132,10 +130,8 @@ export default function UserFavorites() {
           </Link>
         )}
 
-        {/* 省略記号 */}
         {page > 3 && <span className="px-2 dark:text-white">…</span>}
 
-        {/* 現在のページの前後 */}
         {page > 2 && (
           <Link
             to={`?page=${page - 1}`}
@@ -145,7 +141,6 @@ export default function UserFavorites() {
           </Link>
         )}
 
-        {/* 現在のページ */}
         <span className="px-4 py-2 border rounded bg-blue-500 text-white dark:bg-blue-600">
           {page}
         </span>
@@ -159,12 +154,10 @@ export default function UserFavorites() {
           </Link>
         )}
 
-        {/* 省略記号 */}
         {page < totalPages - 2 && (
           <span className="px-2 dark:text-white">…</span>
         )}
 
-        {/* 最後のページ */}
         {page < totalPages - 1 && (
           <Link
             to={`?page=${totalPages}`}
@@ -179,7 +172,6 @@ export default function UserFavorites() {
         )}
       </div>
 
-      {/* プロフィールへのリンク */}
       <Link
         to={`/profile/${profileUser.name}`}
         className="text-blue-600 hover:underline mt-4 dark:text-blue-400"

@@ -1,38 +1,33 @@
-// app/routes/profile.tsx
 import { Outlet, useLoaderData } from 'react-router';
 import type { LoaderFunction } from 'react-router';
 import type { User } from '@prisma/client';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
-import Header from './components/Header';
+import Header from '../components/Header';
 
-// loaderが返すデータの型を定義しておく
 interface LoaderData {
   user: User | null;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  // user と session を受け取る
   const { user, session } = await getAuthenticatedUserOrNull(request);
-
-  // user情報（もしくはnull）をJSON文字列にする
   const body = JSON.stringify({ user });
 
-  // ヘッダーにセッション更新情報を付ける
   const headers = new Headers({ 'Content-Type': 'application/json' });
   headers.set('Set-Cookie', await commitSession(session));
 
   return new Response(body, { headers });
 };
 
-export default function Profile() {
-  // loaderが返す型を指定して、安全にデータを取得
+export default function AppLayout() {
   const { user } = useLoaderData<LoaderData>();
 
   return (
     <div className="container mx-auto p-4 mt-16">
-      <Header path="posts" title="ホーム" username={user?.name || null} />
-      <Outlet />
+      <Header path="posts" title="bubutter" username={user?.name || null} />
+      <main>
+        <Outlet />
+      </main>
     </div>
   );
 }
