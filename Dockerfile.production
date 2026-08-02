@@ -2,10 +2,11 @@
 FROM node:24-alpine AS builder
 
 WORKDIR /app
+RUN corepack enable
 
 # すべての依存関係（devDependencies含む）をインストール
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable
 
 # ソースコードのコピーとビルド実行
 COPY . .
@@ -16,13 +17,14 @@ RUN yarn build
 FROM node:24-alpine AS runner
 
 WORKDIR /app
+RUN corepack enable
 
 ENV NODE_ENV=production
 ENV CHOKIDAR_USEPOLLING=true
 
 # 本番環境用の依存関係のみをインストール
 COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile
+RUN yarn install --immutable
 
 # Prismaの実行に必要なOpenSSLをインストール
 RUN apk add --no-cache openssl
