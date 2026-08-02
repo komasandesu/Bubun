@@ -5,3 +5,8 @@ node_modules
 .env
 .react-router
 .vscode
+
+# OS & Logs & IDEs
+.DS_Store
+*.log
+.idea
