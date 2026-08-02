@@ -5,12 +5,12 @@ WORKDIR /app
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable
 
-# すべての依存関係（devDependencies含む）をインストール
-COPY package.json yarn.lock ./
-RUN yarn install --immutable
-
-# ソースコードのコピーとビルド実行
+# 依存関係とソースコードのコピー
+COPY package.json yarn.lock .yarnrc.yml ./
 COPY . .
+
+# 依存関係のインストールとビルド
+RUN yarn install --immutable
 RUN npx prisma generate
 RUN yarn build
 
@@ -22,22 +22,16 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable
 
 ENV NODE_ENV=production
-ENV CHOKIDAR_USEPOLLING=true
-
-# 本番環境用の依存関係のみをインストール
-COPY package.json yarn.lock ./
-RUN yarn install --immutable
 
 # Prismaの実行に必要なOpenSSLをインストール
 RUN apk add --no-cache openssl
 
-# ビルド成果物とPrismaスキーマをビルド用ステージからコピー
+# 設定ファイルとビルド成果物、node_modulesのコピー
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
-
-# 本番用のPrismaクライアントを再生成
-RUN npx prisma generate
 
 EXPOSE 3000
 
