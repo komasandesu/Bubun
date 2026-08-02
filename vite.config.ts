@@ -3,7 +3,19 @@ import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [
+    {
+      name: 'request-logger',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          console.log(`[HTTP] ${req.method} ${req.url}`);
+          next();
+        });
+      },
+    },
+    reactRouter(),
+    tsconfigPaths(),
+  ],
   server: {
     host: true, // これで全てのインターフェースでアクセスできるようになります
     port: 5173, // 必要に応じてポート番号を指定
