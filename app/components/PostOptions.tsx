@@ -1,7 +1,7 @@
-// app/routes/components/PostOptions.tsx
-import { useState } from 'react';
+// app/components/PostOptions.tsx
 import ReplyForm from './ReplyForm';
 import DeleteButton from './PostDeleteButton';
+import { useModal } from '~/hooks/useModal';
 
 interface PostOptionsProps {
   postId: number;
@@ -17,27 +17,17 @@ const PostOptions: React.FC<PostOptionsProps> = ({
   parentId,
   authorId,
   currentUserId,
+  originalString,
+  substring,
 }) => {
-  const [isReplyModalOpen, setEditReplyOpen] = useState(false);
-  const [isOptionsOpen, setOptionsOpen] = useState(false);
-
-  // const toggleEditModal = () => {
-  //     setEditModalOpen((prev) => !prev);
-  // };
-
-  const toggleReplyModal = () => {
-    setEditReplyOpen((prev) => !prev);
-  };
-
-  const toggleOptions = () => {
-    setOptionsOpen((prev) => !prev); // メニューの開閉状態を切り替える
-  };
+  const replyModal = useModal(false);
+  const optionsMenu = useModal(false);
 
   return (
     <div className="relative">
       {/* オプションボタン */}
       <button
-        onClick={toggleOptions}
+        onClick={optionsMenu.toggle}
         className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
       >
         <svg
@@ -62,57 +52,40 @@ const PostOptions: React.FC<PostOptionsProps> = ({
       </button>
 
       {/* オプションメニュー: 必要に応じて表示 */}
-      {isOptionsOpen && (
-        <div className="absolute top-full mt-2 right-0 flex space-x-2 bg-white shadow-lg rounded p-2 dark:bg-gray-800 dark:text-white">
+      {optionsMenu.isOpen && (
+        <div className="absolute top-full mt-2 right-0 flex space-x-2 bg-white shadow-lg rounded p-2 dark:bg-gray-800 dark:text-white z-10">
           <button
-            onClick={toggleReplyModal}
+            onClick={replyModal.open}
             className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700"
           >
             返信
           </button>
 
           {/* 編集・削除: currentUserId === authorId の場合のみ表示 */}
-          {currentUserId === authorId && (
-            <>
-              {/* <button
-                                onClick={toggleEditModal}
-                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-700"
-                            >
-                                編集
-                            </button> */}
-              <DeleteButton postId={postId} />
-            </>
-          )}
+          {currentUserId === authorId && <DeleteButton postId={postId} />}
         </div>
       )}
 
-      {/* 編集モーダルの表示 */}
-      {/* {isEditModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
-                    <div className="bg-white p-4 rounded shadow-md dark:bg-gray-800 dark:text-white">
-                        <PostEditForm 
-                            postId={postId} 
-                            initialOriginalString={originalString || ""} // デフォルト値を設定
-                            initialSubstring={substring || ""} // デフォルト値を設定
-                        />
-                        <button
-                            onClick={toggleEditModal}
-                            className="mt-4 bg-red-500 text-white py-2 px-4 rounded dark:bg-red-600 dark:hover:bg-red-700"
-                        >
-                            閉じる
-                        </button>
-                    </div>
-                </div>
-            )} */}
       {/* 返信モーダルの表示 */}
-      {isReplyModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-75">
-          <div className="bg-white p-4 rounded shadow-md dark:bg-gray-800 dark:text-white">
+      {replyModal.isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-transparent z-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-2xl dark:bg-gray-800 dark:text-white max-w-lg w-full border border-gray-300 dark:border-gray-600">
+            {(originalString || substring) && (
+              <div className="mb-4 p-3 bg-gray-100/70 dark:bg-gray-700/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 opacity-80">
+                <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1 font-semibold">
+                  💬 返信先
+                </span>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  {originalString} の {substring} の部分
+                </p>
+              </div>
+            )}
+
             {/* 親投稿のIDがない場合は、投稿IDをそのまま使う */}
-            <ReplyForm postId={parentId || postId} onClose={toggleReplyModal} />
+            <ReplyForm postId={parentId || postId} onClose={replyModal.close} />
             <button
-              onClick={toggleReplyModal}
-              className="mt-4 bg-red-500 text-white py-2 px-4 rounded dark:bg-red-600 dark:hover:bg-red-700"
+              onClick={replyModal.close}
+              className="mt-2 w-full bg-gray-200 text-gray-700 hover:bg-gray-300 py-2 px-4 rounded transition dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 font-medium"
             >
               閉じる
             </button>

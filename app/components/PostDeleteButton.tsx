@@ -1,4 +1,4 @@
-// app/routes/components/PostDeleteButton.tsx
+// app/components/PostDeleteButton.tsx
 import { Form } from 'react-router';
 
 interface DeleteButtonProps {

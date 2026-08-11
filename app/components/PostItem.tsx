@@ -34,8 +34,7 @@ export default function PostItem({
         className="text-2xl font-sans mb-2 text-black break-words dark:text-gray-200"
         style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}
       >
-        {originalString} <span className="mx-0.5">の</span> {substring}{' '}
-        <span className="mx-0.5">の部分</span>
+        {originalString} の {substring} の部分
       </h1>
 
       <p className="dark:text-gray-400">

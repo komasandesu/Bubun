@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router';
-import PostForm from '~/routes/components/PostForm';
+import PostForm from '~/components/PostForm';
 
 export default function PostNew() {
   // クエリパラメータからエラーメッセージを取得
