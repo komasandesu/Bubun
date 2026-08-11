@@ -1,10 +1,11 @@
 import { type LoaderFunctionArgs } from 'react-router';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { postRepository } from '~/models/post.server';
-import { useLoaderData, Link } from 'react-router';
+import { useLoaderData } from 'react-router';
 import { favoriteRepository } from '~/models/favorite.server';
 import { commitSession } from '~/services/session.server';
 import PostCard from '~/components/PostCard';
+import Pagination from '~/components/Pagination';
 
 type PostCardProps = {
   id: number;
@@ -93,51 +94,11 @@ export default function SearchResults() {
         )}
       </ul>
 
-      <div className="flex justify-center space-x-2 mt-4">
-        {page > 2 && (
-          <Link
-            to={`?query=${query}&page=1`}
-            className={`px-4 py-2 border rounded ${page === 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
-          >
-            1
-          </Link>
-        )}
-
-        {page > 3 && <span className="px-2">…</span>}
-
-        {page > 1 && (
-          <Link
-            to={`?query=${query}&page=${page - 1}`}
-            className="px-4 py-2 border rounded bg-white text-blue-500"
-          >
-            {page - 1}
-          </Link>
-        )}
-
-        <span className="px-4 py-2 border rounded bg-blue-500 text-white">
-          {page}
-        </span>
-
-        {page < totalPages && (
-          <Link
-            to={`?query=${query}&page=${page + 1}`}
-            className="px-4 py-2 border rounded bg-white text-blue-500"
-          >
-            {page + 1}
-          </Link>
-        )}
-
-        {page < totalPages - 2 && <span className="px-2">…</span>}
-
-        {page < totalPages - 1 && (
-          <Link
-            to={`?query=${query}&page=${totalPages}`}
-            className={`px-4 py-2 border rounded ${page === totalPages ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`}
-          >
-            {totalPages}
-          </Link>
-        )}
-      </div>
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        extraQueryParams={{ query }}
+      />
     </div>
   );
 }

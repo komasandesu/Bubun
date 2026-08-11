@@ -6,6 +6,7 @@ import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { commitSession } from '~/services/session.server';
 import PostCard from '~/components/PostCard';
+import Pagination from '~/components/Pagination';
 
 type PostCardProps = {
   id: number;
@@ -229,62 +230,7 @@ export default function UserProfile() {
         )}
       </ul>
 
-      {/* ページネーション */}
-      <div className="flex justify-center space-x-2 mt-4">
-        {page > 1 && (
-          <Link
-            to="?page=1"
-            className={`px-4 py-2 border rounded ${
-              page === 1
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400'
-            }`}
-          >
-            1
-          </Link>
-        )}
-
-        {page > 3 && <span className="px-2 dark:text-gray-400">…</span>}
-
-        {page > 2 && (
-          <Link
-            to={`?page=${page - 1}`}
-            className="px-4 py-2 border rounded bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400"
-          >
-            {page - 1}
-          </Link>
-        )}
-
-        <span className="px-4 py-2 border rounded bg-blue-500 text-white">
-          {page}
-        </span>
-
-        {page < totalPages && (
-          <Link
-            to={`?page=${page + 1}`}
-            className="px-4 py-2 border rounded bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400"
-          >
-            {page + 1}
-          </Link>
-        )}
-
-        {page < totalPages - 2 && (
-          <span className="px-2 dark:text-gray-400">…</span>
-        )}
-
-        {page < totalPages - 1 && (
-          <Link
-            to={`?page=${totalPages}`}
-            className={`px-4 py-2 border rounded ${
-              page === totalPages
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-blue-500 dark:bg-gray-800 dark:text-blue-400'
-            }`}
-          >
-            {totalPages}
-          </Link>
-        )}
-      </div>
+      <Pagination currentPage={page} totalPages={totalPages} />
     </div>
   );
 }

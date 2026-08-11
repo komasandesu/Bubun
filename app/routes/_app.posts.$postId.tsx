@@ -18,6 +18,7 @@ import ReplyForm from '~/components/ReplyForm';
 import ReplyList from '~/components/ReplyList';
 import PostItem from '~/components/PostItem';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const meta: MetaFunction = (args: any) => {
   const { post } = args?.data || args?.loaderData || {};
 
