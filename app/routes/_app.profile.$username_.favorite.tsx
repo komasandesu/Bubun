@@ -18,7 +18,7 @@ type PostCardProps = {
   initialFavoriteCount: number; // 初期のお気に入り数
 };
 
-const FAVORITES_PER_PAGE = 10; // お気に入りの投稿数
+const FAVORITES_PER_PAGE = 1; // お気に入りの投稿数
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   // user と session を受け取る

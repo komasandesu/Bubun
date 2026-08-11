@@ -17,7 +17,7 @@ type PostCardProps = {
   initialFavoriteCount: number;
 };
 
-const POSTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 1;
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { user, session } = await getAuthenticatedUserOrNull(request);
