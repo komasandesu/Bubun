@@ -1,4 +1,4 @@
-// app/routes/components/ReplyList.tsx
+// app/components/ReplyList.tsx
 import { User } from '.prisma/client';
 import PostItem from './PostItem';
 

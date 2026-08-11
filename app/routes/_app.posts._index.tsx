@@ -1,10 +1,10 @@
-import { useLoaderData, type LoaderFunction, useFetcher } from 'react-router';
-import { useCallback, useState } from 'react';
+import { useLoaderData, type LoaderFunction } from 'react-router';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
-import PostCard from '~/routes/components/PostCard';
+import PostCard from '~/components/PostCard';
+import { useInfiniteScroll } from '~/hooks/useInfiniteScroll';
 
 export const loader: LoaderFunction = async ({ request }) => {
   // user と session を受け取る
@@ -48,93 +48,38 @@ export const loader: LoaderFunction = async ({ request }) => {
   return new Response(body, { status: 200, headers });
 };
 
-// Loader の返り値の型
+// Loader の型
+type PostItemType = {
+  id: number;
+  parentId: number | null;
+  originalString: string;
+  substring: string;
+  createdAt: string;
+  initialIsFavorite: boolean;
+  initialFavoriteCount: number;
+};
+
 type LoaderData = {
-  posts: {
-    id: number;
-    parentId: number | null;
-    originalString: string;
-    substring: string;
-    createdAt: string;
-    initialIsFavorite: boolean;
-    initialFavoriteCount: number;
-  }[];
+  posts: PostItemType[];
   hasNextPage: boolean;
 };
 
 export default function PostIndex() {
   const { posts: initialPosts, hasNextPage: initialHasNextPage } =
     useLoaderData<LoaderData>();
-  const [posts, setPosts] = useState(initialPosts);
-  const [lastId, setLastId] = useState<number | null>(
-    initialPosts[initialPosts.length - 1]?.id || null
-  );
-  const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
-  const [loadingDelay, setLoadingDelay] = useState(false);
 
-  const fetcher = useFetcher<LoaderData>();
-
-  // fetcher.data の変更をレンダー中に同期 (useEffect 不要)
-  const [prevFetcherData, setPrevFetcherData] = useState(fetcher.data);
-  if (fetcher.data && fetcher.data !== prevFetcherData) {
-    setPrevFetcherData(fetcher.data);
-    if (fetcher.data.posts && fetcher.data.posts.length > 0) {
-      const newPosts = fetcher.data.posts;
-      setPosts((prevPosts) => {
-        const prevIds = new Set(prevPosts.map((p) => p.id));
-        const filtered = newPosts.filter((p) => !prevIds.has(p.id));
-        return [...prevPosts, ...filtered];
-      });
-      setLastId(newPosts[newPosts.length - 1]?.id || null);
-      setHasNextPage(fetcher.data.hasNextPage);
-    } else {
-      setHasNextPage(false);
-    }
-  }
-
-  const loading = fetcher.state !== 'idle';
-
-  const loadMorePosts = useCallback(() => {
-    if (!hasNextPage || fetcher.state !== 'idle' || loadingDelay) return;
-
-    setLoadingDelay(true);
-
-    const query =
-      lastId !== null ? `&lastId=${encodeURIComponent(lastId)}` : '';
-    fetcher.load(`/posts?index${query}`);
-
-    setTimeout(() => {
-      setLoadingDelay(false);
-    }, 1000);
-  }, [hasNextPage, fetcher, loadingDelay, lastId]);
-
-  // React 19 Callback Ref で IntersectionObserver を管理 (useEffect 不要)
-  const observerRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (!node) return;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (
-            entry.isIntersecting &&
-            hasNextPage &&
-            entry.intersectionRatio > 0.95
-          ) {
-            loadMorePosts();
-          }
-        },
-        { threshold: 0.95 }
-      );
-
-      observer.observe(node);
-
-      return () => {
-        observer.disconnect();
-      };
-    },
-    [hasNextPage, loadMorePosts]
-  );
+  const {
+    items: posts,
+    hasNextPage,
+    isLoading,
+    observerRef,
+  } = useInfiniteScroll<PostItemType>({
+    initialItems: initialPosts,
+    initialHasNextPage,
+    getItemPageUrl: (lastId) =>
+      `/posts?index${lastId !== null ? `&lastId=${encodeURIComponent(lastId)}` : ''}`,
+    getItemId: (item) => item.id,
+  });
 
   return (
     <div className="container mx-auto p-4">
@@ -153,8 +98,9 @@ export default function PostIndex() {
         ))}
       </div>
       <div ref={observerRef} className="loading-spinner, dark:text-gray-400">
-        {loading && hasNextPage && <p>Loading...</p>}
+        {isLoading && hasNextPage && <p>Loading...</p>}
       </div>
     </div>
   );
 }
+

@@ -4,7 +4,7 @@ import { postRepository } from '~/models/post.server';
 import { useLoaderData, Link } from 'react-router';
 import { favoriteRepository } from '~/models/favorite.server';
 import { commitSession } from '~/services/session.server';
-import PostCard from '~/routes/components/PostCard';
+import PostCard from '~/components/PostCard';
 
 type PostCardProps = {
   id: number;

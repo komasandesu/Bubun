@@ -1,6 +1,6 @@
-// app/routes/components/PostCard.tsx
+// app/components/PostCard.tsx
 import { Link } from 'react-router';
-import FavoriteButton from '~/routes/components/FavoriteButton';
+import FavoriteButton from '~/components/FavoriteButton';
 
 type PostCardProps = {
   id: number;
@@ -33,8 +33,7 @@ const PostCard: React.FC<PostCardProps> = ({
           maxWidth: '100%', // 必要に応じて調整可能
         }}
       >
-        {originalString} <span className="mx-0.5">の</span> {substring}{' '}
-        <span className="mx-0.5">の部分</span>
+        {originalString} の {substring} の部分
       </Link>
       <p className="text-gray-600 mb-4 dark:text-gray-400">{createdAt}</p>
       <div className="flex justify-between items-center">

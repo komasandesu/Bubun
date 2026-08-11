@@ -14,9 +14,9 @@ import {
 } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
 
-import ReplyForm from '~/routes/components/ReplyForm';
-import ReplyList from '~/routes/components/ReplyList';
-import PostItem from '~/routes/components/PostItem';
+import ReplyForm from '~/components/ReplyForm';
+import ReplyList from '~/components/ReplyList';
+import PostItem from '~/components/PostItem';
 
 export const meta: MetaFunction = (args: any) => {
   const { post } = args?.data || args?.loaderData || {};

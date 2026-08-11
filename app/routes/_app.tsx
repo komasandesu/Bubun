@@ -3,7 +3,7 @@ import type { LoaderFunction } from 'react-router';
 import type { User } from '@prisma/client';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
 import { commitSession } from '~/services/session.server';
-import Header from './components/Header';
+import Header from '~/components/Header';
 
 interface LoaderData {
   user: User | null;
