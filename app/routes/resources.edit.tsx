@@ -47,7 +47,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   // 3. フォームデータの取得
   const formData = await request.formData();
   const postIdStr = formData.get('postId') as string | null;
-  const originalString = (formData.get('originalString') as string | null)?.trim();
+  const originalString = (
+    formData.get('originalString') as string | null
+  )?.trim();
   const substring = (formData.get('substring') as string | null)?.trim();
   const redirectTo = formData.get('redirectTo') as string | null;
 
@@ -58,7 +60,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const errorHeaders = new Headers(headers.headers);
     errorHeaders.set('Content-Type', 'application/json');
     return new Response(
-      JSON.stringify({ error: 'Post ID, originalString, and substring are required' }),
+      JSON.stringify({
+        error: 'Post ID, originalString, and substring are required',
+      }),
       { status: 400, headers: errorHeaders }
     );
   }
@@ -86,7 +90,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     console.error('Error updating post:', error);
 
     if (error instanceof Error && error.message.includes('authorized')) {
-      return redirect(redirectTo || `/posts/${postId}?error=unauthorized`, headers);
+      return redirect(
+        redirectTo || `/posts/${postId}?error=unauthorized`,
+        headers
+      );
     }
 
     const errorHeaders = new Headers(headers.headers);
