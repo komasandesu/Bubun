@@ -1,5 +1,5 @@
 import { useLoaderData, type LoaderFunction, useFetcher } from 'react-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { postRepository } from '~/models/post.server';
 import { favoriteRepository } from '~/models/favorite.server';
 import { getAuthenticatedUserOrNull } from '~/services/auth.server';
@@ -70,27 +70,27 @@ export default function PostIndex() {
     initialPosts[initialPosts.length - 1]?.id || null
   );
   const [hasNextPage, setHasNextPage] = useState(initialHasNextPage);
-  const observerRef = useRef<HTMLDivElement>(null);
   const [loadingDelay, setLoadingDelay] = useState(false);
 
   const fetcher = useFetcher<LoaderData>();
 
-  useEffect(() => {
-    if (fetcher.data && fetcher.data.posts) {
+  // fetcher.data の変更をレンダー中に同期 (useEffect 不要)
+  const [prevFetcherData, setPrevFetcherData] = useState(fetcher.data);
+  if (fetcher.data && fetcher.data !== prevFetcherData) {
+    setPrevFetcherData(fetcher.data);
+    if (fetcher.data.posts && fetcher.data.posts.length > 0) {
       const newPosts = fetcher.data.posts;
-      if (newPosts.length > 0) {
-        setPosts((prevPosts) => {
-          const prevIds = new Set(prevPosts.map((p) => p.id));
-          const filtered = newPosts.filter((p) => !prevIds.has(p.id));
-          return [...prevPosts, ...filtered];
-        });
-        setLastId(newPosts[newPosts.length - 1]?.id || null);
-        setHasNextPage(fetcher.data.hasNextPage);
-      } else {
-        setHasNextPage(false);
-      }
+      setPosts((prevPosts) => {
+        const prevIds = new Set(prevPosts.map((p) => p.id));
+        const filtered = newPosts.filter((p) => !prevIds.has(p.id));
+        return [...prevPosts, ...filtered];
+      });
+      setLastId(newPosts[newPosts.length - 1]?.id || null);
+      setHasNextPage(fetcher.data.hasNextPage);
+    } else {
+      setHasNextPage(false);
     }
-  }, [fetcher.data]);
+  }
 
   const loading = fetcher.state !== 'idle';
 
@@ -108,32 +108,33 @@ export default function PostIndex() {
     }, 1000);
   }, [hasNextPage, fetcher, loadingDelay, lastId]);
 
-  useEffect(() => {
-    const currentObserverRef = observerRef.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (
-          entry.isIntersecting &&
-          hasNextPage &&
-          entry.intersectionRatio > 0.95
-        ) {
-          loadMorePosts();
-        }
-      },
-      { threshold: 0.95 }
-    );
+  // React 19 Callback Ref で IntersectionObserver を管理 (useEffect 不要)
+  const observerRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
 
-    if (currentObserverRef) {
-      observer.observe(currentObserverRef);
-    }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (
+            entry.isIntersecting &&
+            hasNextPage &&
+            entry.intersectionRatio > 0.95
+          ) {
+            loadMorePosts();
+          }
+        },
+        { threshold: 0.95 }
+      );
 
-    return () => {
-      if (currentObserverRef) {
-        observer.unobserve(currentObserverRef);
-      }
-    };
-  }, [hasNextPage, loadMorePosts]);
+      observer.observe(node);
+
+      return () => {
+        observer.disconnect();
+      };
+    },
+    [hasNextPage, loadMorePosts]
+  );
 
   return (
     <div className="container mx-auto p-4">
