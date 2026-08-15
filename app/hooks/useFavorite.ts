@@ -37,7 +37,7 @@ export function useFavorite({
 
     // サーバーリクエスト送信
     fetcher.submit(
-      { PostId: postId.toString() },
+      { postId: postId.toString(), PostId: postId.toString() },
       { method: 'POST', action: '/resources/favorite' }
     );
   };

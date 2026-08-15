@@ -1,27 +1,25 @@
 // app/models/favorite.server.ts
-import { PrismaClient } from '@prisma/client';
-import { Favorite, Post } from '.prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '~/models/db.server';
+import type { Favorite, Post } from '@prisma/client';
 
 class FavoriteRepository {
   // お気に入り追加
-  async addFavorite(params: { PostId: number; userId: string }) {
-    const { PostId, userId } = params;
+  async addFavorite(params: { postId: number; userId: string }) {
+    const { postId, userId } = params;
     return prisma.favorite.create({
       data: {
-        PostId,
+        postId,
         userId,
       },
     });
   }
 
   // お気に入り削除
-  async removeFavorite(params: { PostId: number; userId: string }) {
-    const { PostId, userId } = params;
+  async removeFavorite(params: { postId: number; userId: string }) {
+    const { postId, userId } = params;
     return prisma.favorite.deleteMany({
       where: {
-        PostId,
+        postId,
         userId,
       },
     });
@@ -40,10 +38,10 @@ class FavoriteRepository {
   }
 
   // 特定投稿のお気に入り情報を取得
-  async findFavoritesByPost(PostId: number): Promise<Favorite[]> {
+  async findFavoritesByPost(postId: number): Promise<Favorite[]> {
     return prisma.favorite.findMany({
       where: {
-        PostId,
+        postId,
       },
       include: {
         user: true, // ユーザー情報を含めて取得
@@ -53,16 +51,16 @@ class FavoriteRepository {
 
   // お気に入りの切り替え
   async toggleFavorite(params: {
-    PostId: number;
+    postId: number;
     userId: string;
   }): Promise<{ added: boolean }> {
-    const { PostId, userId } = params;
+    const { postId, userId } = params;
 
     const existingFavorite = await prisma.favorite.findUnique({
       where: {
-        userId_PostId: {
+        userId_postId: {
           userId,
-          PostId,
+          postId,
         },
       },
     });
@@ -75,7 +73,7 @@ class FavoriteRepository {
     } else {
       await prisma.favorite.create({
         data: {
-          PostId,
+          postId,
           userId,
         },
       });
@@ -85,18 +83,18 @@ class FavoriteRepository {
 
   // お気に入りの状態を確認
   async isFavorite(params: {
-    PostId: number;
+    postId: number;
     userId: string | null;
   }): Promise<boolean> {
-    const { PostId, userId } = params;
+    const { postId, userId } = params;
     if (!userId) {
       return false; // userId がない場合、フォールバックとしてお気に入りではないと見なす
     }
     const favorite = await prisma.favorite.findUnique({
       where: {
-        userId_PostId: {
+        userId_postId: {
           userId,
-          PostId,
+          postId,
         },
       },
     });
@@ -104,10 +102,10 @@ class FavoriteRepository {
   }
 
   // 特定の投稿のお気に入り数を取得
-  async countFavorites(PostId: number): Promise<number> {
+  async countFavorites(postId: number): Promise<number> {
     return prisma.favorite.count({
       where: {
-        PostId,
+        postId,
       },
     });
   }
@@ -120,29 +118,29 @@ class FavoriteRepository {
     const favoriteStatuses = userId
       ? await prisma.favorite.findMany({
           where: {
-            PostId: { in: postIds },
+            postId: { in: postIds },
             userId,
           },
           select: {
-            PostId: true,
+            postId: true,
           },
         })
       : [];
 
     const favoriteCounts = await prisma.favorite.groupBy({
-      by: ['PostId'],
+      by: ['postId'],
       _count: true,
       where: {
-        PostId: { in: postIds },
+        postId: { in: postIds },
       },
     });
 
     return posts.map((post) => {
       const isFavorite = userId
-        ? favoriteStatuses.some((favorite) => favorite.PostId === post.id)
+        ? favoriteStatuses.some((favorite) => favorite.postId === post.id)
         : false;
       const favoriteCount =
-        favoriteCounts.find((count) => count.PostId === post.id)?._count || 0;
+        favoriteCounts.find((count) => count.postId === post.id)?._count || 0;
 
       return {
         ...post,

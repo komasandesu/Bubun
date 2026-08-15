@@ -3,19 +3,22 @@ import { useFavorite } from '~/hooks/useFavorite';
 import styles from './FavoriteButton.module.css';
 
 interface FavoriteButtonProps {
-  PostId: number;
+  postId?: number;
+  PostId?: number; // 後方互換性用
   initialIsFavorite: boolean;
   initialFavoriteCount: number;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+  postId,
   PostId,
   initialIsFavorite,
   initialFavoriteCount,
 }) => {
+  const targetPostId = (postId ?? PostId) as number;
   const { isFavorite, favoriteCount, toggleFavorite, isSubmitting } =
     useFavorite({
-      postId: PostId,
+      postId: targetPostId,
       initialIsFavorite,
       initialFavoriteCount,
     });
@@ -39,4 +42,3 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 };
 
 export default FavoriteButton;
-

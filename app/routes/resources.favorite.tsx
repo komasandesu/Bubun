@@ -11,20 +11,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   responseHeaders.set('Set-Cookie', sessionCookie);
 
   const formData = await request.formData();
-  const PostId = Number(formData.get('PostId'));
+  const postId = Number(formData.get('postId') || formData.get('PostId'));
 
-  if (!PostId) {
+  if (!postId) {
     const body = JSON.stringify({ error: 'Invalid post ID' });
     return new Response(body, { status: 400, headers: responseHeaders });
   }
 
   try {
     const result = await favoriteRepository.toggleFavorite({
-      PostId: PostId,
+      postId,
       userId: user.id,
     });
 
-    const favoriteCount = await favoriteRepository.countFavorites(PostId);
+    const favoriteCount = await favoriteRepository.countFavorites(postId);
 
     const body = JSON.stringify({
       success: true,
@@ -47,19 +47,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   responseHeaders.set('Set-Cookie', sessionCookie);
 
   const url = new URL(request.url);
-  const PostId = Number(url.searchParams.get('PostId'));
+  const postId = Number(url.searchParams.get('postId') || url.searchParams.get('PostId'));
 
-  if (!PostId) {
+  if (!postId) {
     const body = JSON.stringify({ error: 'Invalid post ID' });
     return new Response(body, { status: 400, headers: responseHeaders });
   }
 
   try {
     const isFavorite = await favoriteRepository.isFavorite({
-      PostId,
+      postId,
       userId: user.id,
     });
-    const favoriteCount = await favoriteRepository.countFavorites(PostId);
+    const favoriteCount = await favoriteRepository.countFavorites(postId);
 
     const body = JSON.stringify({ isFavorite, favoriteCount });
     return new Response(body, { status: 200, headers: responseHeaders });

@@ -77,7 +77,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
     const [isFavorite, favoriteCount] = await Promise.all([
       user
-        ? favoriteRepository.isFavorite({ PostId: postId, userId: user.id })
+        ? favoriteRepository.isFavorite({ postId, userId: user.id })
         : false,
       favoriteRepository.countFavorites(postId),
     ]);
